@@ -35,3 +35,10 @@ yarn-error.log*
 
 # local .env files
 .env.local*
+
+# mkcert 憑證需要本地自己重新生產
+/SSL/mkcert/localhost-key.pem
+/SSL/mkcert/localhost.pem
+
+# 打包分析文件
+visualizer.html

@@ -1,6 +1,23 @@
 {
   "extends": "@quasar/app-vite/tsconfig-preset",
   "compilerOptions": {
-    "baseUrl": "."
-  }
+    "baseUrl": ".",
+    "lib": ["ES2023", "ES2022", "ES2021", "ES2020", "es2019", "dom", "ESNext"]
+    // "paths": {
+    //   "@/*": ["src/*"],
+    //   "src": ["./src/"]
+    // }
+    // "isolatedModules": true
+
+    // "types": ["vitest/globals"]
+    // "skipLibCheck": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "./auto-imports.d.ts",
+    "./components.d.ts"
+  ]
 }

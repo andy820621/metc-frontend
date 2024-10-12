@@ -12,14 +12,56 @@
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
 
-$primary   : #1976D2;
-$secondary : #26A69A;
-$accent    : #9C27B0;
+$primary: #8b694e;
+$secondary: #fffdee;
+$accent: #e7e5d8;
 
-$dark      : #1D1D1D;
-$dark-page : #121212;
+$dark: #1d1d1d;
+$dark-page: #121212;
 
-$positive  : #21BA45;
-$negative  : #C10015;
-$info      : #31CCEC;
-$warning   : #F2C037;
+$positive: #52cc12; // #21ba45;
+$negative: #e01e1e; // #c10015;
+$info: #31ccec;
+$warning: #f0b900; // #f8b600;
+
+// 自訂 brand 顏色
+// Custom Brand Color Map
+$customBrandColors: (
+  tertiary: #dbd7bf,
+  tabGrey: #f0f0f0,
+  process: #c61e1e,
+  activeTab: #ab8d2c,
+  inactiveTab: #5f584e,
+  inactiveTabBg: #f3eee7,
+);
+
+@mixin generate-color-classes($colors) {
+  @each $name, $color in $colors {
+    .text-#{$name} {
+      color: $color !important;
+    }
+    .bg-#{$name} {
+      background: $color !important;
+    }
+  }
+}
+@include generate-color-classes($customBrandColors);
+
+// 哈姆哥設計的顏色
+$nav-bar-bg: rgb(231, 229, 216);
+
+$tab-row-bg: rgb(239, 239, 239);
+$tab-row-text: rgb(54, 54, 54);
+$tab-active-text: rgb(139, 136, 127);
+
+$table-header-row-bg: rgb(231, 229, 216);
+$table-odd-row-bg: rgb(255, 253, 238);
+$table-even-row-bg: rgb(239, 239, 239);
+
+$menu-text: rgb(54, 54, 54);
+$menu-bg: rgb(235, 205, 66);
+$menu-active-bg: rgb(139, 105, 78);
+$menu-hover: rgb(139, 105, 78);
+
+$sub-menu-bg: rgb(220, 165, 64);
+$sub-menu-hover: rgb(139, 105, 78);
