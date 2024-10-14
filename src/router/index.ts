@@ -1,14 +1,14 @@
 /* eslint-disable indent */
-import { route } from "quasar/wrappers";
+import { route } from 'quasar/wrappers';
 import {
   createMemoryHistory,
   createRouter,
   createWebHashHistory,
   createWebHistory,
   Router,
-} from "vue-router";
+} from 'vue-router';
 
-import routes from "./routes";
+import routes from './routes';
 
 /*
  * If not building with SSR mode, you can
@@ -24,7 +24,7 @@ let router: Router;
 export default route((/* { store, ssrContext } */) => {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
-    : process.env.VUE_ROUTER_MODE === "history"
+    : process.env.VUE_ROUTER_MODE === 'history'
     ? createWebHistory
     : createWebHashHistory;
 
@@ -36,7 +36,7 @@ export default route((/* { store, ssrContext } */) => {
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
-    linkActiveClass: "MyActive",
+    linkActiveClass: 'MyActive',
   });
 
   return router;

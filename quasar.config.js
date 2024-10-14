@@ -10,12 +10,12 @@
 
 // import vue from '@vitejs/plugin-vue'
 
-const { QuasarResolver } = require("unplugin-vue-components/resolvers");
-const { visualizer } = require("rollup-plugin-visualizer");
+const { QuasarResolver } = require('unplugin-vue-components/resolvers');
+const { visualizer } = require('rollup-plugin-visualizer');
 
-const { configure } = require("quasar/wrappers");
-const path = require("path");
-const fs = require("fs");
+const { configure } = require('quasar/wrappers');
+const path = require('path');
+const fs = require('fs');
 
 module.exports = configure(function (ctx) {
   return {
@@ -35,10 +35,10 @@ module.exports = configure(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ["global-registration", "router-navigation", "axios"],
+    boot: ['global-registration', 'router-navigation', 'axios'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
-    css: ["app.scss"],
+    css: ['app.scss'],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
@@ -50,41 +50,39 @@ module.exports = configure(function (ctx) {
       // 'line-awesome',
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
 
-      "roboto-font", // optional, you are not bound to it
-      "material-icons", // optional, you are not bound to it
+      'roboto-font', // optional, you are not bound to it
+      'material-icons', // optional, you are not bound to it
     ],
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
     build: {
       target: {
-        browser: ["es2019", "edge88", "firefox78", "chrome87", "safari13.1"],
-        node: "node16",
+        browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],
+        node: 'node16',
         alias: {
-          "@": path.join(__dirname, "./src"),
-          "@assets": path.join(__dirname, "./src/assets"),
+          '@': path.join(__dirname, './src'),
+          '@assets': path.join(__dirname, './src/assets'),
         },
       },
 
-      vueRouterMode: "history", // available values: 'hash', 'history'
+      vueRouterMode: 'history', // available values: 'hash', 'history'
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,
 
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
-      publicPath: "/",
+      publicPath: '/',
       // analyze: true,
       env: {
         // API: ctx.dev ? "https://localhost:5001" : "http://172.17.0.7/",
         // Local: ctx.dev ? "https://localhost:5000" : "https://dahua.metcfire.com.tw/",
         API: ctx.dev
-          ? "https://localhost:5001"
-          : // : "https://demo.metcfire.com.tw",
-            "https://present.metcfire.com.tw",
+          ? 'https://localhost:5001'
+          : 'https://present.metcfire.com.tw',
         Url: ctx.dev
-          ? "https://localhost:9000"
-          : // : "https://demo.metcfire.com.tw",
-            "https://present.metcfire.com.tw",
+          ? 'https://localhost:9000'
+          : 'https://present.metcfire.com.tw',
       },
       // rawDefine: {}
       // ignorePublicFolder: true,
@@ -93,25 +91,25 @@ module.exports = configure(function (ctx) {
       // distDir
 
       extendViteConf(viteConf) {
-        viteConf.base = "/";
+        viteConf.base = '/';
       },
       viteVuePluginOptions: {
         template: {
           compilerOptions: {
-            isCustomElement: (tag) => tag.startsWith("swiper-"),
+            isCustomElement: (tag) => tag.startsWith('swiper-'),
           },
         },
       },
 
       vitePlugins: [
         [
-          "unplugin-auto-import/vite",
+          'unplugin-auto-import/vite',
           {
             dts: true,
             include: [/\.[tj]sx?$/, /\.vue$/],
             imports: [
-              "vue",
-              "vue-router",
+              'vue',
+              'vue-router',
               {
                 // "@vueuse/core": [
                 // named imports
@@ -121,27 +119,27 @@ module.exports = configure(function (ctx) {
                 // ],
                 axios: [
                   // default imports
-                  ["default", "axios"], // import { default as axios } from 'axios',
+                  ['default', 'axios'], // import { default as axios } from 'axios',
                 ],
               },
             ],
             resolvers: [], // 第三方ui
             eslintrc: {
               enabled: false, // @default false
-              filepath: "./.eslintrc-auto-import.json", // @default './.eslintrc-auto-import.json'
+              filepath: './.eslintrc-auto-import.json', // @default './.eslintrc-auto-import.json'
               globalsPropValue: true, // @default true 可設置 boolean | 'readonly' | 'readable' | 'writable' | 'writeable'
             },
           },
         ],
         [
-          "unplugin-vue-components/vite",
+          'unplugin-vue-components/vite',
           {
             dts: true,
             dirs: [
-              "src/components",
-              "src/components/Dialog",
-              "src/layouts/components",
-              "src/pages/emergency/marshalling/components",
+              'src/components',
+              'src/components/Dialog',
+              'src/layouts/components',
+              'src/pages/emergency/marshalling/components',
             ],
             resolvers: [QuasarResolver()],
             deep: true,
@@ -149,7 +147,7 @@ module.exports = configure(function (ctx) {
         ],
         visualizer({
           open: true,
-          filename: "visualizer.html",
+          filename: 'visualizer.html',
           gzipSize: true, // 蒐集 gzip 壓縮檔案到圖表
           brotliSize: true, // 蒐集 brotli 壓縮檔案到圖表
           emitFile: false, // 在 dist 也生出分析文件
@@ -163,15 +161,15 @@ module.exports = configure(function (ctx) {
       https: {
         // quasar 官方提供: https://nodejs.org/api/https.html#https_https_createserver_options_requestlistener
         // mkcert 安裝: https://medium.com/easons-murmuring/%E4%BD%BF%E7%94%A8-mkcert-%E5%9C%A8%E6%9C%AC%E5%9C%B0%E7%AB%AF%E5%AF%A6%E7%8F%BE-https-%E4%BB%A5-node-js-nuxt-js-vue-cli-%E5%8F%8A-create-react-app-%E7%82%BA%E4%BE%8B-dafcb72ff835
-        key: fs.readFileSync("./SSL/mkcert/localhost-key.pem", "utf8"),
-        cert: fs.readFileSync("./SSL/mkcert/localhost.pem", "utf8"),
+        key: fs.readFileSync('./SSL/mkcert/localhost-key.pem', 'utf8'),
+        cert: fs.readFileSync('./SSL/mkcert/localhost.pem', 'utf8'),
       },
       open: true, // opens browser window automatically
       port: ctx.mode.spa ? 5000 : ctx.mode.pwa ? 9000 : 9090,
       proxy: {
         // 將所有以/api開頭的請求代理
-        "/api": {
-          target: "https://localhost:5001/",
+        '/api': {
+          target: 'https://localhost:5001/',
           changeOrigin: true,
         },
       },
@@ -182,21 +180,21 @@ module.exports = configure(function (ctx) {
       cssAddon: true,
       config: {
         brand: {
-          primary: "rgb(139, 105, 78)",
-          secondary: "#f8f3e9",
-          negative: "#C10015",
-          accent: "#e7e5d8",
-          dark: "#1d1d1d",
-          blue: "#26A69A",
-          positive: "#21BA45",
-          info: "#31CCEC",
-          warning: "#f8b600",
+          primary: 'rgb(139, 105, 78)',
+          secondary: '#f8f3e9',
+          negative: '#C10015',
+          accent: '#e7e5d8',
+          dark: '#1d1d1d',
+          blue: '#26A69A',
+          positive: '#21BA45',
+          info: '#31CCEC',
+          warning: '#f8b600',
         },
-        loadingBar: { color: "cyan-8" },
+        loadingBar: { color: 'cyan-8' },
       },
 
       // iconSet: 'material-icons', // Quasar icon set
-      lang: "zh-TW", // Quasar language pack
+      lang: 'zh-TW', // Quasar language pack
 
       // For special cases outside of where the auto-import strategy can have an impact
       // (like functional components as one of the examples),
@@ -207,12 +205,12 @@ module.exports = configure(function (ctx) {
 
       // Quasar plugins
       plugins: [
-        "AppFullscreen",
-        "Notify",
-        "LoadingBar",
-        "Dialog",
-        "Loading",
-        "LocalStorage",
+        'AppFullscreen',
+        'Notify',
+        'LoadingBar',
+        'Dialog',
+        'Loading',
+        'LocalStorage',
       ],
     },
 
@@ -237,16 +235,16 @@ module.exports = configure(function (ctx) {
       // (gets superseded if process.env.PORT is specified at runtime)
 
       middlewares: [
-        "render", // keep this as last one
+        'render', // keep this as last one
       ],
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa
     pwa: {
-      workboxMode: "generateSW", // "generateSW" or 'injectManifest'
+      workboxMode: 'generateSW', // "generateSW" or 'injectManifest'
       injectPwaMetaTags: true,
-      swFilename: "sw.js",
-      manifestFilename: "manifest.json",
+      swFilename: 'sw.js',
+      manifestFilename: 'manifest.json',
       useCredentialsForManifestTag: false,
       // useFilenameHashes: true,
       // extendGenerateSWOptions (cfg) {}
@@ -264,9 +262,9 @@ module.exports = configure(function (ctx) {
       // pwaManifestFile: 'src-pwa/manifest.json',
       // electronMain: 'src-electron/electron-main',
       // electronPreload: 'src-electron/electron-preload'
-      pwaRegisterServiceWorker: "src-pwa/register-service-worker",
-      pwaServiceWorker: "src-pwa/custom-service-worker",
-      pwaManifestFile: "src-pwa/manifest.json",
+      pwaRegisterServiceWorker: 'src-pwa/register-service-worker',
+      pwaServiceWorker: 'src-pwa/custom-service-worker',
+      pwaManifestFile: 'src-pwa/manifest.json',
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-cordova-apps/configuring-cordova
@@ -286,7 +284,7 @@ module.exports = configure(function (ctx) {
 
       inspectPort: 5858,
 
-      bundler: "packager", // 'packager' or 'builder'
+      bundler: 'packager', // 'packager' or 'builder'
 
       packager: {
         // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
@@ -302,13 +300,13 @@ module.exports = configure(function (ctx) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: "metc-frontend",
+        appId: 'metc-frontend',
       },
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-browser-extensions/configuring-bex
     bex: {
-      contentScripts: ["my-content-script"],
+      contentScripts: ['my-content-script'],
 
       // extendBexScriptsConf (esbuildConf) {}
       // extendBexManifestJson (json) {}
