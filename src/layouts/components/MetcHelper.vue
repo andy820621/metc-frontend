@@ -30,7 +30,7 @@
         label-position="left"
         :color="item.color"
         :text-color="item.color !== 'primary' ? 'dark' : 'white'"
-        @click="helperAction(item)"
+        @click="helperAction()"
         @mouseenter="isHover = true"
         @mouseout="isHover = false"
         :label="item.label"
@@ -114,35 +114,23 @@
 
   <!-- 消防支援 -->
   <FireSupport v-model:visible="fireSupportVisible" />
-
-  <!-- 設備警示 -->
-  <DialogDeviceAlert
-    v-if="$q.screen.xs || $q.screen.sm || isInHomePage"
-    v-model="deviceAlertModel"
-  />
 </template>
 
 <script setup lang="ts">
 // utils
-import tableMixin, { setBlockLoading } from "src/utils/tableMixin";
-// api
-import System, { SystemViewModel, systemType } from "src/api/system";
-import DeviceHistory, {
-  ReceiveDeviceAddressViewModel,
-  formatedDeviceBlockData,
-} from "src/api/deviceHistory";
+import tableMixin, { setBlockLoading } from 'src/utils/tableMixin';
 // type
-import type { blockRefType } from "src/utils/tableMixin";
-import { TouchPanValue } from "quasar";
+import type { blockRefType } from 'src/utils/tableMixin';
+import { TouchPanValue } from 'quasar';
 // websocket signalR
-import { storeToRefs } from "pinia";
-import { useDeviceAddressStore } from "src/stores/deviceAddress";
+import { storeToRefs } from 'pinia';
+import { useDeviceAddressStore } from 'src/stores/deviceAddress';
 
 // 變數
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = inject('$q') as typeof QVueGlobals;
 const isHover = ref(false);
 const route = useRoute();
-const isInHomePage = computed(() => route.path === "/");
+const isInHomePage = computed(() => route.path === '/');
 
 // store data
 const deviceAddressStore = useDeviceAddressStore();
@@ -150,17 +138,17 @@ const { nohmi02, nohmi03, fatek03 } = storeToRefs(deviceAddressStore);
 
 watch(nohmi02, (newValue) => {
   if (newValue) {
-    console.log("nohmi02", newValue);
+    console.log('nohmi02', newValue);
   }
 });
 watch(nohmi03, (newValue) => {
   if (newValue) {
-    console.log("nohmi03", newValue);
+    console.log('nohmi03', newValue);
   }
 });
 watch(fatek03, (newValue) => {
   if (newValue) {
-    console.log("fatek03", newValue);
+    console.log('fatek03', newValue);
   }
 });
 
@@ -172,19 +160,19 @@ const helperMenuDefault = reactive([
   //   color: "white",
   // },
   {
-    label: "聯絡防災中心",
-    value: "contact",
-    color: "primary",
+    label: '聯絡防災中心',
+    value: 'contact',
+    color: 'primary',
   },
   {
-    label: "防災中心官方帳號",
-    value: "lineAccount",
-    color: "white",
+    label: '防災中心官方帳號',
+    value: 'lineAccount',
+    color: 'white',
   },
   {
-    label: "視訊直播間",
-    value: "liveStream",
-    color: "primary",
+    label: '視訊直播間',
+    value: 'liveStream',
+    color: 'primary',
   },
   // {
   //   label: "模擬試驗",
@@ -197,9 +185,9 @@ const helperMenu = computed(() => {
     return [
       ...helperMenuDefault,
       {
-        label: "設備警示",
-        value: "deviceAlert",
-        color: "primary",
+        label: '設備警示',
+        value: 'deviceAlert',
+        color: 'primary',
       },
     ];
   }
@@ -268,100 +256,66 @@ type helperMenuItemType = {
 
 const deviceConfig = [
   {
-    label: "時間",
-    name: "dateTime",
-    field: "dateTime",
-    align: "left",
-    formType: "inputString",
+    label: '時間',
+    name: 'dateTime',
+    field: 'dateTime',
+    align: 'left',
+    formType: 'inputString',
     isTable: true,
   },
   {
-    label: "地址",
-    name: "addressName",
-    field: "addressName",
-    align: "left",
-    formType: "inputString",
+    label: '地址',
+    name: 'addressName',
+    field: 'addressName',
+    align: 'left',
+    formType: 'inputString',
     isTable: true,
   },
   {
-    label: "空間名稱",
-    name: "areaName",
-    field: "areaName",
-    align: "left",
-    formType: "inputString",
+    label: '空間名稱',
+    name: 'areaName',
+    field: 'areaName',
+    align: 'left',
+    formType: 'inputString',
     isTable: true,
   },
   {
-    label: "種類",
-    name: "deviceType",
-    field: "deviceType",
-    align: "left",
-    formType: "inputString",
+    label: '種類',
+    name: 'deviceType',
+    field: 'deviceType',
+    align: 'left',
+    formType: 'inputString',
     isTable: true,
   },
   {
-    label: "設備名稱",
-    name: "deviceName",
-    field: "deviceName",
-    align: "left",
-    formType: "inputString",
+    label: '設備名稱',
+    name: 'deviceName',
+    field: 'deviceName',
+    align: 'left',
+    formType: 'inputString',
     isTable: true,
   },
   {
-    label: "設備狀況",
-    name: "deviceStatus",
-    field: "status",
-    align: "left",
-    formType: "inputString",
+    label: '設備狀況',
+    name: 'deviceStatus',
+    field: 'status',
+    align: 'left',
+    formType: 'inputString',
     isTable: true,
   },
   {
-    label: "備註",
-    name: "note",
-    field: (row: ReceiveDeviceAddressViewModel) =>
-      row?.deviceAddress?.device?.note ?? "",
-    align: "left",
-    formType: "textArea",
+    label: '備註',
+    name: 'note',
+    field: 'note',
+    align: 'left',
+    formType: 'textArea',
     isTable: true,
   },
 ];
-const contactData = ref<SystemViewModel[]>([]);
+const contactData = ref<any[]>([]);
 const router = useRouter();
-async function helperAction(item: helperMenuItemType) {
-  if (item.value === "contact") {
-    isDialogOpen.value = !isDialogOpen.value;
-    isContact.value = true;
-    const result = (await System.apiGetSystemItem(
-      systemType.Contact
-    )) as typeof AxiosResponse;
-    if (result.data) contactData.value = result.data;
-  } else if (item.value === "lineAccount") {
-    const href = "https://lin.ee/rshiHBg";
-    window.open(href, "_blank");
-    isDialogOpen.value = false;
-  } else if (item.value === "equipMsg") {
-    isDialogOpen.value = !isDialogOpen.value;
-    isEquipMsg.value = true;
-    const result = (await DeviceHistory.apiGetData({
-      filters: "",
-      page: 1,
-      rowsPerPage: 12,
-    })) as typeof AxiosResponse;
-    console.log("now result", result);
-    nextTick(() => {
-      tableAttrs.value.tableConfig = deviceConfig;
-      tableAttrs.value.headerButtons = [];
-      tableAttrs.value.tableButtons = [];
-      setBlockLoading(blockRef);
-    });
-  } else if (item.value === "commitSettings") {
-    isCommitSettings.value = true;
-  } else if (item.value === "simulationTest") {
-    simulationTestVisible.value = true;
-  } else if (item.value === "liveStream") {
-    const streamPage = router.resolve({ name: "liveStream" });
-    window.open(streamPage.href, "_blank");
-  } else if (item.value === "deviceAlert") handleDeviceAlert();
+async function helperAction() {
+  console.log('todo');
 }
 function dialogClose() {
   isContact.value = false;
@@ -380,20 +334,21 @@ const tableEvent = computed(() => {
 });
 
 async function getTableData(
-  pagination: blockRefType["pagination"] = {
-    filters: "",
+  pagination: blockRefType['pagination'] = {
+    filters: '',
     page: 1,
     rowsPerPage: 12,
   }
 ) {
   if (pagination) {
-    const result = (await DeviceHistory.apiGetData(
-      pagination
-    )) as typeof AxiosResponse;
-    tableAttrs.value.blockData = result?.data?.rows
-      ? formatedDeviceBlockData(result.data?.rows)
-      : [];
-    tableAttrs.value.totalNum = result?.data?.rowsNumber ?? 0;
+    // const result = (await DeviceHistory.apiGetData(
+    //   pagination
+    // )) as typeof AxiosResponse;
+    // tableAttrs.value.blockData = result?.data?.rows
+    //   ? formatedDeviceBlockData(result.data?.rows)
+    //   : [];
+    // tableAttrs.value.totalNum = result?.data?.rowsNumber ?? 0;
+    console.log({ pagination });
   }
 }
 

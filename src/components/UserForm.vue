@@ -6,12 +6,7 @@
           square
           size="150px"
           class="q-mb-md cursor-pointer avatarHover"
-          @click="
-            open(),
-              typeof dialogAttrs.tempData.id === 'string'
-                ? (accountType = 'user')
-                : (accountType = 'account')
-          "
+          @click="() => console.log('test')"
         >
           <q-img
             class="fit"
@@ -126,9 +121,9 @@
                 :offset="[10, 10]"
               >
                 {{
-                  config.name === "phoneNumber2"
-                    ? "新增聯絡電話( 最多三組)"
-                    : "新增緊急聯絡電話( 最多兩組)"
+                  config.name === 'phoneNumber2'
+                    ? '新增聯絡電話( 最多三組)'
+                    : '新增緊急聯絡電話( 最多兩組)'
                 }}
               </q-tooltip>
             </q-btn>
@@ -161,7 +156,7 @@
             dense
             icon="email"
             padding="5px 5px"
-            @click="verifyEmail"
+            @click="() => console.log('test')"
           >
             <q-tooltip
               class="text-body2"
@@ -173,8 +168,8 @@
             >
               {{
                 dialogAttrs.tempData.isEmailConfirmed
-                  ? "已驗證電子信箱"
-                  : "尚未驗證電子信箱"
+                  ? '已驗證電子信箱'
+                  : '尚未驗證電子信箱'
               }}
             </q-tooltip>
           </q-btn>
@@ -308,18 +303,16 @@
           <q-chip
             clickable
             removable
-            @remove="
-              scope.removeAtIndex(scope.index), rolesDataFormat(scope.opt)
-            "
+            @remove="() => console.log('test')"
             :tabindex="scope.tabindex"
             dense
-            @click.prevent.stop="openRoleDialog(scope.opt)"
+            @click.prevent.stop="() => console.log('test')"
           >
             {{ scope.opt.description || scope.opt.fullname || scope.opt.name }}
           </q-chip>
         </template>
         <template v-slot:option="scope">
-          <q-item v-bind="scope.itemProps" @click="openRoleDialog(scope.opt)">
+          <q-item v-bind="scope.itemProps" @click="() => console.log('test')">
             <q-item-section>
               <q-item-label>{{
                 scope.opt.description || scope.opt.fullname || scope.opt.name
@@ -349,7 +342,7 @@
       />
       <!-- radio -->
       <div v-else-if="config.formType === 'radioOption'">
-        {{ config.label + (config.required ? " *" : "") }}
+        {{ config.label + (config.required ? ' *' : '') }}
         <q-field
           :disable="config.disable"
           hide-bottom-space
@@ -375,7 +368,7 @@
       <!-- checkbox -->
       <div v-if="config.formType === 'checkbox'">
         <div class="text-grey-6">
-          {{ config.label + (config.required ? " *" : "") }}
+          {{ config.label + (config.required ? ' *' : '') }}
         </div>
         <span>
           <q-btn
@@ -436,7 +429,7 @@
           flat
           round
           dense
-          @click="errorHandle(rolesTempData?.role, 'close')"
+          @click="() => console.log('test')"
         />
       </q-card-section>
 
@@ -447,7 +440,7 @@
             <q-select
               :disable="config.disable"
               v-if="config.formType === 'selectString'"
-              v-model="rolesTempData[config.name as keyof rolesTempDataType]"
+              v-model="rolesTempData[config.name as keyof any]"
               :options="userFormSelectOption"
               :label="config.label + (config.required ? ' *' : '')"
               @focus="selectListChange(config.name)"
@@ -511,7 +504,7 @@
               multiple
               use-chips
               option-value="id"
-              v-model="rolesTempData[config.name as keyof rolesTempDataType]"
+              v-model="rolesTempData[config.name as any]"
               :options="userFormSelectOption"
               :label="config.label + (config.required ? ' *' : '')"
               @focus="selectListChange(config.name)"
@@ -585,7 +578,7 @@
         <q-btn
           color="primary"
           label="確定"
-          @click="errorHandle(rolesTempData?.role)"
+          @click="() => console.log('test')"
         />
       </q-card-section>
     </q-card>
@@ -593,35 +586,27 @@
 </template>
 
 <script setup lang="ts">
-import { date } from "quasar";
-
-// api
-import User from "src/api/user";
-import { BuildingViewModel } from "src/api/building";
-import { AddressPlateViewModel } from "src/api/addressPlate";
-import { RoleViewModel } from "src/api/role";
-import { FloorViewModel } from "src/api/floors";
-import userAccount from "src/api/userAccount";
+import { date } from 'quasar';
 
 // utils
 import type {
   tableConfigItem,
   dialogAttrsType,
   tempDataType,
-} from "src/utils/tableMixin";
-import FileReadMixin from "src/utils/fileRead";
-import { useCloned, useFileDialog } from "@vueuse/core";
+} from 'src/utils/tableMixin';
+import FileReadMixin from 'src/utils/fileRead';
+import { useCloned, useFileDialog } from '@vueuse/core';
 import {
   phoneRules,
   mobilePhoneRules,
   phoneRulesMask,
-} from "src/utils/quasarRules";
+} from 'src/utils/quasarRules';
 // icon
-import { matErrorOutline } from "@quasar/extras/material-icons";
+import { matErrorOutline } from '@quasar/extras/material-icons';
 
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = inject('$q') as typeof QVueGlobals;
 
-const emit = defineEmits(["selectListChange", "getUserData", "addOtherPhone"]);
+const emit = defineEmits(['selectListChange', 'getUserData', 'addOtherPhone']);
 
 const props = defineProps<{
   dialogAttrs: dialogAttrsType;
@@ -633,13 +618,7 @@ const props = defineProps<{
   emgyCellPhoneArr: string[];
 }>();
 
-const tableConfig = computed(() => {
-  if (props.tableConfig?.length) {
-    return props.tableConfig;
-  } else if (props.customTableConfig?.length) {
-    return props.customTableConfig;
-  }
-});
+const tableConfig = computed(() => props.tableConfig);
 const dialogAttrs = computed(() => props.dialogAttrs);
 const userFormSelectOption = computed(() => props.userFormSelectOption);
 
@@ -648,11 +627,11 @@ const emgyCellPhoneArr = computed(() => props.emgyCellPhoneArr);
 
 const radioOption = [
   {
-    label: "男",
+    label: '男',
     value: false,
   },
   {
-    label: "女",
+    label: '女',
     value: true,
   },
 ];
@@ -660,100 +639,67 @@ const radioOption = [
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/; // 信箱驗證
 
 function addOtherPhone(props: string) {
-  emit("addOtherPhone", props);
+  emit('addOtherPhone', props);
 }
 const isPwd = ref(true);
 
 function selectListChange(props: string) {
-  emit("selectListChange", props);
-}
-
-// 驗證Email
-async function verifyEmail() {
-  console.log("verifyEmail");
-  if (!dialogAttrs.value.tempData.isEmailConfirmed) {
-    const result = (await User.apiVerifyEmail()) as typeof AxiosResponse;
-    if (result.data) {
-      $q.notify({
-        type: "positive",
-        message: "驗證成功",
-        position: "top",
-      });
-      emit("getUserData");
-    } else {
-      $q.notify({
-        type: "negative",
-        message: "驗證失敗",
-        position: "top",
-      });
-    }
-  } else {
-    $q.notify({
-      type: "positive",
-      message: "信箱已驗證成功",
-      position: "top",
-    });
-  }
+  emit('selectListChange', props);
 }
 // 驗證日期
 function validateDate() {
   if (dialogAttrs.value.tempData.birthday) {
-    const nowDate = date.formatDate(Date.now(), "YYYY-MM-DD");
+    const nowDate = date.formatDate(Date.now(), 'YYYY-MM-DD');
     const diff = date.getDateDiff(
       nowDate,
       dialogAttrs.value.tempData.birthday,
-      "years"
+      'years'
     );
     if (diff > 100) {
-      dialogAttrs.value.tempData.birthday = "";
+      dialogAttrs.value.tempData.birthday = '';
       $q.notify({
-        type: "negative",
-        message: "請輸入正確的生日年份",
-        position: "top",
+        type: 'negative',
+        message: '請輸入正確的生日年份',
+        position: 'top',
       });
     }
   }
 }
 // 角色 / 身分 dialog
 const rolesDialogVisible = ref(false);
-export interface rolesTempDataType {
-  buildings: BuildingViewModel | BuildingViewModel[];
-  role?: RoleViewModel & { rolesTempData: rolesTempDataType | undefined };
-  floor?: FloorViewModel;
-  addressPlates?: AddressPlateViewModel[];
-}
-const rolesTempData = ref<rolesTempDataType>();
+
+const rolesTempData = ref<any>();
 // 角色 / 身分內置欄位
 const rolesConfig = ref<tableConfigItem[]>([
   {
-    label: "大樓",
-    name: "buildings",
-    field: "buildings",
-    align: "left",
-    formType: "selectMany",
-    message: "請選擇 大樓",
+    label: '大樓',
+    name: 'buildings',
+    field: 'buildings',
+    align: 'left',
+    formType: 'selectMany',
+    message: '請選擇 大樓',
     isTable: true,
     isDialogForm: true,
     required: true,
   },
   {
-    label: "樓層",
-    name: "floor",
-    field: "floor",
-    align: "left",
-    formType: "selectString",
-    message: "請選擇 樓層",
+    label: '樓層',
+    name: 'floor',
+    field: 'floor',
+    align: 'left',
+    formType: 'selectString',
+    message: '請選擇 樓層',
     isTable: true,
     isDialogForm: true,
     required: true,
   },
   {
-    label: "地址",
-    name: "addressPlates",
-    field: "addressPlates",
-    align: "left",
-    formType: "selectMany",
-    message: "請選擇 地址",
+    label: '地址',
+    name: 'addressPlates',
+    field: 'addressPlates',
+    align: 'left',
+    formType: 'selectMany',
+    message: '請選擇 地址',
     isTable: true,
     isDialogForm: true,
     required: true,
@@ -762,143 +708,43 @@ const rolesConfig = ref<tableConfigItem[]>([
 
 // 根據角色判斷顯示的欄位
 const onlyBuildingRolesArr = [
-  "System",
-  "SecurityGuard",
-  "Center",
-  "Provider",
-  "FireBrigade",
-  "Community",
-  "Manager",
-  "Mercury",
-  "Fire",
-  "Inform",
-  "EvacuationGuide",
-  "SafetyProtection",
-  "Ambulance",
+  'System',
+  'SecurityGuard',
+  'Center',
+  'Provider',
+  'FireBrigade',
+  'Community',
+  'Manager',
+  'Mercury',
+  'Fire',
+  'Inform',
+  'EvacuationGuide',
+  'SafetyProtection',
+  'Ambulance',
 ];
-const withAddressRolesArr = ["Landlord", "Member", "User"];
+const withAddressRolesArr = ['Landlord', 'Member', 'User'];
 const isOnlyBuilding = ref(false);
 const isWithAddress = ref(false);
 function rolesTableConfigChange() {
   const floorConfigObj = rolesConfig.value.find(
-    (item) => item.name === "floor"
+    (item) => item.name === 'floor'
   );
   const addressPlatesConfigObj = rolesConfig.value.find(
-    (item) => item.name === "addressPlates"
+    (item) => item.name === 'addressPlates'
   );
   const buildingConfigObj = rolesConfig.value.find(
-    (item) => item.name === "buildings"
+    (item) => item.name === 'buildings'
   );
   if (isOnlyBuilding.value || !isWithAddress.value) {
     if (floorConfigObj) floorConfigObj.isDialogForm = false;
     if (addressPlatesConfigObj) addressPlatesConfigObj.isDialogForm = false;
-    if (buildingConfigObj) buildingConfigObj.formType = "selectMany";
+    if (buildingConfigObj) buildingConfigObj.formType = 'selectMany';
   } else if (isWithAddress.value || !isOnlyBuilding.value) {
     if (floorConfigObj) floorConfigObj.isDialogForm = true;
     if (addressPlatesConfigObj) addressPlatesConfigObj.isDialogForm = true;
-    if (buildingConfigObj) buildingConfigObj.formType = "selectString";
+    if (buildingConfigObj) buildingConfigObj.formType = 'selectString';
   }
 }
-
-function updateRoleStatus(
-  roleData: RoleViewModel & { rolesTempData: rolesTempDataType | undefined }
-) {
-  isOnlyBuilding.value = onlyBuildingRolesArr.includes(roleData.name); // 判斷目前所選角色是否包含只需選building的角色
-  isWithAddress.value = withAddressRolesArr.includes(roleData.name); // 判斷目前所選角色是否包含需選building、floor、addressPlates的角色
-}
-function openRoleDialog(
-  roleData: RoleViewModel & { rolesTempData: rolesTempDataType | undefined }
-) {
-  console.log("openRoleDialog", roleData);
-  updateRoleStatus(roleData);
-  rolesTempData.value = {} as rolesTempDataType;
-
-  if (roleData.rolesTempData) {
-    rolesTempData.value = roleData.rolesTempData;
-  } else {
-    rolesTempData.value.role = useCloned(roleData).cloned.value;
-  }
-
-  rolesDialogVisible.value = true;
-  rolesTableConfigChange();
-
-  if (rolesTempData.value) {
-    // roleData.rolesTempData = useCloned(rolesTempData.value).cloned.value;
-    roleData.rolesTempData = rolesTempData.value;
-  }
-}
-function errorHandle(
-  roleData: RoleViewModel & { rolesTempData: rolesTempDataType | undefined },
-  status?: string
-) {
-  let error = false;
-  // 錯誤處理
-  rolesConfig.value.forEach((item) => {
-    if (
-      rolesTempData.value &&
-      !rolesTempData.value[item.name as keyof rolesTempDataType] &&
-      item.required &&
-      item.isDialogForm
-    ) {
-      $q.notify({
-        type: "negative",
-        message: `${item.label} 尚未填寫 (位於角色/身分欄位裡)`,
-        position: "top",
-      });
-      error = true;
-    }
-  });
-
-  if (error === false) {
-    rolesDialogVisible.value = false;
-  }
-
-  if (status === "close") {
-    rolesDialogVisible.value = false;
-    const currentRoleIndex = dialogAttrs.value.tempData.roles.findIndex(
-      (role: { id: number }) =>
-        role.id === Number(rolesTempData.value?.role?.id)
-    );
-    if (error && currentRoleIndex === -1) {
-      dialogAttrs.value.tempData.roles.splice(currentRoleIndex, 1);
-    }
-  } else {
-    rolesDataFormat(roleData);
-  }
-
-  return error;
-}
-watch(
-  () => dialogAttrs.value.visible,
-  () => {
-    if (dialogAttrs.value.visible && dialogAttrs.value.tempData.roles?.length) {
-      dialogAttrs.value.tempData.roles?.forEach(
-        (
-          role: RoleViewModel & { rolesTempData: rolesTempDataType | undefined }
-        ) => {
-          if (onlyBuildingRolesArr.includes(role.name)) {
-            const result = dialogAttrs.value.tempData.roleBuildings?.find(
-              (item: any) => item.role.id === role.id
-            );
-            role.rolesTempData = result;
-          } else if (withAddressRolesArr.includes(role.name)) {
-            const result = dialogAttrs.value.tempData.roleAddressPlates?.find(
-              (item: any) => item.role.id === role.id
-            );
-            role.rolesTempData = result;
-            if (role.rolesTempData && role.rolesTempData.addressPlates) {
-              role.rolesTempData.floor =
-                role.rolesTempData.addressPlates[0].floor;
-              role.rolesTempData.buildings =
-                role.rolesTempData.addressPlates[0].floor.building;
-            }
-          }
-        }
-      );
-    }
-  },
-  { immediate: true }
-);
 
 watch(
   () => rolesTempData.value?.buildings,
@@ -927,97 +773,12 @@ watch(
   }
 );
 
-function rolesDataFormat(
-  roleData: RoleViewModel & { rolesTempData: rolesTempDataType | undefined }
-) {
-  roleData.rolesTempData = useCloned(rolesTempData.value).cloned.value;
-
-  if (dialogAttrs.value.tempData.roles) {
-    const obj: { [key: string]: any[] } = {
-      roleBuildings: [],
-      roleAddressPlates: [],
-    };
-    dialogAttrs.value.tempData.roles.forEach(
-      (
-        role: RoleViewModel & { rolesTempData: rolesTempDataType | undefined }
-      ) => {
-        if (role.rolesTempData) {
-          if (onlyBuildingRolesArr.includes(role.name)) {
-            obj.roleBuildings.push({
-              role: role.rolesTempData.role,
-              buildings: role.rolesTempData.buildings,
-            });
-          } else if (withAddressRolesArr.includes(role.name)) {
-            obj.roleAddressPlates.push({
-              role: role.rolesTempData.role,
-              addressPlates: role.rolesTempData.addressPlates,
-            });
-          }
-        }
-      }
-    );
-    dialogAttrs.value.tempData.roleBuildings = obj.roleBuildings;
-    dialogAttrs.value.tempData.roleAddressPlates = obj.roleAddressPlates;
-  } else {
-    delete dialogAttrs.value.tempData.roleBuildings;
-    dialogAttrs.value.tempData.roleAddressPlates = [];
-  }
-
-  console.log("tempData", dialogAttrs.value.tempData);
-}
-
 defineExpose({
   rolesConfig,
   rolesTempData,
 });
 
-// 上傳大頭貼
-const { files, open } = useFileDialog();
-watch(files, async (files) => {
-  if (files) {
-    await updateHeadShotPhoto(files[0]);
-  }
-});
-
-// 上傳大頭貼
-const { getFile } = FileReadMixin();
-const accountType = ref("");
-async function updateHeadShotPhoto(headShotData: File) {
-  console.log("accountType", accountType.value);
-  const { name } = headShotData;
-  const formData = new FormData();
-  formData.append("file", headShotData, name);
-
-  let result: typeof AxiosResponse;
-  if (accountType.value === "user") {
-    result = (await User.apiUploadUserMugshot(
-      formData,
-      dialogAttrs.value.tempData.id
-    )) as typeof AxiosResponse;
-  } else if (accountType.value === "account") {
-    result = (await userAccount.apiUploadAccountMugshot(
-      formData,
-      dialogAttrs.value.tempData.id
-    )) as typeof AxiosResponse;
-  }
-  if (result.data) {
-    $q.notify({
-      type: "positive",
-      message: "上傳成功",
-      position: "top",
-    });
-    dialogAttrs.value.tempData.userMugShotUrl = await getFile(
-      result.data,
-      null
-    );
-  } else {
-    $q.notify({
-      type: "negative",
-      message: "上傳失敗",
-      position: "top",
-    });
-  }
-}
+const accountType = ref('');
 </script>
 <style lang="scss" scoped>
 .avatarHover {
@@ -1036,7 +797,7 @@ async function updateHeadShotPhoto(headShotData: File) {
   align-items: center;
 }
 
-:deep(.q-field__native[type="date"]::-webkit-calendar-picker-indicator) {
+:deep(.q-field__native[type='date']::-webkit-calendar-picker-indicator) {
   cursor: pointer;
   position: absolute;
   right: 0;

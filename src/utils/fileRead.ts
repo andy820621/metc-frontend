@@ -1,43 +1,42 @@
-import { useObjectUrl, useCloned } from "@vueuse/core";
-import Files from "src/api/file";
-import { Notify } from "quasar";
-import { renderAsync } from "docx-preview";
-import { read, utils } from "xlsx";
-import type { WorkSheet } from "xlsx";
+import { useObjectUrl, useCloned } from '@vueuse/core';
+import { Notify } from 'quasar';
+import { renderAsync } from 'docx-preview';
+import { read, utils } from 'xlsx';
+import type { WorkSheet } from 'xlsx';
 
 // import { tempDataType } from "./tableMixin";
 
-export const excelFileTypes = ["xls", "xlsx", "csv"];
-export const wordFileTypes = ["docx", "doc"];
+export const excelFileTypes = ['xls', 'xlsx', 'csv'];
+export const wordFileTypes = ['docx', 'doc'];
 export const showInIframe = [
   ...excelFileTypes,
   ...wordFileTypes,
   ...[
-    "pdf",
-    "txt",
-    "json",
-    "ppt",
-    "pptx",
-    "html",
-    "md",
-    "xml",
-    "htm",
-    "css",
-    "scss",
-    "sass",
-    "js",
-    "ts",
-    "vue",
-    "mp3",
-    "mp4",
-    "m4a",
-    "mpeg",
-    "avi",
-    "mkv",
-    "mov",
-    "wmv",
-    "wav",
-    "ogg",
+    'pdf',
+    'txt',
+    'json',
+    'ppt',
+    'pptx',
+    'html',
+    'md',
+    'xml',
+    'htm',
+    'css',
+    'scss',
+    'sass',
+    'js',
+    'ts',
+    'vue',
+    'mp3',
+    'mp4',
+    'm4a',
+    'mpeg',
+    'avi',
+    'mkv',
+    'mov',
+    'wmv',
+    'wav',
+    'ogg',
   ],
 ];
 
@@ -47,7 +46,7 @@ export default function fileRead() {
   // base64 string 轉 File
   function base64toFile(
     base64: string,
-    fileName = "file",
+    fileName = 'file',
     fileType?: string
   ): File {
     const byteCharacters = atob(base64);
@@ -58,113 +57,113 @@ export default function fileRead() {
     const byteArray = new Uint8Array(byteNumbers);
 
     // 根據文件類型設定MIME類型
-    let type = "application/octet-stream"; // 默認二進制流
+    let type = 'application/octet-stream'; // 默認二進制流
     if (fileType) {
       switch (fileType.toLowerCase()) {
-        case "jpg":
-        case "jpeg":
-          type = "image/jpeg";
+        case 'jpg':
+        case 'jpeg':
+          type = 'image/jpeg';
           break;
-        case "png":
-          type = "image/png";
+        case 'png':
+          type = 'image/png';
           break;
-        case "gif":
-          type = "image/gif";
+        case 'gif':
+          type = 'image/gif';
           break;
-        case "webp":
-          type = "image/webp";
+        case 'webp':
+          type = 'image/webp';
           break;
-        case "bmp":
-          type = "image/bmp";
+        case 'bmp':
+          type = 'image/bmp';
           break;
-        case "txt":
-        case "log":
-          type = "text/plain";
+        case 'txt':
+        case 'log':
+          type = 'text/plain';
           break;
-        case "pdf":
-          type = "application/pdf";
+        case 'pdf':
+          type = 'application/pdf';
           break;
-        case "doc":
-          type = "application/msword";
+        case 'doc':
+          type = 'application/msword';
           break;
-        case "docx":
+        case 'docx':
           type =
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
           break;
-        case "xls":
-          type = "application/vnd.ms-excel";
+        case 'xls':
+          type = 'application/vnd.ms-excel';
           break;
-        case "xlsx":
+        case 'xlsx':
           type =
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
           break;
-        case "ppt":
-          type = "application/vnd.ms-powerpoint";
+        case 'ppt':
+          type = 'application/vnd.ms-powerpoint';
           break;
-        case "pptx":
+        case 'pptx':
           type =
-            "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation';
           break;
-        case "csv":
-          type = "text/csv";
+        case 'csv':
+          type = 'text/csv';
           break;
-        case "html":
-        case "htm":
-          type = "text/html";
+        case 'html':
+        case 'htm':
+          type = 'text/html';
           break;
-        case "xml":
-          type = "text/xml";
+        case 'xml':
+          type = 'text/xml';
           break;
-        case "md":
-          type = "text/markdown";
+        case 'md':
+          type = 'text/markdown';
           break;
-        case "scss":
-          type = "text/x-scss";
+        case 'scss':
+          type = 'text/x-scss';
           break;
-        case "sass":
-          type = "text/x-sass";
+        case 'sass':
+          type = 'text/x-sass';
           break;
-        case "css":
-          type = "text/css";
+        case 'css':
+          type = 'text/css';
           break;
-        case "js":
-          type = "text/javascript";
+        case 'js':
+          type = 'text/javascript';
           break;
-        case "ts":
-          type = "text/typescript";
+        case 'ts':
+          type = 'text/typescript';
           break;
-        case "json":
-          type = "application/json";
+        case 'json':
+          type = 'application/json';
           break;
-        case "mp3":
-          type = "audio/mpeg";
+        case 'mp3':
+          type = 'audio/mpeg';
           break;
-        case "wav":
-          type = "audio/wav";
+        case 'wav':
+          type = 'audio/wav';
           break;
-        case "ogg":
-          type = "audio/ogg";
+        case 'ogg':
+          type = 'audio/ogg';
           break;
-        case "avi":
-          type = "video/x-msvideo";
+        case 'avi':
+          type = 'video/x-msvideo';
           break;
-        case "m4a":
-          type = "audio/x-m4a";
+        case 'm4a':
+          type = 'audio/x-m4a';
           break;
-        case "mp4":
-          type = "video/mp4";
+        case 'mp4':
+          type = 'video/mp4';
           break;
-        case "mpeg":
-          type = "video/mpeg";
+        case 'mpeg':
+          type = 'video/mpeg';
           break;
-        case "wmv":
-          type = "video/x-ms-wmv";
+        case 'wmv':
+          type = 'video/x-ms-wmv';
           break;
-        case "mkv":
-          type = "video/x-matroska";
+        case 'mkv':
+          type = 'video/x-matroska';
           break;
         default:
-          type = "application/octet-stream";
+          type = 'application/octet-stream';
       }
     }
 
@@ -177,18 +176,16 @@ export default function fileRead() {
     filePath: string | null = null,
     fileId: number | null = null,
     type: string | null = null,
-    fileName = "file"
+    fileName = 'file'
   ) {
     let result: typeof AxiosResponse;
 
     if (filePath) {
-      result = (await Files.apiFileByPath(
-        encodeURI(filePath)
-      )) as typeof AxiosResponse;
+      console.log('getFile filePath:', filePath);
     } else if (fileId) {
-      result = (await Files.apiFileById(fileId)) as typeof AxiosResponse;
+      console.log('getFile fileId:', fileId);
     } else {
-      return "";
+      return '';
     }
     if (result && result.data) {
       const File = type
@@ -197,15 +194,15 @@ export default function fileRead() {
       file.value = File;
     } else {
       Notify.create({
-        type: "negative",
-        message: "獲取檔案失敗",
-        position: "top",
+        type: 'negative',
+        message: '獲取檔案失敗',
+        position: 'top',
       });
       return false;
     }
 
     if (type && wordFileTypes.includes(type)) {
-      const tempContainer = document.createElement("div");
+      const tempContainer = document.createElement('div');
 
       // 添加新的 styleContainer 元素用於樣式
       // const styleContainer = document.createElement("style");
@@ -216,7 +213,7 @@ export default function fileRead() {
       // `;
       // document.head.appendChild(styleContainer);
 
-      tempContainer.style.display = "none";
+      tempContainer.style.display = 'none';
       document.body.appendChild(tempContainer);
 
       try {
@@ -237,32 +234,32 @@ export default function fileRead() {
         // })
         await renderAsync(file.value, tempContainer);
       } catch (error) {
-        throw new Error("docx 轉換失敗: " + error);
+        throw new Error('docx 轉換失敗: ' + error);
       }
 
       const docxWrapper = tempContainer.querySelector(
-        ".docx-wrapper"
+        '.docx-wrapper'
       ) as HTMLElement;
       if (docxWrapper) {
         // docxWrapper.style.backgroundColor = "#fff";
-        docxWrapper.style.padding = "1rem .6rem";
+        docxWrapper.style.padding = '1rem .6rem';
       }
 
       const sectionDocx = tempContainer.querySelector(
-        "section.docx"
+        'section.docx'
       ) as HTMLElement;
       if (sectionDocx) {
         if (sectionDocx) {
-          sectionDocx.style.setProperty("width", "100%", "important");
-          sectionDocx.style.setProperty("padding", "1rem", "important");
-          sectionDocx.style.setProperty("min-height", "auto", "important");
-          sectionDocx.style.marginBottom = "0";
+          sectionDocx.style.setProperty('width', '100%', 'important');
+          sectionDocx.style.setProperty('padding', '1rem', 'important');
+          sectionDocx.style.setProperty('min-height', 'auto', 'important');
+          sectionDocx.style.marginBottom = '0';
           // sectionDocx.style.boxShadow = "none";
         }
       }
 
       const htmlContent = tempContainer.innerHTML;
-      const blob = new Blob([htmlContent], { type: "text/html" });
+      const blob = new Blob([htmlContent], { type: 'text/html' });
       const blobUrl = URL.createObjectURL(blob);
 
       document.body.removeChild(tempContainer);
@@ -274,7 +271,7 @@ export default function fileRead() {
       const worksheets = await readExcelFile(file.value);
       const allSheetsHtml = generateAllSheetsHtml(worksheets);
       // 把產出的 HTML 轉成 blob
-      const blob = new Blob([allSheetsHtml], { type: "text/html" });
+      const blob = new Blob([allSheetsHtml], { type: 'text/html' });
       const blobUrl = URL.createObjectURL(blob);
       return blobUrl;
     }
@@ -292,10 +289,10 @@ export default function fileRead() {
 }
 
 export function extractFilenameAndExtension(fullStr: string) {
-  const lastDotIndex = fullStr.lastIndexOf(".");
+  const lastDotIndex = fullStr.lastIndexOf('.');
 
   if (lastDotIndex === -1 || lastDotIndex === 0) {
-    return { filename: fullStr, extension: "" };
+    return { filename: fullStr, extension: '' };
   }
 
   const filename = fullStr.substring(0, lastDotIndex);
@@ -316,14 +313,14 @@ function readExcelFile(file: File): Promise<WorksheetObj[]> {
       const arrayBuffer = e.target?.result;
       if (arrayBuffer) {
         const data = new Uint8Array(arrayBuffer as ArrayBuffer);
-        const workbook = read(data, { type: "array" });
+        const workbook = read(data, { type: 'array' });
         const worksheets: WorksheetObj[] = [];
         workbook.SheetNames.forEach((sheetName) => {
           const worksheet = workbook.Sheets[sheetName];
           worksheets.push({ sheetName, worksheet });
         });
         resolve(worksheets);
-      } else reject(new Error("讀取檔案失敗"));
+      } else reject(new Error('讀取檔案失敗'));
     };
     reader.onerror = (error) => reject(error);
     reader.readAsArrayBuffer(file);
@@ -335,16 +332,16 @@ function generateAllSheetsHtml(worksheets: WorksheetObj[]): string {
 
   worksheets.forEach((ws, index) => {
     const isActive = index === 0; // 第一個標籤和工作表為活動狀態
-    const tabClass = isActive ? "tab active" : "tab";
-    const sheetClass = isActive ? "sheet active" : "sheet";
+    const tabClass = isActive ? 'tab active' : 'tab';
+    const sheetClass = isActive ? 'sheet active' : 'sheet';
 
     tabsHtml += `<div class="${tabClass}" onclick="showSheet('sheet-${index}', this)">${ws.sheetName}</div>`;
     const sheetHtml = utils.sheet_to_html(ws.worksheet);
     sheetsHtml += `<div id="sheet-${index}" class="${sheetClass}">${sheetHtml}</div>`;
   });
 
-  tabsHtml += "</div>";
-  sheetsHtml += "</div>";
+  tabsHtml += '</div>';
+  sheetsHtml += '</div>';
 
   // CSS樣式
   const style = `

@@ -136,12 +136,12 @@
                 <div>
                   <div class="text-bold text-body1">
                     未定位
-                    {{ UnlocatedPplNum(item) }}
+                    {{ 10 }}
                     人
                   </div>
                   <div class="text-bold text-body1">
                     未撤退
-                    {{ unEvacuatedPplNum(item) }}
+                    {{ 10 }}
                     人
                   </div>
                 </div>
@@ -190,14 +190,14 @@
             </div>
           </div>
           <div class="full-width">
-            <SDFMViewerPeople
+            <!-- <SDFMViewerPeople
               v-if="currentGroupData"
               :marshallingClass="currentGroupData"
               :processRunning="processRunning"
               :unReadMissionCount="currentGroupData.unReadMissionCount"
               @handleOpenUser="handleOpenUser"
               @openMissionList="clearUnReadMissionCount"
-            />
+            /> -->
           </div>
         </div>
       </div>
@@ -260,77 +260,14 @@
                   name="人員位置紀錄"
                   :style="`height: ${topPanelHeight}px`"
                 >
-                  <div
-                    v-if="!positionAndRetreatLists.length"
-                    class="text-grey text-center"
-                  >
-                    尚未有資料
-                  </div>
-                  <div
-                    v-for="(item, index) in positionAndRetreatLists"
-                    :key="index"
-                  >
-                    <div>
-                      <span>
-                        {{ item.dateTime }}
-                      </span>
-                      <span> - </span>
-                      <template v-if="item.user?.fullname">
-                        <span>{{ item.user.fullname }}&nbsp;</span>
-                      </template>
-                      <template v-if="!item.user && item.positionUser">
-                        <span>{{ item.positionUser.fullname }}&nbsp;</span>
-                      </template>
-
-                      <template v-if="item.nodeLabel">
-                        <span
-                          v-if="
-                            item.nodeType === iconLabels.Fire ||
-                            item.nodeType === iconLabels.Not
-                          "
-                        >
-                          確認</span
-                        >
-                        <span>{{ item.nodeLabel }}</span>
-                      </template>
-                    </div>
-                  </div>
+                  <div class="text-grey text-center">尚未有資料</div>
                 </q-tab-panel>
 
                 <q-tab-panel
                   name="防護編組事件處理紀錄"
                   :style="`height: ${topPanelHeight}px`"
                 >
-                  <div
-                    v-if="!sDFMNodesLists.length"
-                    class="text-grey text-center"
-                  >
-                    尚未有資料
-                  </div>
-                  <div v-for="(item, index) in sDFMNodesLists" :key="index">
-                    <div>
-                      <span>
-                        {{ item.dateTime }}
-                      </span>
-                      <span> - </span>
-
-                      <template v-if="item.user?.fullname">
-                        <span>{{ item.user.fullname }}&nbsp;</span>
-                      </template>
-
-                      <template
-                        v-if="
-                          item.nodeType === iconLabels.Wait && item.chRoleName
-                        "
-                      >
-                        <span>{{ item.chRoleName }}&nbsp;</span>
-                      </template>
-
-                      <template v-if="item.nodeLabel">
-                        <span>{{ item.nodeLabel }}</span>
-                      </template>
-                    </div>
-                  </div>
+                  <div class="text-grey text-center">尚未有資料</div>
                 </q-tab-panel>
 
                 <q-tab-panel
@@ -521,43 +458,28 @@
 
 <script setup lang="ts">
 // quasar
-import { mdiPrinter, mdiCheckCircle } from "@quasar/extras/mdi-v6";
+import { mdiPrinter, mdiCheckCircle } from '@quasar/extras/mdi-v6';
 
 // icon
-import { mdiArrowSplitHorizontal } from "@quasar/extras/mdi-v7";
-
-// api
-import Area from "src/api/area";
-import sDFM from "src/api/sDFM";
-import type { GroupViewModel, GroupMember } from "src/api/sDFM";
-import Role, { roleType } from "src/api/role";
-import EmergencyHistory, {
-  RecordTypes,
-  EmergencyRecordViewModel,
-} from "src/api/emergencyHistory";
-import System, { SystemViewModel, systemType } from "src/api/system";
+import { mdiArrowSplitHorizontal } from '@quasar/extras/mdi-v7';
 
 // pinia store
-import { storeToRefs } from "pinia";
-import { useBuildingStore } from "src/stores/building.js";
-import { useSignalRStore, RoleNameToChName } from "src/stores/signalR"; // websocket signalR
-import fireMarshalling from "src/api/fireMarshalling";
+import { storeToRefs } from 'pinia';
+import { useBuildingStore } from 'src/stores/building.js';
 
 // utils
-import { print, getTable } from "src/utils/usePrint";
-import FileReadMixin from "src/utils/fileRead";
-import { useCloned } from "@vueuse/core";
-import { compareByDateTime } from "src/utils/formatUtils";
+import { print, getTable } from 'src/utils/usePrint';
+import FileReadMixin from 'src/utils/fileRead';
+import { useCloned } from '@vueuse/core';
+import { compareByDateTime } from 'src/utils/formatUtils';
 
 // type
-import type { SendViewModel } from "src/stores/signalR";
-import type { UserViewModel } from "src/api/accountSetting";
-import { iconLabels } from "../flow/processIconOptions";
+import { iconLabels } from '../flow/processIconOptions';
 
 // assets
-import mugShotUrl from "src/assets/image/mugShotPlaceHolder.png";
-import { date } from "quasar";
-import { useUserStore } from "src/stores/user";
+import mugShotUrl from 'src/assets/image/mugShotPlaceHolder.png';
+import { date } from 'quasar';
+import { useUserStore } from 'src/stores/user';
 
 const userStore = useUserStore();
 const { userData } = storeToRefs(userStore);
@@ -572,218 +494,49 @@ const isCommonCommunityUser = computed(() => {
   );
 });
 
-const signalRStore = useSignalRStore();
-const {
-  processRunning,
-  nodeRecord,
-  locationRecordByGroupId,
-  nodeResultFormatAsNodeRecord,
-  emgMissionWs,
-  emergencyMsg,
-  isSavedEmergencyRecordData,
-} = storeToRefs(signalRStore);
-
 const buildingStore = useBuildingStore();
 const { Bid } = storeToRefs(buildingStore);
 
-const $q = inject("$q") as typeof QVueGlobals;
-
-watch(
-  processRunning,
-  async (newValue, oldValue) => {
-    if (newValue === false && oldValue) {
-      // 儲存緊急應變歷史紀錄
-      const payload: EmergencyRecordViewModel[] = [];
-      const nodeIdArray: string[] = [];
-
-      reversedMessage.value.forEach((msg) => {
-        const nodeId = msg.externalNode?.id as string;
-
-        nodeIdArray.push(nodeId); // 記錄用
-
-        const data = {
-          nodeId,
-          recordType: RecordTypes.EventHandlingRecord,
-          dateTimeString: new Date(msg.dateTime).toISOString(),
-          name:
-            (msg.nodeType === iconLabels.Wait && msg.chRoleName
-              ? msg.chRoleName
-              : msg.user?.fullname) ?? "",
-          label: msg.nodeLabel,
-        };
-        payload.push(data);
-      });
-
-      positionAndRetreatLists.value.forEach((msg) => {
-        const nodeId = msg.externalNode?.id as string;
-
-        if (nodeIdArray.includes(nodeId)) return;
-
-        const data = {
-          nodeId,
-          recordType: RecordTypes.PersonnelLocationRecord,
-          dateTimeString: new Date(msg.dateTime).toISOString(),
-          name:
-            (!msg.user && msg.positionUser
-              ? msg.positionUser.fullname
-              : msg.user?.fullname) ?? "",
-          label: msg.nodeLabel,
-        };
-        payload.push(data);
-      });
-      console.log("緊急應變結束 payload", payload);
-
-      const result = (await EmergencyHistory.apiPostData(
-        payload
-      )) as typeof AxiosResponse;
-
-      console.log("緊急應變結束 result: ", result);
-      if (result.data) {
-        $q.notify({
-          type: "positive",
-          message: "緊急應變/人員操作紀錄已被儲存",
-          position: "top",
-        });
-      } else {
-        $q.notify({
-          type: "negative",
-          message: "儲存歷史紀錄失敗",
-          position: "top",
-        });
-      }
-
-      isSavedEmergencyRecordData.value = true;
-
-      reversedMessage.value.length = 0;
-
-      // 結束後清空未讀任務
-      Object.values(peopleList.value).forEach((item) => {
-        if (item.unReadMissionCount) {
-          item.unReadMissionCount = 0;
-          $q.localStorage.set("unReadMissionCountObj", 0);
-        }
-      });
-    }
-  },
-  { immediate: true }
-);
+const $q = inject('$q') as typeof QVueGlobals;
 
 // DialogContact 部分
 const visible = ref(false);
-const accountData = ref<UserViewModel>();
-function handleOpenUser(content: UserViewModel) {
+const accountData = ref<any>();
+function handleOpenUser(content: any) {
   visible.value = true;
   accountData.value = content;
 }
 
-const currentFloorGroup = ref<GroupViewModel>();
-const floorGroupOptions = ref<GroupViewModel[]>([]);
+const currentFloorGroup = ref<any>();
+const floorGroupOptions = ref<any[]>([]);
 const currentGroupData = ref();
-// 取得消防編組資料
-watch(
-  nodeRecord,
-  (newValue) => {
-    if (newValue) {
-      console.log("new nodeRecord", newValue);
-    }
-  },
-  { deep: true }
-);
-watch(
-  locationRecordByGroupId,
-  (newValue) => {
-    if (newValue) {
-      console.log("new locationRecordByGroupId", newValue);
-    }
-  },
-  { deep: true, immediate: true }
-);
-watch(
-  Bid,
-  async (val) => {
-    if (val) {
-      await getAreaData(val);
-      currentFloorGroup.value = floorGroupOptions.value[0];
-    }
-  },
-  { immediate: true }
-);
+// watch(
+//   Bid,
+//   async (val) => {
+//     if (val) {
+//       await getAreaData(val);
+//       currentFloorGroup.value = floorGroupOptions.value[0];
+//     }
+//   },
+//   { immediate: true }
+// );
 watch(currentFloorGroup, () => {
   if (currentFloorGroup.value) {
     getSDFMData();
   }
 });
-async function getAreaData(bid: number) {
-  const result = (await Area.apiGetArea(bid)) as typeof AxiosResponse;
-  floorGroupOptions.value = result.data;
-}
-let tableContent = "";
+const tableContent = '';
 
 const { getFile } = FileReadMixin();
 async function getSDFMData() {
-  peopleList.value = {};
-  if (currentFloorGroup.value) {
-    const areaGroupResult = (await sDFM.apiGetGroupByArea(
-      currentFloorGroup.value?.id
-    )) as typeof AxiosResponse;
-
-    const allFloorGroup = (await sDFM.apiGetGroupByArea(
-      null,
-      Bid.value
-    )) as typeof AxiosResponse;
-    console.log("now allFloorGroup", allFloorGroup.data);
-
-    if (areaGroupResult.data && allFloorGroup.data) {
-      const combinedData = [...areaGroupResult.data, ...allFloorGroup.data];
-      for (const currentList of combinedData) {
-        const { id, members, classLeaderUserId } = currentList;
-
-        for (const ppl of currentList.members) {
-          if (ppl.mugShotFileId) {
-            ppl.mugShotUrl = ppl.mugShotFileId
-              ? await getFile(null, ppl.mugShotFileId)
-              : "";
-          }
-        }
-        // 找到班長的 index
-        const classLeaderIndex = members.findIndex(
-          (member: { id: string }) => member.id === classLeaderUserId
-        );
-        // 把班長移到第一位
-        if (classLeaderIndex !== -1) {
-          const classLeader = members.splice(classLeaderIndex, 1)[0];
-          members.unshift(classLeader);
-        }
-
-        classMembersObject.value[id] = members;
-        console.log("nowww members", members);
-        peopleList.value[id] = currentList;
-      }
-      currentGroupData.value = Object.values(peopleList.value)[0];
-
-      console.log("now peopleList", peopleList.value);
-      for (const currentList of combinedData) {
-        currentList.members.forEach(
-          async (item: UserViewModel & { mugShotUrl: string }) => {
-            item.mugShotUrl = await item.mugShotUrl;
-          }
-        );
-        setTimeout(() => {
-          const tdContent = getTdContent(combinedData.flat());
-          tableContent = getTable(tableTitle, tdContent);
-        }, 100);
-      }
-
-      getUnReadMissionCountData();
-    }
-  }
+  console.log('getSDFMData');
 }
 
 const peopleList = ref<{
-  [id: number]: GroupViewModel & { unReadMissionCount: number };
+  [id: number]: any & { unReadMissionCount: number };
 }>({});
 const classMembersObject = ref<{
-  [id: number]: UserViewModel[];
+  [id: number]: any[];
 }>({});
 
 // Spitter 設定
@@ -801,7 +554,7 @@ const TOP_PADDING = 10;
 onMounted(() => {
   splitterHeight.value = rightRef.value?.getBoundingClientRect().height ?? 700;
 
-  console.log("now topPanelHeight", splitterHeight.value, topPanelHeight.value);
+  console.log('now topPanelHeight', splitterHeight.value, topPanelHeight.value);
 });
 const topPanelHeight = computed(
   () =>
@@ -811,247 +564,44 @@ const topPanelHeight = computed(
     SPLITTER_LINE_HEIGHT / 2
 );
 
-// 人員統計/撤退統計 & 防護編組事件處理紀錄
-const tab = ref("人員位置紀錄");
-watch(nodeResultFormatAsNodeRecord, () => {
-  console.log(
-    "now nodeResultFormatAsNodeRecord",
-    nodeResultFormatAsNodeRecord.value
-  );
-});
-const reversedMessage = computed<SendViewModel[]>(() => {
-  if (nodeResultFormatAsNodeRecord.value.length) {
-    return nodeResultFormatAsNodeRecord.value.sort(compareByDateTime).reverse();
-  }
-  return Object.values(nodeRecord.value)
-    .flat()
-    .sort(compareByDateTime)
-    .reverse();
-});
-watch(reversedMessage, () => {
-  console.log("now reversedMessage", reversedMessage.value);
-});
-const marshallingTeam = [
-  "Fire",
-  "Inform",
-  "EvacuationGuide",
-  "SafetyProtection",
-  "Ambulance",
-];
-const reversedMessageAboutPositioning = computed<SendViewModel[]>(() =>
-  reversedMessage.value.filter((record) => {
-    const { nodeType, roleName } = record;
-    if (nodeType === iconLabels.Wait && !marshallingTeam.includes(roleName)) {
-      return false;
-    }
-    return (
-      nodeType === iconLabels.Wait ||
-      nodeType === iconLabels.InPosition ||
-      nodeType === iconLabels.Retreat ||
-      nodeType === iconLabels.Fire ||
-      nodeType === iconLabels.Not ||
-      nodeType === iconLabels.Success ||
-      nodeType === iconLabels.Failure ||
-      nodeType === iconLabels.False ||
-      nodeType === iconLabels.BootSuccess ||
-      nodeType === iconLabels.BootFailure ||
-      nodeType === iconLabels.CustomForSendLogViewModel
-    );
-  })
-);
-
-watch(
-  reversedMessageAboutPositioning,
-  () => {
-    console.log(
-      "now reversedMessageAboutPositioning",
-      reversedMessageAboutPositioning.value
-    );
-  },
-  { immediate: true }
-);
-// 防護編組事件處理紀錄篩選掉等待節點
-const sDFMNodesLists = computed<SendViewModel[]>(() =>
-  reversedMessage.value.filter((item) => item.nodeType !== iconLabels.Wait)
-);
-const positionAndRetreatLists = computed<SendViewModel[]>(() =>
-  reversedMessageAboutPositioning.value.reduce((acc, cur) => {
-    if (cur.nodeType === iconLabels.Wait) {
-      const workflowGroupId = cur.workflowGroupId
-        ? cur.workflowGroupId
-        : cur.group.id;
-      const members = classMembersObject.value[workflowGroupId];
-      // TODO: 之後考慮跟以前一樣用 nCMD 或其他方式去做
-      if (
-        cur.nodeLabel.includes("定位") ||
-        cur.nodeLabel.includes("尚未接收訊息")
-      ) {
-        members?.forEach((member) => {
-          const { cloned } = useCloned(cur);
-          cloned.value.nodeLabel = "尚未接收訊息";
-          cloned.value.positionUser = member;
-          acc.push(cloned.value);
-        });
-      } else {
-        const locationRecordObjByGroupId =
-          locationRecordByGroupId.value[workflowGroupId];
-        if (!locationRecordObjByGroupId) return acc;
-        const keys = Object.keys(locationRecordObjByGroupId);
-        const InPositionKey = keys.find((key) => key.includes("定位"));
-        if (!InPositionKey) return acc;
-        const isInPosition =
-          locationRecordByGroupId.value[workflowGroupId][InPositionKey];
-
-        if (isInPosition && members) {
-          const isInPositionMembers = members.filter((member) =>
-            isInPosition.includes(member.id as string)
-          );
-          isInPositionMembers?.forEach((member) => {
-            const { cloned } = useCloned(cur);
-            cloned.value.positionUser = member;
-            acc.push(cloned.value);
-          });
-          console.log("isInPositionMembers", isInPositionMembers);
-        }
-      }
-    } else {
-      acc.push(cur);
-    }
-    return acc;
-  }, [] as SendViewModel[])
-);
-
-watch(
-  positionAndRetreatLists,
-  () => {
-    console.log("now positionAndRetreatLists", positionAndRetreatLists.value);
-  },
-  { immediate: true }
-);
-
-const positionAndRetreatListsSpiltByGroupId = computed(() =>
-  positionAndRetreatLists.value.reduce((acc, cur) => {
-    const workflowGroupId = cur.workflowGroupId
-      ? cur.workflowGroupId
-      : cur.group.id;
-    if (!acc[workflowGroupId]) {
-      acc[workflowGroupId] = [cur];
-    } else {
-      acc[workflowGroupId].push(cur);
-    }
-    return acc;
-  }, {} as { [id: number]: SendViewModel[] })
-);
-
-watch(positionAndRetreatListsSpiltByGroupId, () => {
-  console.log(
-    "now positionAndRetreatListsSpiltByGroupId",
-    positionAndRetreatListsSpiltByGroupId.value
-  );
-  for (const id in positionAndRetreatListsSpiltByGroupId.value) {
-    console.log("now groupId", id);
-    const groupPplData = peopleList.value[id];
-    console.log("now groupPplData", groupPplData);
-    if (!groupPplData) continue;
-    const groupLocationData =
-      positionAndRetreatListsSpiltByGroupId.value[id].sort(compareByDateTime);
-    console.log("now groupLocationData", groupLocationData);
-    let isInPosition = false;
-    let isRetreat = false;
-    const groupLocationObjectByUserId = groupLocationData.reduce(
-      (acc, cur) => {
-        const { nodeLabel, positionUser, user, nodeType, roleName } = cur;
-
-        if (nodeType === iconLabels.InPosition) {
-          isInPosition = true;
-        }
-
-        if (nodeType === iconLabels.Retreat) {
-          isRetreat = true;
-        }
-        // 如果是防災中心確認火災的話
-        if (
-          nodeType === iconLabels.Fire &&
-          user?.roles.find((item) => item.name === "Center")
-        ) {
-          isInPosition = false;
-          isRetreat = false;
-        }
-
-        if (positionUser) {
-          acc[positionUser.id as string] = {
-            nodeLabel,
-            isInPosition,
-            isRetreat,
-          };
-        }
-        if (user) {
-          acc[user.id as string] = {
-            nodeLabel,
-            isInPosition,
-            isRetreat,
-          };
-        }
-
-        return acc;
-      },
-      {} as {
-        [userId: string]: {
-          nodeLabel: string;
-          isInPosition: boolean;
-          isRetreat: boolean;
-        };
-      }
-    );
-    console.log("now groupLocationObjectByUserId", groupLocationObjectByUserId);
-    groupPplData.members.forEach((acc) => {
-      const { id } = acc;
-      if (id) {
-        acc.state = groupLocationObjectByUserId[id].nodeLabel || "尚未接收訊息";
-        acc.isInPosition = groupLocationObjectByUserId[id].isInPosition;
-        acc.isRetreat = groupLocationObjectByUserId[id].isRetreat;
-      }
-    });
-    console.log("now peopleList", peopleList.value);
-  }
-});
-
 // 消防編組全員呼叫指示
 function handleBtnClick(btnType: string | null = null) {
-  console.log("handleBtnClick");
+  console.log('handleBtnClick');
   const submitData = {
     RoleNames: marshallingOptions.map((role) => role.name),
     BuildingId: Bid.value as number,
   };
 
-  if (btnType === "retreat") {
+  if (btnType === 'retreat') {
     $q.dialog({
-      title: "提示",
-      message: "確定要編組成員全員撤退嗎?",
+      title: '提示',
+      message: '確定要編組成員全員撤退嗎?',
       persistent: true,
       ok: {
         push: true,
-        label: "確定",
+        label: '確定',
       },
-      cancel: "取消",
+      cancel: '取消',
     }).onOk(() => {
-      signalRStore.emergencyHub?.sendRetreatRequest?.(submitData);
+      console.log('OK');
     });
   } else {
     $q.dialog({
-      title: "提示",
-      message: "確定要編組成員全員定位嗎?",
+      title: '提示',
+      message: '確定要編組成員全員定位嗎?',
       persistent: true,
       ok: {
         push: true,
-        label: "確定",
+        label: '確定',
       },
-      cancel: "取消",
+      cancel: '取消',
     }).onOk(() => {
-      signalRStore.emergencyHub?.sendLocationRequest?.(submitData);
+      console.log('OK');
     });
   }
 }
+
+const tab = ref('人員位置紀錄');
 
 // 緊急通知訊息對話框
 // Select
@@ -1062,27 +612,6 @@ interface roleSelectOptions {
   description: string;
   isEmergency: boolean;
 }
-onMounted(getRoleOptions);
-async function getRoleOptions() {
-  const payload = [
-    { type: roleType.role, isEmergency: true },
-    { type: roleType.class, isEmergency: null },
-  ];
-
-  const result = (await Role.apiGetRoles(payload)) as typeof AxiosResponse;
-  if (result.data) {
-    roleOptions.length = 0;
-    marshallingOptions.length = 0;
-
-    result.data.forEach((role: roleSelectOptions) => {
-      if (role.type === 1) {
-        roleOptions.push(role);
-      } else if (role.type === 2) {
-        marshallingOptions.push(role);
-      }
-    });
-  }
-}
 
 const modelMultiple = ref<roleSelectOptions[]>([]);
 const roleOptions = reactive<roleSelectOptions[]>([]);
@@ -1090,11 +619,11 @@ const marshallingOptions = reactive<roleSelectOptions[]>([]);
 const selectOptions = computed(() => [...roleOptions, ...marshallingOptions]);
 
 const btnOptions = reactive([
-  { value: "all", label: "全選所有身分類別", selected: false },
-  { value: "allMarshalling", label: "全選所有消防編組", selected: false },
+  { value: 'all', label: '全選所有身分類別', selected: false },
+  { value: 'allMarshalling', label: '全選所有消防編組', selected: false },
 ]);
 function handleClickGroupBtn(btn: { value: string; selected: boolean }) {
-  if (btn.value === "all") {
+  if (btn.value === 'all') {
     if (btn.selected) modelMultiple.value = [];
     else modelMultiple.value = [...roleOptions, ...marshallingOptions];
   } else {
@@ -1126,16 +655,14 @@ watch(modelMultiple, (newValue) => {
 // Submit
 let stringOptions: string[] = [];
 const messageOptions = ref<string[]>([]);
-const emergencyMessage = ref("");
+const emergencyMessage = ref('');
 const isFocused = ref(false);
 
 onMounted(async () => {
-  const result = (await System.apiGetSystemItem(
-    systemType.EmergencyNotice
-  )) as typeof AxiosResponse;
-  messageOptions.value = stringOptions = result.data.map(
-    (item: SystemViewModel) => item.label
-  );
+  // messageOptions.value = stringOptions = result.data.map(
+  //   (item: SystemViewModel) => item.label
+  // );
+  messageOptions.value = stringOptions = [];
 });
 function handleFilterMessageOptions(
   val: string,
@@ -1151,17 +678,17 @@ function handleFilterMessageOptions(
 function submitMessage() {
   if (!modelMultiple.value || !modelMultiple.value.length) {
     $q.notify({
-      type: "warning",
-      message: "請先選擇發送對象",
-      position: "top",
+      type: 'warning',
+      message: '請先選擇發送對象',
+      position: 'top',
     });
     return;
   }
-  if (emergencyMessage.value === "") {
+  if (emergencyMessage.value === '') {
     $q.notify({
-      type: "warning",
-      message: "請先輸入要發送的內容",
-      position: "top",
+      type: 'warning',
+      message: '請先輸入要發送的內容',
+      position: 'top',
     });
     return;
   }
@@ -1172,8 +699,8 @@ function submitMessage() {
     BuildingId: Bid.value as number,
   };
 
-  console.log("submitMessage submitData: ", submitData);
-  signalRStore.emergencyHub?.sendEmergencyMessage?.(submitData);
+  console.log('submitMessage submitData: ', submitData);
+  // signalRStore.emergencyHub?.sendEmergencyMessage?.(submitData); // TODO: 待實作
 }
 function setEmergencyMessage(val: string) {
   emergencyMessage.value = val;
@@ -1181,36 +708,36 @@ function setEmergencyMessage(val: string) {
 
 // 列印
 const tableTitle = {
-  dutyType: "班別模式",
-  className: "班別",
-  position: "職位",
-  photo: "照片",
-  fullname: "姓名",
-  phoneNumber: "電話",
-  areaName: "樓層群組",
+  dutyType: '班別模式',
+  className: '班別',
+  position: '職位',
+  photo: '照片',
+  fullname: '姓名',
+  phoneNumber: '電話',
+  areaName: '樓層群組',
 };
-function getTdContent(data: GroupViewModel[]) {
+function getTdContent(data: any[]) {
   return data.map((classes) => {
     // console.log("classes", classes);
     const tempData = {
-      dutyType: "",
-      className: "",
-      position: "",
-      photo: "",
-      fullname: "",
-      phoneNumber: "",
-      areaName: "",
+      dutyType: '',
+      className: '',
+      position: '',
+      photo: '',
+      fullname: '',
+      phoneNumber: '',
+      areaName: '',
     };
 
     tempData.className += `<p>${classes.name}</p>`;
-    tempData.areaName += `<p>${classes.area ? classes.area.name : ""}</p>`;
-    tempData.dutyType += `<p>${dutyTypeNumToName(classes).join("<br>")}</p>`;
+    tempData.areaName += `<p>${classes.area ? classes.area.name : ''}</p>`;
+    tempData.dutyType += `<p>${dutyTypeNumToName(classes).join('<br>')}</p>`;
 
     [...classes.members].forEach(async (member) => {
       tempData.position += `<p>${
         classes.classLeaderUserId === member.id
           ? "<span style='color:red;'>班長 ✔</span>"
-          : ""
+          : ''
       }</p>`;
       if (member.mugShotFileId) {
         tempData.photo += `
@@ -1226,19 +753,19 @@ function getTdContent(data: GroupViewModel[]) {
             `;
       }
       tempData.fullname += `<p>${member.fullname}</p>`;
-      tempData.phoneNumber += `<p>${member.phoneNumber || "尚未設定"}</p>`;
+      tempData.phoneNumber += `<p>${member.phoneNumber || '尚未設定'}</p>`;
     });
 
     return tempData;
   });
 }
 const dutyType = {
-  1: "平日",
-  2: "夜間",
-  4: "假日",
-  8: "其他",
+  1: '平日',
+  2: '夜間',
+  4: '假日',
+  8: '其他',
 };
-function dutyTypeNumToName(data: GroupViewModel) {
+function dutyTypeNumToName(data: any) {
   const dutyTypeNum: number[] = [];
   const dutyTypeArr = Object.keys(dutyType).map(Number);
   dutyTypeArr.forEach((num) => {
@@ -1248,96 +775,13 @@ function dutyTypeNumToName(data: GroupViewModel) {
   return dutyTypeNum.map((item) => dutyType[item as keyof typeof dutyType]);
 }
 
-// 未定位、未撤退人員計算
-// 未定位
-const UnlocatedPplNum = computed(
-  () => (classes: GroupViewModel & { UnlocatedPplNum?: number }) => {
-    if (processRunning.value) {
-      classes.UnlocatedPplNum = classes.members?.filter(
-        (item) => !item.isInPosition
-      ).length;
-    } else {
-      classes.UnlocatedPplNum = 0;
-    }
-
-    return classes.UnlocatedPplNum;
-  }
-);
-// 未撤退
-const unEvacuatedPplNum = computed(
-  () => (classes: GroupViewModel & { unEvacuatedPplNum?: number }) => {
-    if (processRunning.value) {
-      classes.unEvacuatedPplNum = classes.members.filter(
-        (item) => !item.isRetreat
-      ).length;
-    } else {
-      classes.unEvacuatedPplNum = 0;
-    }
-
-    return classes.unEvacuatedPplNum;
-  }
-);
-
-// 計算任務異動與清空(用localStorage存)
-const unReadMissionCountData = ref<{ [key: string]: number }>({});
-watch(
-  emgMissionWs,
-  (newVal, oldVal) => {
-    if (
-      newVal &&
-      newVal.id !== oldVal.id &&
-      newVal.content !== oldVal.content
-    ) {
-      // 計算任務異動
-      const group = Object.values(peopleList.value).find(
-        (ppl) => newVal.role.id === ppl.role.id
-      );
-      if (group) {
-        if (!group.unReadMissionCount) group.unReadMissionCount = 0;
-        group.unReadMissionCount++;
-        unReadMissionCountData.value[group.id] = group.unReadMissionCount;
-
-        $q.localStorage.set(
-          "unReadMissionCountObj",
-          unReadMissionCountData.value
-        );
-      }
-    }
-  },
-  { deep: true }
-);
-
-function getUnReadMissionCountData() {
-  let unReadMissionCountData: { [key: GroupViewModel["id"]]: number } =
-    $q.localStorage.getItem("unReadMissionCountObj");
-  if (!unReadMissionCountData) {
-    unReadMissionCountData = {};
-  }
-  Object.entries(unReadMissionCountData)?.forEach((item) => {
-    for (const key in peopleList.value) {
-      if (item[0] === key) {
-        peopleList.value[key].unReadMissionCount = item[1] as number;
-      }
-    }
-  });
-  console.log("test", peopleList.value);
-}
-
-function clearUnReadMissionCount(
-  classes: GroupViewModel & { unReadMissionCount: number }
-) {
-  classes.unReadMissionCount = 0;
-  unReadMissionCountData.value[classes.id] = classes.unReadMissionCount;
-  $q.localStorage.set("unReadMissionCountObj", unReadMissionCountData.value);
-}
-
-const mobileDisplayStatus = ref("peopleList");
+const mobileDisplayStatus = ref('peopleList');
 
 function handleSwipe(ev: any) {
-  if (ev.touch && ev.direction === "right") {
-    mobileDisplayStatus.value = "peopleList";
-  } else if (ev.touch && ev.direction === "left") {
-    mobileDisplayStatus.value = "emgyAction";
+  if (ev.touch && ev.direction === 'right') {
+    mobileDisplayStatus.value = 'peopleList';
+  } else if (ev.touch && ev.direction === 'left') {
+    mobileDisplayStatus.value = 'emgyAction';
   }
 }
 
@@ -1353,52 +797,10 @@ watch(
   Bid,
   async (val) => {
     if (val) {
-      const result = await fireMarshalling.apiGetHistoryMessage(val);
-      if (result?.data) {
-        console.log("now apiGetHistoryMessage", result.data);
-        result.data.forEach((msgObj) => {
-          const { Message, RoleNames } = JSON.parse(msgObj.log);
-
-          RoleNames.forEach((role: string) => {
-            const chName =
-              RoleNameToChName[role as keyof typeof RoleNameToChName];
-            const messageItem = {
-              role: chName,
-              submissionTime: date.formatDate(
-                new Date(msgObj.dateTime),
-                "YYYY-MM-DD HH:mm:ss"
-              ),
-              textContent: Message,
-            };
-            emergencyMsgArray.value.push(messageItem);
-          });
-        });
-      }
+      console.log('new Bid', val);
     }
   },
   { immediate: true }
-);
-watch(
-  emergencyMsg,
-  (newValue) => {
-    if (newValue) {
-      console.log("now emergencyMsg", newValue);
-      const { roleNames, message } = newValue.notice!;
-      roleNames.forEach((role) => {
-        const chName = RoleNameToChName[role as keyof typeof RoleNameToChName];
-        const messageItem = {
-          role: chName,
-          submissionTime: date.formatDate(
-            new Date(newValue?.dateTime),
-            "YYYY-MM-DD HH:mm:ss"
-          ),
-          textContent: message,
-        };
-        emergencyMsgArray.value.push(messageItem);
-      });
-    }
-  },
-  { deep: true }
 );
 </script>
 

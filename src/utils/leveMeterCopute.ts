@@ -1,29 +1,27 @@
-import { PoolViewModel } from "src/api/device";
-
-export function getTotalVolume(poolData?: PoolViewModel) {
-  if (!poolData) return "尚未設定總容量";
+export function getTotalVolume(poolData?: any) {
+  if (!poolData) return '尚未設定總容量';
   const { area, high } = poolData;
-  if (!area) return "尚未設定容器面積";
-  else if (!high) return "尚未設定容器高度";
+  if (!area) return '尚未設定容器面積';
+  else if (!high) return '尚未設定容器高度';
   return area * high;
 }
-export function getLegalVolume(poolData?: PoolViewModel) {
-  if (!poolData) return "尚未設定總容量";
+export function getLegalVolume(poolData?: any) {
+  if (!poolData) return '尚未設定總容量';
   const { legal, invalid } = poolData;
-  if (!legal) return "尚未設定法定水量";
-  else if (!invalid) return "尚未設定無效水量";
+  if (!legal) return '尚未設定法定水量';
+  else if (!invalid) return '尚未設定無效水量';
   return legal + invalid;
 }
-export function getCurrentVolume(status: number, poolData?: PoolViewModel) {
+export function getCurrentVolume(status: number, poolData?: any) {
   if (!poolData) return 0;
   const totalVolume = getTotalVolume(poolData);
-  if (status && typeof totalVolume === "number") {
+  if (status && typeof totalVolume === 'number') {
     return (status / 100) * totalVolume;
   }
   return 0;
 }
 
-export function toPercentage(value: number, poolData: PoolViewModel | null) {
+export function toPercentage(value: number, poolData: any | null) {
   if (!poolData) return 0;
 
   const { area, high, legal, invalid, total, zero } = poolData;

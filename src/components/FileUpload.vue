@@ -413,29 +413,26 @@
 
 <script setup lang="ts">
 // icon
-import { mdiFolderOpen, mdiCloudUpload } from "@quasar/extras/mdi-v6";
+import { mdiFolderOpen, mdiCloudUpload } from '@quasar/extras/mdi-v6';
 import {
   matPhoto,
   matCreateNewFolder,
   matSettings,
-} from "@quasar/extras/material-icons";
-// api
-import File from "src/api/file";
-import { AxiosPromise } from "axios";
+} from '@quasar/extras/material-icons';
 // quasar
-import { QUploaderProps } from "quasar";
+import { QUploaderProps } from 'quasar';
 // utils
 import fileRead, {
   extractFilenameAndExtension,
   showInIframe,
   excelFileTypes,
   wordFileTypes,
-} from "src/utils/fileRead";
+} from 'src/utils/fileRead';
 // vueUse
-import { onKeyUp } from "@vueuse/core";
+import { onKeyUp } from '@vueuse/core';
 
 const slots = useSlots();
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = inject('$q') as typeof QVueGlobals;
 const { getFile, file, useObjectUrl } = fileRead();
 
 const props = withDefaults(
@@ -459,10 +456,10 @@ const pathArray = reactive<string[]>([
 watch(pathArray, initData);
 // 根目錄路徑 + 資料夾路徑
 const fullPath = computed(() => {
-  if (!rootPath.value) return "";
+  if (!rootPath.value) return '';
 
   if (pathArray.length) {
-    return rootPath.value + pathArray.join("\\") + "\\";
+    return rootPath.value + pathArray.join('\\') + '\\';
   }
 
   return rootPath.value;
@@ -474,19 +471,7 @@ async function getFileData(path: string | null = null) {
     : pathArray.length
     ? encodeURI(fullPath.value)
     : encodeURI(rootPath.value);
-  const result = (await File.apiGetFileList(
-    encodedPath
-  )) as typeof AxiosResponse;
-  console.log("now fileData", result);
-  if (result.data) {
-    fileData.value = result.data;
-  } else {
-    $q.notify({
-      type: "negative",
-      message: "獲取檔案列表失敗",
-      position: "top",
-    });
-  }
+  console.log('getFileData');
 }
 async function getFolderData(path: string | null = null) {
   const encodedPath = path
@@ -495,26 +480,14 @@ async function getFolderData(path: string | null = null) {
     ? encodeURI(fullPath.value)
     : encodeURI(rootPath.value);
 
-  const result = (await File.apiGetFolderList(
-    encodedPath
-  )) as typeof AxiosResponse;
-  console.log("now folderData", result);
-  if (result.data) {
-    folderData.value = result.data;
-  } else {
-    $q.notify({
-      type: "negative",
-      message: "獲取資料夾列表失敗",
-      position: "top",
-    });
-  }
+  console.log('getFolderList');
 }
 
 // 資料夾
 const folderData = ref<string[]>([]);
 const formattedFolderListData = computed(() => {
   return folderData.value.map((item) => {
-    const spiltItem = item.split("\\");
+    const spiltItem = item.split('\\');
     const name = spiltItem[spiltItem.length - 2];
     if (highlightObj.value && highlightObj.value[item]) {
       return { name, activeColor: highlightObj.value[item] };
@@ -532,38 +505,22 @@ const resultFolderData = computed(() => {
 });
 async function deleteFolder(name: string) {
   $q.dialog({
-    title: "提示",
+    title: '提示',
     message: `確定要刪除名稱為【${name}】的資料夾嗎?`,
     persistent: true,
     ok: {
       push: true,
-      label: "確定",
+      label: '確定',
     },
-    cancel: "取消",
+    cancel: '取消',
   }).onOk(async () => {
     // 刪除資料夾
-    const encodedPath = encodeURI(fullPath.value + name + "\\");
-    const result = (await File.apiDeleteFolder(
-      encodedPath
-    )) as typeof AxiosResponse;
-    if (result.data) {
-      getFolderData();
-      $q.notify({
-        type: "positive",
-        message: "刪除資料夾成功",
-        position: "top",
-      });
-    } else {
-      $q.notify({
-        type: "negative",
-        message: "刪除資料夾失敗",
-        position: "top",
-      });
-    }
+    const encodedPath = encodeURI(fullPath.value + name + '\\');
+    console.log('deleteFolder', encodedPath);
   });
 }
 function openFolder(name: string) {
-  console.log("openFolder invoked!", name);
+  console.log('openFolder invoked!', name);
   pathArray.push(name);
 }
 // 檔案
@@ -572,7 +529,7 @@ const uploaderRef = ref();
 const fileData = ref<string[]>([]);
 const formattedFileList = computed(() => {
   return fileData.value.map((item) => {
-    const spiltItem = item.split("\\");
+    const spiltItem = item.split('\\');
     const name = spiltItem[spiltItem.length - 1];
     if (highlightObj.value && highlightObj.value[item]) {
       return { name, activeColor: highlightObj.value[item] };
@@ -589,41 +546,26 @@ const resultFileData = computed(() => {
   return formattedFileList.value;
 });
 const previewFileModel = ref(false);
-const imageUrl = ref("");
-const iframeUrl = ref("");
-const downloadUrl = ref("");
-onKeyUp("Delete", handleDelete);
+const imageUrl = ref('');
+const iframeUrl = ref('');
+const downloadUrl = ref('');
+onKeyUp('Delete', handleDelete);
 async function deleteFile(names: string[]) {
   $q.dialog({
-    title: "提示",
-    message: `確定要刪除名稱為【${names.join("、")}】的檔案嗎?`,
+    title: '提示',
+    message: `確定要刪除名稱為【${names.join('、')}】的檔案嗎?`,
     persistent: true,
     ok: {
       push: true,
-      label: "確定",
+      label: '確定',
     },
-    cancel: "取消",
+    cancel: '取消',
   })
     .onOk(async () => {
       // 刪除檔案
       for (const name of names) {
         const encodedPath = encodeURI(fullPath.value + name);
-        const result = (await File.apiDeleteFile(
-          encodedPath
-        )) as typeof AxiosResponse;
-        if (result.data) {
-          $q.notify({
-            type: "positive",
-            message: `刪除檔案【${name}】成功`,
-            position: "top",
-          });
-        } else {
-          $q.notify({
-            type: "negative",
-            message: `刪除檔案【${name}】失敗`,
-            position: "top",
-          });
-        }
+        console.log('deleteFile', encodedPath);
       }
       getFileData();
     })
@@ -634,9 +576,9 @@ async function deleteFile(names: string[]) {
 
 watch(previewFileModel, (val) => {
   if (!val) {
-    imageUrl.value = "";
-    iframeUrl.value = "";
-    downloadUrl.value = "";
+    imageUrl.value = '';
+    iframeUrl.value = '';
+    downloadUrl.value = '';
   }
 });
 async function handlePreviewFile(name: string) {
@@ -648,7 +590,7 @@ async function handlePreviewFile(name: string) {
     filename
   );
 
-  console.log("handlePreviewFile fileUrl", fileUrl);
+  console.log('handlePreviewFile fileUrl', fileUrl);
 
   if (fileUrl) {
     if (showInIframe.includes(extension)) iframeUrl.value = fileUrl;
@@ -665,17 +607,17 @@ async function handlePreviewFile(name: string) {
     previewFileModel.value = true;
   } else {
     $q.notify({
-      type: "negative",
-      message: "獲取檔案失敗",
-      position: "top",
+      type: 'negative',
+      message: '獲取檔案失敗',
+      position: 'top',
     });
   }
 }
 // 設定檔案
 const dialogVisible = ref(false);
-const dialogValue = ref("");
+const dialogValue = ref('');
 watch(dialogValue, (val) => {
-  if (val === "createFolderModel") {
+  if (val === 'createFolderModel') {
     setTimeout(() => {
       folderNameRef.value.focus();
     }, 0);
@@ -691,8 +633,8 @@ const currentFileData = ref();
 function settingFileData(fileData: { name: string; activeColor?: string }) {
   currentFileData.value = fileData;
   dialogVisible.value = true;
-  dialogValue.value = "settingData";
-  console.log("settingFileData", fileData);
+  dialogValue.value = 'settingData';
+  console.log('settingFileData', fileData);
 }
 // 上傳檔案
 function uploaderFactoryFn(files: File[]) {
@@ -701,67 +643,33 @@ function uploaderFactoryFn(files: File[]) {
 
     const { name } = files[0];
     // 檔案副檔名小寫化
-    const dotIndex = name.lastIndexOf(".");
+    const dotIndex = name.lastIndexOf('.');
     const baseName = name.substring(0, dotIndex);
     const extension = name.substring(dotIndex).toLowerCase();
-    const replaceDotsBaseName = baseName.replace(/\./g, "-"); // 後端不允許多個`.`
+    const replaceDotsBaseName = baseName.replace(/\./g, '-'); // 後端不允許多個`.`
     const lowerCaseName = replaceDotsBaseName + extension;
 
     const formData = new FormData();
-    formData.append("file", files[0], lowerCaseName);
+    formData.append('file', files[0], lowerCaseName);
 
     const path = pathArray.length ? fullPath.value : rootPath.value;
     const encodedPath = encodeURI(path + lowerCaseName);
-    console.log("encodedPath", encodedPath);
+    console.log('encodedPath', encodedPath);
 
-    (File.apiUploadFile(formData, encodedPath) as AxiosPromise)
-      .then((res) => {
-        if (res.data) {
-          getFileData();
-          $q.notify({
-            type: "positive",
-            message: "新增檔案成功",
-            position: "top",
-          });
-          resolve(null);
-          dialogVisible.value = false;
-        } else {
-          const { errors } = res as unknown as {
-            errors: { [key: string]: string };
-          };
-          const errorMsg = Object.values(errors)[0];
-          $q.notify({
-            type: "negative",
-            message: "新增檔案失敗: " + errorMsg,
-            position: "top",
-          });
-          reject(errorMsg);
-        }
-      })
-      .catch((err: Error) => {
-        $q.notify({
-          type: "negative",
-          message: "新增檔案失敗: " + err,
-          position: "top",
-        });
-        reject(err);
-      })
-      .finally(() => {
-        uploaderRef.value.reset();
-      });
+    // 上傳檔案
   });
 }
 
 const scrollAreaHeight = computed(() => {
-  return props.containerHeight - 32 - 29 - 16 - 56 + "px";
+  return props.containerHeight - 32 - 29 - 16 - 56 + 'px';
 });
 
 // 新增資料夾
-const folderName = ref("");
+const folderName = ref('');
 const folderNameRef = ref();
 
-onKeyUp("Enter", () => {
-  if (dialogVisible.value && dialogValue.value === "createFolderModel") {
+onKeyUp('Enter', () => {
+  if (dialogVisible.value && dialogValue.value === 'createFolderModel') {
     addNewFolder();
   }
 });
@@ -769,59 +677,44 @@ onKeyUp("Enter", () => {
 function handleOpenCreateFolderDialog() {
   if (pathArray.length >= 2) {
     $q.notify({
-      type: "warning",
-      message: "資料夾不能超過2層",
-      position: "top",
+      type: 'warning',
+      message: '資料夾不能超過2層',
+      position: 'top',
     });
     return;
   }
-  dialogValue.value = "createFolderModel";
+  dialogValue.value = 'createFolderModel';
   dialogVisible.value = true;
 }
 async function addNewFolder() {
   if (!rootPath.value) return;
   if (!folderName.value) {
     $q.notify({
-      type: "warning",
-      message: "請輸入資料夾名稱",
-      position: "top",
+      type: 'warning',
+      message: '請輸入資料夾名稱',
+      position: 'top',
     });
     return;
-  } else if (folderName.value.includes(".")) {
+  } else if (folderName.value.includes('.')) {
     $q.notify({
-      type: "warning",
-      message: "資料夾名稱不可包含`.`",
-      position: "top",
+      type: 'warning',
+      message: '資料夾名稱不可包含`.`',
+      position: 'top',
     });
     return;
   }
 
-  const encodedPath = encodeURI(fullPath.value + folderName.value + "\\");
-  const result = (await File.apiCreateFolder(
-    encodedPath
-  )) as typeof AxiosResponse;
-
-  if (result.data) {
-    folderName.value = "";
-    dialogVisible.value = false;
-    getFolderData(); // 獲取資料更新頁面
-    $q.notify({
-      type: "positive",
-      message: "新增資料夾成功",
-      position: "top",
-    });
-  } else {
-    $q.notify({
-      type: "negative",
-      message: "新增資料夾失敗",
-      position: "top",
-    });
-  }
+  const encodedPath = encodeURI(fullPath.value + folderName.value + '\\');
+  $q.notify({
+    type: 'positive',
+    message: '新增資料夾成功',
+    position: 'top',
+  });
 }
 
 // 共用方法
-const searchInputValue = ref("");
-const searchText = ref("");
+const searchInputValue = ref('');
+const searchText = ref('');
 
 // 檔案刪除
 function handleDelete() {
@@ -829,16 +722,16 @@ function handleDelete() {
     deleteFile(fileModelArray.value);
   } else {
     $q.notify({
-      type: "negative",
-      message: "請勾選要刪除的資料列",
-      position: "top",
+      type: 'negative',
+      message: '請勾選要刪除的資料列',
+      position: 'top',
     });
   }
 }
 watch(
   () => props.root.path,
   (val) => {
-    if (val && val !== "") {
+    if (val && val !== '') {
       rootPath.value = val;
 
       initData();
@@ -848,11 +741,11 @@ watch(
 );
 function initData() {
   fileModelArray.value.length = 0;
-  folderName.value = "";
+  folderName.value = '';
   folderData.value.length = 0;
   fileData.value.length = 0;
-  searchInputValue.value = "";
-  searchText.value = "";
+  searchInputValue.value = '';
+  searchText.value = '';
 
   getFileData();
   getFolderData();
@@ -860,7 +753,7 @@ function initData() {
 
 // 資料夾切換
 function handleBreadcrumbs(index: number | null = null) {
-  console.log("handleBreadcrumbs index", index);
+  console.log('handleBreadcrumbs index', index);
   if (index !== null) {
     pathArray.splice(index + 1);
   } else {

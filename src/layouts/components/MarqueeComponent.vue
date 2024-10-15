@@ -32,40 +32,17 @@
       </q-item>
     </div>
   </div>
-
-  <DialogDataRowPreview
-    v-if="dialogData"
-    v-model:visible="visible"
-    :dataLabel="dialogData.title"
-    :dialog-config="announcementConfig"
-    :dialog-data="dialogData"
-    :isArray="true"
-  >
-    <template #btn>
-      <q-btn
-        outline
-        class="q-mr-md"
-        color="primary"
-        @click="marqueeOrderChange('pre')"
-        >上一則</q-btn
-      >
-      <q-btn outline color="primary" @click="marqueeOrderChange('next')"
-        >下一則</q-btn
-      >
-    </template>
-  </DialogDataRowPreview>
 </template>
 
 <script setup lang="ts">
-import Board, { BoardViewModel, announcementConfig } from "src/api/board";
+// icon
+import { mdiBullhorn } from '@quasar/extras/mdi-v6';
 
 const flipCount = ref(0);
 
 let lastTime = 0;
 const triggerTime = 5000;
 const isAnimating = ref(false);
-// icon
-import { mdiBullhorn } from "@quasar/extras/mdi-v6";
 // const remainingTime = ref(triggerTime / 1000); // 初始化剩餘時間 (測試用)
 
 function animate(currentTime: number) {
@@ -86,20 +63,13 @@ function handleTransitionEnd(e: TransitionEvent) {
 
 onMounted(async () => {
   animate(0);
-
-  // 更新跑馬燈資料
-  const result = await Board.apiGetMarquee();
-  if (result.data) {
-    console.log("now 跑馬燈資料", result);
-    marqueeData.value = result.data;
-  }
 });
 
-const marqueeData = ref<BoardViewModel[]>([]);
+const marqueeData = ref<any[]>([]);
 function marqueeOrderChange(status: string) {
-  if (status === "next") {
+  if (status === 'next') {
     dialogData.value = frontData.value;
-  } else if (status === "pre") {
+  } else if (status === 'pre') {
     dialogData.value = backData.value;
   }
 }
@@ -126,9 +96,9 @@ const bindToBack = computed(() =>
 
 // Dialog
 const visible = ref(false);
-const dialogData = ref<BoardViewModel>();
+const dialogData = ref<any>();
 
-function openDialog(data: BoardViewModel) {
+function openDialog(data: any) {
   visible.value = true;
   dialogData.value = data;
 }

@@ -414,13 +414,13 @@
     </q-layout>
   </q-page>
 
-  <DialogForm
+  <!-- <DialogForm
     :blockAttrs="blockAttrs"
     :dialogAttrs="dialogAttrs"
     @hide="hideDialog"
     v-on="dialogEvent"
   >
-  </DialogForm>
+  </DialogForm> -->
 
   <q-dialog v-model="dialogTestProcessVisible" persistent>
     <q-card
@@ -471,11 +471,11 @@ import {
   onKeyStroke,
   useCloned,
   useEventListener,
-} from "@vueuse/core";
+} from '@vueuse/core';
 // 元件
-import StartNode from "./workFlowNodes/StartNode.vue";
-import FlowNode from "./workFlowNodes/FlowNode.vue";
-import EndNode from "./workFlowNodes/EndNode.vue";
+import StartNode from './workFlowNodes/StartNode.vue';
+import FlowNode from './workFlowNodes/FlowNode.vue';
+import EndNode from './workFlowNodes/EndNode.vue';
 // ICON
 import {
   matFireExtinguisher,
@@ -488,35 +488,32 @@ import {
   matFollowTheSigns,
   matHealthAndSafety,
   matReport,
-} from "@quasar/extras/material-icons";
+} from '@quasar/extras/material-icons';
 import {
   mdiMotherNurse,
   mdiPlus,
   mdiPencil,
   mdiDelete,
   mdiTimerPlayOutline,
-} from "@quasar/extras/mdi-v6";
+} from '@quasar/extras/mdi-v6';
 // utils
-import tableMixin from "src/utils/tableMixin";
-// API
-import process, { workflowData } from "src/api/process";
-import processInstruction from "src/api/processInstruction";
-import Role, { roleType } from "src/api/role";
+import tableMixin from 'src/utils/tableMixin';
+
 // quasar
-import { uid } from "quasar";
+import { uid } from 'quasar';
 import {
   iconObjectOptions,
   NodeGroup,
   iconLabels,
-} from "src/pages/emergency/flow/processIconOptions";
+} from 'src/pages/emergency/flow/processIconOptions';
 // 類型、Config、Options
-import type { QTreeNode } from "quasar";
-import { wfNode, convertedNode, serverDataType } from "./flowTypes";
+import type { QTreeNode } from 'quasar';
+import { wfNode, convertedNode, serverDataType } from './flowTypes';
 import {
   flowProcessTableConfigs,
   actionNames,
   flowProcessTableConfigsType,
-} from "src/pages/emergency/flow/flowProcessTableConfigs";
+} from 'src/pages/emergency/flow/flowProcessTableConfigs';
 
 // VueFlow 套件
 import {
@@ -532,26 +529,24 @@ import {
   NodeDragEvent,
   Elements,
   // Position,
-} from "@vue-flow/core";
-import { Background } from "@vue-flow/background";
-import { Controls } from "@vue-flow/controls";
+} from '@vue-flow/core';
+import { Background } from '@vue-flow/background';
+import { Controls } from '@vue-flow/controls';
 // pinia store
-import { useBuildingStore } from "src/stores/building.js";
-import WorkflowType from "src/api/workflowType";
-import { tempDataType } from "src/api/api.type";
+import { useBuildingStore } from 'src/stores/building.js';
 
 const buildingStore = useBuildingStore();
 
 async function testStartProgress() {
   $q.dialog({
-    title: "提示",
-    message: "確定要啟動這張流程圖嗎?",
+    title: '提示',
+    message: '確定要啟動這張流程圖嗎?',
     persistent: true,
     ok: {
       push: true,
-      label: "確定",
+      label: '確定',
     },
-    cancel: "取消",
+    cancel: '取消',
   }).onOk(async () => {
     const { id, version } = nowProcess.value.node as {
       id: string;
@@ -563,13 +558,8 @@ async function testStartProgress() {
       testable: true,
       // reference: "123",
     };
-    const result = (await process.apiStartProcess(
-      queryObject
-    )) as typeof AxiosResponse;
-    if (result.data) {
-      const nowProcessId = result.data;
-      console.log("now process id", nowProcessId);
-    }
+
+    console.log('testStartProgress');
   });
 }
 
@@ -588,17 +578,17 @@ interface stepDefinition {
   outputs: object;
 }
 onMounted(() => {
-  console.log("iconObjectOptions", iconObjectOptions);
+  console.log('iconObjectOptions', iconObjectOptions);
 });
 
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = inject('$q') as typeof QVueGlobals;
 
 // 左側workflow 流程圖 的node
-const wfFilter = ref("");
+const wfFilter = ref('');
 const stringOptions: string[] = []; // 這裡之後可以寫在系統設定
 const wfFilterOptions = ref(stringOptions);
 
-let wfNodesString: wfNode[] = [];
+const wfNodesString: wfNode[] = [];
 const wfNodes = ref<QTreeNode[]>(wfNodesString);
 
 // 取得樓層和班別名稱的下拉選單
@@ -654,7 +644,7 @@ function setModel(val: string) {
   }
 }
 
-const selectedWfNodesId = ref("");
+const selectedWfNodesId = ref('');
 const wfTree: QTreeNode = ref(null);
 function wfNodesSelectAction() {
   wfTree.value?.setExpanded(selectedWfNodesId.value, true);
@@ -699,9 +689,9 @@ function formatSecondsToTime(seconds: number): string {
   const minutes = Math.floor((seconds % 3600) / 60);
   const remainingSeconds = seconds % 60;
 
-  const formattedHours = String(hours).padStart(2, "0");
-  const formattedMinutes = String(minutes).padStart(2, "0");
-  const formattedSeconds = String(remainingSeconds).padStart(2, "0");
+  const formattedHours = String(hours).padStart(2, '0');
+  const formattedMinutes = String(minutes).padStart(2, '0');
+  const formattedSeconds = String(remainingSeconds).padStart(2, '0');
 
   return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
 }
@@ -713,31 +703,31 @@ const nodeTypeOptions = ref();
 // 流程圖 options
 const workFlowOptions = ref([
   {
-    label: "1 - 12F 救護班流程圖",
+    label: '1 - 12F 救護班流程圖',
   },
   {
-    label: "1 - 12F 救護班定位",
+    label: '1 - 12F 救護班定位',
   },
   {
-    label: "1 - 12F 救護班撤退",
+    label: '1 - 12F 救護班撤退',
   },
   {
-    label: "1 - 12F 滅火班流程圖",
+    label: '1 - 12F 滅火班流程圖',
   },
   {
-    label: "1 - 12F 滅火班定位",
+    label: '1 - 12F 滅火班定位',
   },
   {
-    label: "1 - 12F 滅火班撤退",
+    label: '1 - 12F 滅火班撤退',
   },
   {
-    label: "1 - 12F 安全防護班流程圖",
+    label: '1 - 12F 安全防護班流程圖',
   },
   {
-    label: "1 - 12F 安全防護班定位",
+    label: '1 - 12F 安全防護班定位',
   },
   {
-    label: "1 - 12F 安全防護班撤退",
+    label: '1 - 12F 安全防護班撤退',
   },
 ]);
 
@@ -779,9 +769,9 @@ onConnect((params) => {
     // animated: true,
     markerEnd: MarkerType.ArrowClosed,
     // type: "smoothstep",
-    label: "",
-    labelBgStyle: { fill: "white", stroke: "grey" },
-    labelStyle: { fill: "grey" },
+    label: '',
+    labelBgStyle: { fill: 'white', stroke: 'grey' },
+    labelStyle: { fill: 'grey' },
     labelBgPadding: [5, 3],
   };
   addEdges([newLines]);
@@ -822,12 +812,12 @@ onNodeClick((props) => {
       selectedEdge.value.selected = false;
       selectedEdge.value = undefined;
     }
-    console.log("now selected node: ", selectedNode.value);
+    console.log('now selected node: ', selectedNode.value);
   }
 });
 onPaneClick(paneClickHandler);
 function paneClickHandler() {
-  if (selectedNode.value) selectedNode.value.class = "cursor-pointer";
+  if (selectedNode.value) selectedNode.value.class = 'cursor-pointer';
   if (selectedNode.value) {
     selectedNode.value.selected = false;
     selectedNode.value = undefined;
@@ -847,15 +837,15 @@ onPaneMouseLeave(() => {
 
 // 新增節點的拖拉方法
 const nodeData = ref<QTreeNode>({
-  type: "",
-  icon: "",
-  name: "",
-  nodeType: { key: "", label: "" },
+  type: '',
+  icon: '',
+  name: '',
+  nodeType: { key: '', label: '' },
 });
 function getNodeType(isStart: boolean | null) {
-  if (isStart) return "startNode";
-  else if (isStart === false) return "endNode";
-  return "flowNode";
+  if (isStart) return 'startNode';
+  else if (isStart === false) return 'endNode';
+  return 'flowNode';
 }
 function onDragStart(node: QTreeNode) {
   if (!nowProcess.value) return;
@@ -874,9 +864,9 @@ function onDragOver(...args: unknown[]) {
 function onDrop(event: DragEvent) {
   if (!nowProcess.value) {
     $q.notify({
-      type: "warning",
-      message: "請先選擇流程圖 或 建立一張新的流程圖",
-      position: "top",
+      type: 'warning',
+      message: '請先選擇流程圖 或 建立一張新的流程圖',
+      position: 'top',
     });
     return;
   }
@@ -908,7 +898,7 @@ function onDrop(event: DragEvent) {
     const selectedNodes = getSelectedNodes.value;
     if (node) {
       if (inputRef.value && inputRef.value.textContent) {
-        inputRef.value.textContent = "";
+        inputRef.value.textContent = '';
       }
       removeSelectedNodes(selectedNodes);
       const stop = watch(
@@ -923,7 +913,7 @@ function onDrop(event: DragEvent) {
             addDataToHistoryArray();
           }
         },
-        { deep: true, flush: "post" }
+        { deep: true, flush: 'post' }
       );
 
       selectedNode.value = node;
@@ -933,12 +923,12 @@ function onDrop(event: DragEvent) {
 }
 
 enum controlListIconLabels {
-  Undo = "上一步",
-  Redo = "下一步",
-  Delete = "刪除圖形",
-  copy = "複製流程圖",
-  saveFile = "儲存",
-  clear = "清空畫布",
+  Undo = '上一步',
+  Redo = '下一步',
+  Delete = '刪除圖形',
+  copy = '複製流程圖',
+  saveFile = '儲存',
+  clear = '清空畫布',
 }
 // 控制列
 const controlListIcon = [
@@ -981,9 +971,9 @@ const nowState = ref<FlowExportObject>(); // 現在狀態的JSON數據
 function doUndo() {
   if (history.value.length === 0) {
     $q.notify({
-      type: "warning",
-      message: "目前沒有動作可復原",
-      position: "top",
+      type: 'warning',
+      message: '目前沒有動作可復原',
+      position: 'top',
     });
     return;
   }
@@ -1003,9 +993,9 @@ function doUndo() {
 function doRedo() {
   if (redoHistory.value.length === 0) {
     $q.notify({
-      type: "warning",
-      message: "目前沒有動作可重作",
-      position: "top",
+      type: 'warning',
+      message: '目前沒有動作可重作',
+      position: 'top',
     });
     return;
   }
@@ -1059,59 +1049,40 @@ function checkIfResetSelectedNode(
 }
 // 上排控制列方法
 function doCopy() {
-  console.log("work");
+  console.log('work');
 }
 interface withErrors {
   errors: string;
 }
 async function doSaveFile() {
-  const payload = clientToServer();
-  if (!payload) return;
-  const isUpdated = (await process.apiSaveOrUpdateProcessNodeData(
-    payload,
-    nowProcess.value.node.isOldProcess
-  )) as typeof AxiosResponse;
-
-  if (isUpdated.data) {
-    $q.notify({
-      type: "positive",
-      message: "儲存成功",
-      position: "top",
-    });
-    if (!nowProcess.value.node.isOldProcess) {
-      nowProcess.value.node.isOldProcess = true;
-    }
-    nowProcess.value.node.version += 1;
-  } else {
-    $q.notify({
-      type: "negative",
-      message: `儲存失敗 ${(isUpdated as unknown as withErrors).errors}`,
-      position: "top",
-    });
-  }
+  $q.notify({
+    type: 'positive',
+    message: 'doSaveFile 儲存成功',
+    position: 'top',
+  });
 }
 function doDelete() {
   // 沒有選到節點線段時返回
   if (!selectedNode.value && !selectedEdge.value) {
     $q.notify({
-      type: "warning",
-      message: "請選擇節點或是線段再進行刪除動作",
-      position: "top",
+      type: 'warning',
+      message: '請選擇節點或是線段再進行刪除動作',
+      position: 'top',
     });
     return;
   }
   // 提示是否刪除
   $q.dialog({
-    title: "提示",
+    title: '提示',
     message: selectedNode.value
       ? `確定要刪除名稱為【${selectedNode.value?.label}】的節點嗎?`
-      : "確定要刪除所點擊的線嗎?",
+      : '確定要刪除所點擊的線嗎?',
     persistent: true,
     ok: {
       push: true,
-      label: "確定",
+      label: '確定',
     },
-    cancel: "取消",
+    cancel: '取消',
   }).onOk(() => {
     // 刪除節點
     if (selectedNode.value) {
@@ -1152,18 +1123,18 @@ function clearForChangeProcess() {
 // 流程圖資料轉換: client ⇄ server
 function clientToServer() {
   const processParentNode = findParentNode();
-  console.log("now nowProcess.value", nowProcess.value);
+  console.log('now nowProcess.value', nowProcess.value);
   if (!processParentNode) {
     $q.notify({
-      type: "negative",
-      message: "找不到父節點, 請刷新重試",
-      position: "top",
+      type: 'negative',
+      message: '找不到父節點, 請刷新重試',
+      position: 'top',
     });
     return false;
   }
   const nowState = toObject();
   const { cloned } = useCloned(nowState);
-  console.log("clientToServer", buildingStore.Bid);
+  console.log('clientToServer', buildingStore.Bid);
   const params: serverDataType = {
     id: nowProcess.value.key,
     version: nowProcess.value.node.version,
@@ -1180,11 +1151,11 @@ function clientToServer() {
   );
   for (const node of params.nodes) {
     if (checkIfWithMessageInput(node.stepDefinition?.nodeType.key)) {
-      if (!node.message || node.message === "") {
+      if (!node.message || node.message === '') {
         $q.notify({
-          type: "negative",
-          message: "訊息欄位不可為空",
-          position: "top",
+          type: 'negative',
+          message: '訊息欄位不可為空',
+          position: 'top',
         });
         return false;
       }
@@ -1195,7 +1166,7 @@ function clientToServer() {
   );
   params.position = cloned.value.position;
   params.zoom = cloned.value.zoom || 1;
-  console.log("params to server", JSON.stringify(params));
+  console.log('params to server', JSON.stringify(params));
   return params;
 }
 function convertNodeForServerStructure(
@@ -1252,8 +1223,8 @@ function serverToClient(serverData: any) {
     if (node.roleName) node.roleNameObject = getRoleName(node.roleName);
   });
   serverData.edges.forEach((edge: any) => {
-    edge.labelBgStyle = { fill: "white", stroke: "grey" };
-    edge.labelStyle = { fill: "grey" };
+    edge.labelBgStyle = { fill: 'white', stroke: 'grey' };
+    edge.labelStyle = { fill: 'grey' };
     edge.labelBgPadding = [5, 3];
     edge.source = edge.sourceId;
     edge.target = edge.targetId;
@@ -1265,7 +1236,7 @@ function serverToClient(serverData: any) {
   setFlowDataToPage(serverData);
   setTimeout(() => {
     nowState.value = toObject();
-    console.log("now nowState", nowState.value);
+    console.log('now nowState', nowState.value);
   }, 1000);
 }
 function getRoleName(roleName: string) {
@@ -1290,19 +1261,19 @@ function findParentNode(nowId?: string) {
 
 // 鍵盤事件監聽
 const cloneNode = ref<Node>();
-const source = ref(""); // 複製的文字內容
+const source = ref(''); // 複製的文字內容
 const isTextareaFocused = ref(false); // EditableTextarea 用
-onKeyDown("Delete", doDelete);
+onKeyDown('Delete', doDelete);
 onKeyStroke((e) => {
   if (isTextareaFocused.value) return;
   const { copy } = useClipboard({ source });
   // 從其他瀏覽器複製過的文字內容
-  document.addEventListener("paste", (event: ClipboardEvent) => {
+  document.addEventListener('paste', (event: ClipboardEvent) => {
     if (isInVueFlow.value) return;
     // 取得剪貼簿的內容
     const clipboardData = event.clipboardData;
     // 取得剪貼簿中的文字內容
-    const text = clipboardData?.getData("text");
+    const text = clipboardData?.getData('text');
 
     if (text) {
       source.value = text;
@@ -1310,17 +1281,17 @@ onKeyStroke((e) => {
     }
   });
   // 預設的複製貼上文字功能
-  if (e.code === "KeyC" && e.ctrlKey) {
+  if (e.code === 'KeyC' && e.ctrlKey) {
     const selection = window.getSelection()?.toString();
     if (selection) {
       source.value = selection;
       copy(source.value);
     } else {
-      source.value = "";
+      source.value = '';
     }
   }
   if (!source.value && isInVueFlow.value) {
-    if (e.code === "KeyC" && e.ctrlKey && selectedNode.value) {
+    if (e.code === 'KeyC' && e.ctrlKey && selectedNode.value) {
       // 複製
       if (!selectedNode.value) return;
       cloneNode.value = undefined;
@@ -1334,19 +1305,19 @@ onKeyStroke((e) => {
         y: selectedNode.value.position.y,
       }; // 更新複製出來的節點位置
       cloneNode.value = cloned.value;
-    } else if (e.code === "KeyV" && e.ctrlKey && cloneNode.value) {
+    } else if (e.code === 'KeyV' && e.ctrlKey && cloneNode.value) {
       // 貼上
       addNodes([cloneNode.value]);
       addDataToHistoryArray();
       const node = findNode(cloneNode.value.id);
       selectedNode.value = node;
       cloneNode.value = undefined;
-    } else if (e.code === "KeyZ" && e.ctrlKey && !e.shiftKey) {
+    } else if (e.code === 'KeyZ' && e.ctrlKey && !e.shiftKey) {
       if (openRightDrawer.value) return;
       doUndo(); // 上一步
     } else if (
       e.ctrlKey &&
-      (e.code === "KeyY" || (e.code === "KeyZ" && e.shiftKey))
+      (e.code === 'KeyY' || (e.code === 'KeyZ' && e.shiftKey))
     ) {
       if (openRightDrawer.value) return;
       doRedo(); // 下一步
@@ -1369,37 +1340,25 @@ interface classData {
   children?: classData[] | { id: string; label: string }[];
 }
 async function getRoleTreeForProcess() {
-  try {
-    const result =
-      (await process.apiGetFireMarchallingRoleLists()) as typeof AxiosResponse;
-    console.log("getRoleTreeForProcess result", result.data);
-    if (result.data) {
-      const roleLists = formatRoleTreeData(result.data);
-      // 把資料帶進wfNode
-      wfNodes.value = wfNodesString = roleLists;
-      getFilterOptions(); // 生出下拉資料
-    } else console.error("apiGetFireMarchallingRoleLists() returned false");
-  } catch (error) {
-    console.error("getRoleTreeForProcess error:", error);
-  }
+  console.log('getRoleTreeForProcess() called');
 }
 function formatRoleTreeData(
   data: typeof AxiosResponse,
   depth = 0
 ): classData[] {
   return Object.entries(data).map(([key, value]) => {
-    const [id, label] = key.split("_");
-    let header = "";
+    const [id, label] = key.split('_');
+    let header = '';
     let children;
     if (depth === 1) {
-      header = "marshalling";
+      header = 'marshalling';
       children = Object.entries(value as typeof AxiosResponse).map(
         ([key, label]) => {
-          const [id, version] = key.split("_");
+          const [id, version] = key.split('_');
           return {
             id,
             label: label as string,
-            header: "process",
+            header: 'process',
             // isOldProcess: Number(version) !== 1,
             isOldProcess: true,
             version: Number(version),
@@ -1429,125 +1388,45 @@ function formatRoleTreeData(
 }
 onMounted(getRoleNameObjectOptions);
 async function getRoleNameObjectOptions() {
-  const payload = [
-    { type: roleType.role, isEmergency: null },
-    { type: roleType.class, isEmergency: null },
-  ];
-  const result = (await Role.apiGetRoles(payload)) as typeof AxiosResponse;
-  if (result.data) {
-    roleNameObjectOptions.value = result.data;
-    console.log("roleNameObjectOptions.value: ", roleNameObjectOptions.value);
-  }
+  console.log('getRoleNameObjectOptions() called');
+  // const payload = [
+  //   { type: roleType.role, isEmergency: null },
+  //   { type: roleType.class, isEmergency: null },
+  // ];
+  // const result = (await Role.apiGetRoles(payload)) as typeof AxiosResponse;
+  // if (result.data) {
+  //   roleNameObjectOptions.value = result.data;
+  //   console.log('roleNameObjectOptions.value: ', roleNameObjectOptions.value);
+  // }
 }
 // 新增 icon 給各班別的方法
 // 之後有真實欄位後請後端回傳真實資料就可以把這個方法改成用 enum 去寫
 function getIconToWfNode(label: string) {
   switch (label) {
-    case "滅火班":
+    case '滅火班':
       return matFireExtinguisher;
-    case "救護班":
+    case '救護班':
       return matHealthAndSafety;
-    case "避難引導班":
+    case '避難引導班':
       return matFollowTheSigns;
-    case "安全防護班":
+    case '安全防護班':
       return mdiMotherNurse;
-    case "通報班":
+    case '通報班':
       return matReport;
   }
 }
 
-const { blockAttrs, dialogAttrs, handleDialogMixin, hideDialog } = tableMixin();
-const dialogEvent = computed(() => ({ handleDialog, selectListChange }));
-
-// API類別
-const API = process;
-// 在新增/編輯 dialog 上的操作
-async function handleDialog(status: string, data: tempDataType) {
-  if (status === actionNames.addProcess) {
-    const tempData = { ...data };
-    tempData.groupId = +tempData.marshalling.id;
-    delete tempData.marshalling;
-    const result = await process.apiAddNewProcess(tempData as workflowData);
-
-    if (result.data) {
-      const newProcess = {
-        id: result.data,
-        label: tempData.description,
-        header: "process",
-        isOldProcess: false,
-        version: 1,
-      };
-      // 把新增的流程圖資訊show在畫面
-      const groupId = String(tempData.groupId);
-      const addGroup = wfTree.value.getNodeByKey(groupId);
-      if (addGroup.children) addGroup.children.push(newProcess);
-      else addGroup.children = [newProcess];
-      wfTree.value.setExpanded(addGroup.id, true); // 展開流程圖
-      selectedWfNodesId.value = newProcess.id;
-      const nowProcess = {
-        key: newProcess.id,
-        node: newProcess,
-      };
-
-      await handleClickProcess(nowProcess);
-
-      $q.notify({
-        type: "positive",
-        message: "新增成功",
-        position: "top",
-      });
-      hideDialog();
-    } else {
-      $q.notify({
-        type: "negative",
-        message: "新增失敗",
-        position: "top",
-      });
-    }
-    return;
-  } else if (status === actionNames.editProcess) {
-    const result = await process.apiChangeProcessName(data as workflowData);
-
-    if (result.data) {
-      // 把更改後的流程圖名稱更新在畫面
-      const process = wfTree.value.getNodeByKey(data.id);
-      process.label = data.description;
-
-      $q.notify({
-        type: "positive",
-        message: "更新成功",
-        position: "top",
-      });
-      hideDialog();
-    } else {
-      $q.notify({
-        type: "negative",
-        message: "更新失敗",
-        position: "top",
-      });
-    }
-    return;
-  }
-
-  await handleDialogMixin(status, API);
-}
+const { blockAttrs, dialogAttrs, hideDialog } = tableMixin();
 
 function initDialog() {
-  dialogAttrs.value.dialogTitle = "流程圖";
-  dialogAttrs.value.status = "add";
+  dialogAttrs.value.dialogTitle = '流程圖';
+  dialogAttrs.value.status = 'add';
 }
 onMounted(() => {
   initDialog();
 });
 
 // 左邊流程圖下拉按鈕方法
-async function selectListChange(props: string, tempData?: tempDataType) {
-  console.log("selectListChange", props);
-  if (props === "type") {
-    const result = await WorkflowType.apiGetAllFlowTypes();
-    dialogAttrs.value.selectOption = result.data;
-  }
-}
 function resetDialog(actionNames: keyof flowProcessTableConfigsType) {
   blockAttrs.value.tableConfig = flowProcessTableConfigs[actionNames];
   dialogAttrs.value.visible = true;
@@ -1566,15 +1445,8 @@ async function handleEditProcess(
   actionNames: keyof flowProcessTableConfigsType
 ) {
   const { id, version, label } = processProps;
-  const result = await process.apiGetProcessNodeData(id, version);
-  console.log("now handleEditProcess result", result);
-  if (result.data) {
-    resetDialog(actionNames);
-    dialogAttrs.value.tempData.description = label;
-    dialogAttrs.value.tempData.id = id;
-    dialogAttrs.value.tempData.version = version;
-    dialogAttrs.value.tempData.type = result.data.type;
-  }
+
+  console.log('now handleEditProcess', { id, version, label });
 }
 const nowProcess = ref();
 async function handleClickProcess(
@@ -1588,21 +1460,8 @@ async function handleClickProcess(
   nowProcess.value = prop;
   nowState.value = toObject();
   saveStateToArray(history.value);
-  const result = (await process.apiGetProcessNodeData(
-    nowProcess.value.key,
-    nowProcess.value.node.version
-  )) as typeof AxiosResponse;
-  if (result.data) {
-    const { nodes, edges, type } = result.data;
-    const hasNodesData = !(nodes.length === 0 && edges.length === 0);
-    nowProcess.value.node.isOldProcess = hasNodesData;
-    nowProcess.value.node.type = type;
-    if (hasNodesData) {
-      serverToClient(result.data);
-    } else {
-      nowState.value = toObject();
-    }
-  }
+
+  console.log('handleClickProcess');
 }
 async function handleDeleteProcess(processProps: {
   id: string;
@@ -1610,46 +1469,16 @@ async function handleDeleteProcess(processProps: {
 }) {
   // 提示是否刪除
   $q.dialog({
-    title: "提示",
+    title: '提示',
     message: `確定要刪除名稱為【${processProps.label}】的流程圖嗎?`,
     persistent: true,
     ok: {
       push: true,
-      label: "確定",
+      label: '確定',
     },
-    cancel: "取消",
+    cancel: '取消',
   }).onOk(async () => {
-    const result = (await process.apiDeleteProcess(
-      processProps.id
-    )) as typeof AxiosResponse;
-    if (result.data) {
-      $q.notify({
-        type: "positive",
-        message: "刪除成功",
-        position: "top",
-      });
-      // 清除畫布
-      clearForChangeProcess();
-      // 從 tree 刪除該流程圖
-      const processParentNode = findParentNode(processProps.id); // 選擇樹狀結構的第二層(群組樓層的編組)
-      if (processParentNode && processParentNode.children) {
-        processParentNode.children = processParentNode.children.filter(
-          (process: QTreeNode) => process.id !== processProps.id
-        );
-      }
-    } else if (result.data === false) {
-      $q.notify({
-        type: "negative",
-        message: "流程圖正在執行中，目前無法刪除",
-        position: "top",
-      });
-    } else if (result.data === null) {
-      $q.notify({
-        type: "negative",
-        message: "找不到流程圖id，刪除失敗",
-        position: "top",
-      });
-    }
+    console.log(' handleDeleteProcess OK');
   });
 }
 
@@ -1665,16 +1494,9 @@ interface NodeData {
 }
 const nodesData = ref<NodeData[]>([]);
 async function getNodesData(
-  pagination = { filters: "", page: 1, rowsPerPage: 0 }
+  pagination = { filters: '', page: 1, rowsPerPage: 0 }
 ) {
-  const result = (await processInstruction.apiGetData(
-    pagination
-  )) as typeof AxiosResponse;
-  if (result.data) {
-    nodesData.value = nodeTypeOptions.value = result.data.rows;
-    console.log("now nodesData.value", nodesData.value);
-    // nodeTypeOptions.value = result.data.rows;
-  }
+  console.log('getNodesData() called');
 }
 const formattedNodesData = computed(() => {
   return nodesData.value.reduce((a, b) => {
@@ -1683,7 +1505,7 @@ const formattedNodesData = computed(() => {
     const { group, iconImg } = iconObjectOptions[nodeTypeNumber];
     const groupChName = NodeGroup[group];
     newNode.iconString = iconImg;
-    newNode.header = "groupItem";
+    newNode.header = 'groupItem';
     let groupData = a.find((item) => item.label === groupChName);
     if (!groupData) {
       groupData = { name: group, label: groupChName, children: [] };
@@ -1696,13 +1518,13 @@ const formattedNodesData = computed(() => {
 watch(
   formattedNodesData,
   (val) => {
-    console.log("now formattedNodesData", formattedNodesData.value);
+    console.log('now formattedNodesData', formattedNodesData.value);
   },
   { deep: true }
 );
 
 // 搜尋節點
-const searchContent = ref("");
+const searchContent = ref('');
 const flowNodesTree = ref();
 function onSearch() {
   if (!searchContent.value) {
@@ -1787,16 +1609,16 @@ watch(
   { deep: true }
 );
 function returnToOldNode(oldNode: myGraphNode) {
-  console.log("oldNode", oldNode);
+  console.log('oldNode', oldNode);
 
   isNodeChanging.value = true;
   oldNode.selected = true;
   setTimeout(() => {
     selectedNode.value = oldNode;
     $q.notify({
-      type: "warning",
-      message: "請輸入必填欄位",
-      position: "top",
+      type: 'warning',
+      message: '請輸入必填欄位',
+      position: 'top',
     });
     nextTick(() => {
       isNodeChanging.value = false;
@@ -1804,43 +1626,43 @@ function returnToOldNode(oldNode: myGraphNode) {
   }, 100);
 }
 
-useEventListener(inputRef, "paste", (e: ClipboardEvent) => {
+useEventListener(inputRef, 'paste', (e: ClipboardEvent) => {
   e.preventDefault();
-  const text = e.clipboardData?.getData("text/plain"); // 獲取貼上的純文字內容
-  document.execCommand("insertText", false, text); // 將純文字內容插入到編輯器中
+  const text = e.clipboardData?.getData('text/plain'); // 獲取貼上的純文字內容
+  document.execCommand('insertText', false, text); // 將純文字內容插入到編輯器中
 });
 function handleInput(e: Event) {
   const input = e.target as HTMLInputElement;
-  console.log("now handleInput textContent", input.textContent);
-  console.log("now handleInput innerHTML", input.innerHTML);
+  console.log('now handleInput textContent', input.textContent);
+  console.log('now handleInput innerHTML', input.innerHTML);
   if (input.textContent !== null && selectedNode.value) {
     const formatedText = formatAsMessage(input.textContent);
     selectedNode.value.message = formatedText;
-    console.log("now selectedNode.value.message", selectedNode.value?.message);
+    console.log('now selectedNode.value.message', selectedNode.value?.message);
   }
 }
 function formatAsMessage(text: string) {
   let clonedText = useCloned(text).cloned.value;
   // clonedText = clonedText.replaceAll("大樓名稱", "{buildingName}");
   // clonedText = clonedText.replaceAll("地址名稱", "{addressName}");
-  clonedText = clonedText.replaceAll("起火位置", "@NodeMessageFormat");
-  return clonedText || "";
+  clonedText = clonedText.replaceAll('起火位置', '@NodeMessageFormat');
+  return clonedText || '';
 }
 const blankSpaceBtnList = [
   // { value: "buildingName", label: "大樓名稱" },
   // { value: "addressName", label: "地址名稱" },
-  { value: "@NodeMessageFormat", label: "起火位置" },
+  { value: '@NodeMessageFormat', label: '起火位置' },
 ];
 function addBlankSpaceText(btn: { value: string; label: string }) {
   if (inputRef.value) {
     // 獲取光標位置
-    if (typeof window.getSelection !== "undefined") {
+    if (typeof window.getSelection !== 'undefined') {
       const sel = window.getSelection();
       if (sel && sel.rangeCount > 0) {
         const range = sel.getRangeAt(0); // 選中的範圍，表示用戶目前所選取的文字位置。
         // 把文字更新至當前光標
         const newText = `<span contentEditable="false">${btn.label}</span>`;
-        const tempDiv = document.createElement("div");
+        const tempDiv = document.createElement('div');
         tempDiv.innerHTML = newText;
         const frag = document.createDocumentFragment();
         let node, // 用於迭代
@@ -1871,11 +1693,11 @@ function addBlankSpaceText(btn: { value: string; label: string }) {
 
 <style lang="scss">
 /* these are necessary styles for vue flow */
-@import "@vue-flow/core/dist/style.css";
+@import '@vue-flow/core/dist/style.css';
 
 /* this contains the default theme, these are optional styles */
-@import "@vue-flow/core/dist/theme-default.css";
-@import "@vue-flow/controls/dist/style.css";
+@import '@vue-flow/core/dist/theme-default.css';
+@import '@vue-flow/controls/dist/style.css';
 .flowNode {
   outline: 1px solid #d3d3d3;
   border: none;

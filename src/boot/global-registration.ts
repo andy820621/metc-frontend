@@ -1,18 +1,18 @@
-import { boot } from "quasar/wrappers";
+import { boot } from 'quasar/wrappers';
 // 導入想註冊的元件
-import SvgIcon from "components/SvgIcon.vue";
-import SvgBtn from "components/SvgBtn.vue";
-import SvgDropdownBtn from "components/SvgDropdownBtn.vue";
+import SvgIcon from 'components/SvgIcon.vue';
+import SvgBtn from 'components/SvgBtn.vue';
+import SvgDropdownBtn from 'components/SvgDropdownBtn.vue';
 // 導入想註冊的插件
-import VueKonva from "vue-konva";
-import { register } from "swiper/element/bundle";
+import VueKonva from 'vue-konva';
+import { register } from 'swiper/element/bundle';
 // 想註冊的屬性
 
 export default boot(async ({ app }) => {
   // 註冊元件 (全域)
-  app.component("SvgIcon", SvgIcon);
-  app.component("SvgBtn", SvgBtn);
-  app.component("SvgDropdownBtn", SvgDropdownBtn);
+  app.component('SvgIcon', SvgIcon);
+  app.component('SvgBtn', SvgBtn);
+  app.component('SvgDropdownBtn', SvgDropdownBtn);
 
   // 註冊插件
   app.use(VueKonva);

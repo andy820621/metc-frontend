@@ -83,10 +83,7 @@
               <slot name="customFilter"> </slot>
 
               <template v-for="(filter, idx) in filtersData" :key="idx">
-                <q-card-section
-                  v-if="filter.type === 'string' && isStringFilter(filter)"
-                  class="filter"
-                >
+                <q-card-section v-if="filter.type === 'string'" class="filter">
                   <div class="title">{{ filter.title }}</div>
                   <div class="options">
                     <q-checkbox
@@ -104,7 +101,7 @@
                 </q-card-section>
 
                 <q-card-section
-                  v-else-if="filter.type === 'date' && isDateFilter(filter)"
+                  v-else-if="filter.type === 'date'"
                   class="filter"
                 >
                   <div class="title">{{ filter.title }}</div>
@@ -112,7 +109,7 @@
                   <div class="dateRange">
                     <div class="dateBox">
                       <span class="label">
-                        {{ filter.searchOption.startString || "起始日期" }}
+                        {{ filter.searchOption.startString || '起始日期' }}
                       </span>
                       <DateSelect
                         :min-width="
@@ -129,7 +126,7 @@
                     ~
                     <div class="dateBox">
                       <span class="label">
-                        {{ filter.searchOption.endString || "結束日期" }}
+                        {{ filter.searchOption.endString || '結束日期' }}
                       </span>
                       <DateSelect
                         :min-width="
@@ -148,10 +145,7 @@
                 </q-card-section>
 
                 <q-card-section
-                  v-else-if="
-                    filter.type === 'singleSelect' &&
-                    isSingleSelectFilter(filter)
-                  "
+                  v-else-if="filter.type === 'singleSelect'"
                   class="filter"
                 >
                   <div class="title">{{ filter.title }}</div>
@@ -321,7 +315,7 @@
                 </div>
 
                 <div v-else-if="col.formType === 'selectMany'">
-                  <span>{{ col.value?.length ? col.value : "" }}</span>
+                  <span>{{ col.value?.length ? col.value : '' }}</span>
                 </div>
 
                 <div v-else-if="col.formType === 'selectIcon'">
@@ -344,9 +338,9 @@
                     col.value
                       ? date.formatDate(
                           new Date(col.value),
-                          col.customDateFormat || "YYYY-MM-DD"
+                          col.customDateFormat || 'YYYY-MM-DD'
                         )
-                      : ""
+                      : ''
                   }}</span>
                 </div>
                 <div v-else-if="!col.isTableSlot">{{ col.value }}</div>
@@ -545,9 +539,9 @@
                           col.value
                             ? date.formatDate(
                                 new Date(col.value),
-                                col.customDateFormat || "YYYY-MM-DD"
+                                col.customDateFormat || 'YYYY-MM-DD'
                               )
-                            : ""
+                            : ''
                         }}</span>
                       </div>
                       <div v-else-if="!col.isTableSlot">{{ col.value }}</div>
@@ -602,14 +596,14 @@
   </DialogDataRowPreview>
 </template>
 <script setup lang="ts">
-import type { QTableProps } from "quasar";
-import { date } from "quasar";
-import { useRouter } from "vue-router";
+import type { QTableProps } from 'quasar';
+import { date } from 'quasar';
+import { useRouter } from 'vue-router';
 // utils
-import { linkUrlAction } from "src/utils/urlActions";
-import { useVModel } from "@vueuse/core";
+import { linkUrlAction } from 'src/utils/urlActions';
+import { useVModel } from '@vueuse/core';
 // icon
-import { fasFileExport, fasFileImport } from "@quasar/extras/fontawesome-v5";
+import { fasFileExport, fasFileImport } from '@quasar/extras/fontawesome-v5';
 // type
 import {
   tempDataType,
@@ -617,15 +611,10 @@ import {
   expandAttrsType,
   tableConfigItem,
   blockRefType,
-} from "src/utils/tableMixin";
-import { matErrorOutline } from "@quasar/extras/material-icons";
-import {
-  filtersType,
-  isStringFilter,
-  isDateFilter,
-  isSingleSelectFilter,
-} from "src/api/api.type";
-const $q = inject("$q") as typeof QVueGlobals;
+} from 'src/utils/tableMixin';
+import { matErrorOutline } from '@quasar/extras/material-icons';
+
+const $q = inject('$q') as typeof QVueGlobals;
 const slots = useSlots();
 
 const props = withDefaults(
@@ -637,49 +626,50 @@ const props = withDefaults(
     isCheckbox?: boolean;
     tabHeight?: string;
     customHeight?: string;
-    filters?: filtersType;
+    // filters?: filtersType;
+    filters?: any;
   }>(),
   {
     isSearch: true,
     isDialogTable: false,
-    tabHeight: "36px",
+    tabHeight: '36px',
     isCheckbox: true,
   }
 );
 
 const emit = defineEmits([
-  "handleBlock",
-  "changeBlockData",
-  "handleSelectArray",
-  "updateLatestData",
-  "update:filters",
+  'handleBlock',
+  'changeBlockData',
+  'handleSelectArray',
+  'updateLatestData',
+  'update:filters',
 ]);
 
-const filtersData = useVModel(props, "filters", emit);
+const filtersData = useVModel(props, 'filters', emit);
 
 const blockAttrs = computed(() => props.blockAttrs);
 const dialogConfig = ref<tableConfigItem[]>();
 const expandAttrs = computed(() => props.expandAttrs);
 
 const scrollAreaHeight = computed(() => {
-  let result = "";
+  let result = '';
   if (props.isSearch) {
-    result = $q.screen.xs || $q.screen.sm ? "height: 78%" : "height: 87%";
+    result = $q.screen.xs || $q.screen.sm ? 'height: 78%' : 'height: 87%';
   } else if (headerButtons.value.length > 0) {
-    result = $q.screen.xs || $q.screen.sm ? "height: 87%" : "height: 86%";
+    result = $q.screen.xs || $q.screen.sm ? 'height: 87%' : 'height: 86%';
   } else if (!$q.screen.gt.md) {
-    result = "height:  91%";
+    result = 'height:  91%';
   } else {
-    result = "height: 93%";
+    result = 'height: 93%';
   }
   return result;
 });
 const tableStyle = computed(() => {
-  let result = "";
+  let result = '';
   if (props.blockAttrs.blockData?.length < 8) {
-    result = "height: auto";
+    result = 'height: auto';
   } else if (props.isDialogTable) {
-    result = "--bodyHeight:88vh";
+    result = '--bodyHeight:88vh';
   } else {
     result = `--tab-height:${props.tabHeight}`;
   }
@@ -693,11 +683,11 @@ interface tableButtonsType {
   status: string;
 }
 function handleClickOption(btn: tableButtonsType, data?: tempDataType) {
-  console.log("handleClickOption", btn, data, selected.value);
-  if (btn.status === "updateMany") {
-    emit("handleBlock", btn, selected.value);
+  console.log('handleClickOption', btn, data, selected.value);
+  if (btn.status === 'updateMany') {
+    emit('handleBlock', btn, selected.value);
   } else {
-    emit("handleBlock", btn, data);
+    emit('handleBlock', btn, data);
   }
 }
 // 表格
@@ -711,7 +701,7 @@ const pagesNumber = computed(() =>
 );
 
 const pagination = ref({
-  filters: "",
+  filters: '',
   page: 1,
   rowsPerPage: 25,
   rowsNumber: blockAttrs.value.totalNum,
@@ -730,7 +720,7 @@ function changeBlockData({
   filters,
   rowsPerPage,
   page,
-}: blockRefType["pagination"]) {
+}: blockRefType['pagination']) {
   pagination.value = {
     filters,
     rowsPerPage,
@@ -739,7 +729,7 @@ function changeBlockData({
   };
 
   loading.value = true;
-  emit("changeBlockData", pagination.value);
+  emit('changeBlockData', pagination.value);
   setTimeout(() => {
     if (loading.value) loading.value = false;
   }, 5000);
@@ -763,7 +753,7 @@ onMounted(() => {
 
 const selected = ref([]);
 function handleTableSelected() {
-  emit("handleSelectArray", selected.value);
+  emit('handleSelectArray', selected.value);
 }
 function resetSelect() {
   selected.value = [];
@@ -773,54 +763,54 @@ function resetSelect() {
 // 按鈕
 const headerButtonsData = ref([
   {
-    label: "匯入檔案",
+    label: '匯入檔案',
     icon: fasFileImport,
-    status: "importExcel",
+    status: 'importExcel',
     isShow: true,
   },
   {
-    label: "匯出檔案",
+    label: '匯出檔案',
     icon: fasFileExport,
-    status: "exportExcel",
+    status: 'exportExcel',
     isShow: true,
   },
   {
-    label: "新增資料",
-    icon: "add",
-    status: "add",
+    label: '新增資料',
+    icon: 'add',
+    status: 'add',
     isShow: true,
   },
   {
-    label: "多筆編輯",
-    icon: "edit",
-    status: "updateMany",
+    label: '多筆編輯',
+    icon: 'edit',
+    status: 'updateMany',
     isShow: true,
   },
   {
-    label: "多筆刪除",
-    icon: "delete",
-    status: "deleteMany",
+    label: '多筆刪除',
+    icon: 'delete',
+    status: 'deleteMany',
     isShow: true,
   },
 ]);
 
 const tableButtonsData = ref([
   {
-    label: "檔案上傳",
-    icon: "upload",
-    status: "upload",
+    label: '檔案上傳',
+    icon: 'upload',
+    status: 'upload',
     isShow: true,
   },
   {
-    label: "編輯",
-    icon: "edit",
-    status: "edit",
+    label: '編輯',
+    icon: 'edit',
+    status: 'edit',
     isShow: true,
   },
   {
-    label: "刪除",
-    icon: "delete",
-    status: "delete",
+    label: '刪除',
+    icon: 'delete',
+    status: 'delete',
     isShow: true,
   },
 ]);
@@ -857,11 +847,11 @@ interface tableCol {
 }
 function openDialog(col: tableCol) {
   const { value: data, label: configLabel, linkUrl, config } = col;
-  console.log("openDialog", data, configLabel);
+  console.log('openDialog', data, configLabel);
   linkDialogVisible.value = true;
   dialogConfig.value = config;
   data.configLabel = configLabel;
-  if (linkUrl === "onlyOpen") {
+  if (linkUrl === 'onlyOpen') {
     data.onlyOpen = true;
   } else {
     data.linkUrl = linkUrl;
@@ -889,7 +879,7 @@ function disablePast(pastDate: string) {
   if (!isNaN(parsedDate)) {
     return new Date(parsedDate);
   }
-  return new Date("1990/01/01");
+  return new Date('1990/01/01');
 }
 </script>
 

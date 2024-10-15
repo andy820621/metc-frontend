@@ -35,7 +35,7 @@ module.exports = configure(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['global-registration', 'router-navigation', 'axios'],
+    boot: ['global-registration', 'axios'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
     css: ['app.scss'],
@@ -157,13 +157,13 @@ module.exports = configure(function (ctx) {
     },
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
-      // https: true,
-      https: {
-        // quasar 官方提供: https://nodejs.org/api/https.html#https_https_createserver_options_requestlistener
-        // mkcert 安裝: https://medium.com/easons-murmuring/%E4%BD%BF%E7%94%A8-mkcert-%E5%9C%A8%E6%9C%AC%E5%9C%B0%E7%AB%AF%E5%AF%A6%E7%8F%BE-https-%E4%BB%A5-node-js-nuxt-js-vue-cli-%E5%8F%8A-create-react-app-%E7%82%BA%E4%BE%8B-dafcb72ff835
-        key: fs.readFileSync('./SSL/mkcert/localhost-key.pem', 'utf8'),
-        cert: fs.readFileSync('./SSL/mkcert/localhost.pem', 'utf8'),
-      },
+      https: true,
+      // https: {
+      //   // quasar 官方提供: https://nodejs.org/api/https.html#https_https_createserver_options_requestlistener
+      //   // mkcert 安裝: https://medium.com/easons-murmuring/%E4%BD%BF%E7%94%A8-mkcert-%E5%9C%A8%E6%9C%AC%E5%9C%B0%E7%AB%AF%E5%AF%A6%E7%8F%BE-https-%E4%BB%A5-node-js-nuxt-js-vue-cli-%E5%8F%8A-create-react-app-%E7%82%BA%E4%BE%8B-dafcb72ff835
+      //   key: fs.readFileSync('./SSL/mkcert/localhost-key.pem', 'utf8'),
+      //   cert: fs.readFileSync('./SSL/mkcert/localhost.pem', 'utf8'),
+      // },
       open: true, // opens browser window automatically
       port: ctx.mode.spa ? 5000 : ctx.mode.pwa ? 9000 : 9090,
       proxy: {

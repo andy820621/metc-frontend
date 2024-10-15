@@ -219,49 +219,31 @@
 
 <script setup lang="ts">
 // konva
-import Konva from "konva";
+import Konva from 'konva';
 // quasar
-import { date } from "quasar";
-import { useResizeObserver } from "@vueuse/core";
-// API
-import emergencyMission, { postMissionParams } from "src/api/emergencyMission";
-import Role, { roleType } from "src/api/role";
-import System, { systemType } from "src/api/system";
-import DeviceControl from "src/api/deviceControl";
-import Device from "src/api/device";
-import Floors from "src/api/floors";
+import { date } from 'quasar';
+import { useResizeObserver } from '@vueuse/core';
 
 // types
 import {
   fatek03Control,
   useDeviceAddressStore,
-} from "src/stores/deviceAddress";
-import type {
-  DeviceAddressViewModel,
-  DeviceStatusViewModel,
-  DeviceStatus,
-} from "src/api/device";
+} from 'src/stores/deviceAddress';
 // websocket signalR
-import { useSignalRStore } from "src/stores/signalR";
-import { storeToRefs } from "pinia";
-// utils
-import { tempDataType } from "src/api/api.type";
+import { storeToRefs } from 'pinia';
 
 const deviceAddressStore = useDeviceAddressStore();
 const { nohmi03, fatek03, amsamotion02, mitsubishi } =
   storeToRefs(deviceAddressStore);
-const signalRStore = useSignalRStore();
-const { processRunning, initialDetector, triggerTime } =
-  storeToRefs(signalRStore);
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = inject('$q') as typeof QVueGlobals;
 
 // 選擇設備
 const deviceFilter = inject<Ref<number | string>>(
-  "deviceFilter",
-  ref("not provided")
+  'deviceFilter',
+  ref('not provided')
 );
 
-if (deviceFilter && deviceFilter.value !== "not provided") {
+if (deviceFilter && deviceFilter.value !== 'not provided') {
   watch(
     () => deviceFilter.value,
     () => {
@@ -288,12 +270,12 @@ const isCctv = ref(false);
 const deviceData: Konva.NodeConfig = ref({});
 const positionNodeConfig: Konva.NodeConfig = ref({});
 function deviceDataOpen(data: Konva.NodeConfig) {
-  console.log("deviceDataOpen", data);
+  console.log('deviceDataOpen', data);
   deviceData.value = positionNodeConfig.value = data;
   deviceControlOptions.value =
     deviceData.value.control?.flatMap(
       (item: {
-        deviceStatuses: tempDataType[];
+        deviceStatuses: any[];
         deviceAddress: { address: number; number: number; system: string };
       }) => {
         return item.deviceStatuses.map((status) => {
@@ -307,10 +289,10 @@ function deviceDataOpen(data: Konva.NodeConfig) {
     ) || [];
 
   dialogMissionContent.value =
-    deviceData.value.name + " 設備出現異常，請前往確認";
+    deviceData.value.name + ' 設備出現異常，請前往確認';
 
   nextTick(selectAndChangeIconColor);
-  if (deviceData.value.iconId === "fire_o3") {
+  if (deviceData.value.iconId === 'fire_o3') {
     // 監視攝影機
     isCctv.value = true;
   } else {
@@ -324,9 +306,9 @@ watch(isCctv, (newVal) => {
   }
 });
 async function handleClickDeviceBtn(
-  btn: DeviceStatus,
-  deviceAddress: DeviceAddressViewModel,
-  deviceData: tempDataType
+  btn: any,
+  deviceAddress: any,
+  deviceData: any
 ) {
   if (deviceData.value === btn.name) return;
   deviceData.value = btn.name;
@@ -359,30 +341,17 @@ async function handleClickDeviceBtn(
     controlArray[7] = btn.value;
   }
   if (controlArray.length > 0) {
-    const result = await DeviceControl.apiDeviceControl(
-      deviceData.gateway,
-      deviceData.deviceId,
-      controlArray
-    );
-    if (result.data.length && result.data[0].isSuccess) {
-      $q.notify({
-        type: "positive",
-        message: "發送成功",
-        position: "top",
-      });
-      dialogClose();
-    } else {
-      $q.notify({
-        type: "negative",
-        message: "發送失敗",
-        position: "top",
-      });
-    }
+    $q.notify({
+      type: 'positive',
+      message: '發送成功',
+      position: 'top',
+    });
+    dialogClose();
   } else {
     $q.notify({
-      type: "warning",
-      message: "尚未取得設備點位完整資料，請稍等片刻再重新嘗試",
-      position: "top",
+      type: 'warning',
+      message: '尚未取得設備點位完整資料，請稍等片刻再重新嘗試',
+      position: 'top',
     });
   }
 }
@@ -400,13 +369,13 @@ function filterFunc<T = object>(
   update: (func: () => void) => void,
   refOptions: Ref<T[]>,
   options: T[],
-  optionLabelKey = "name"
+  optionLabelKey = 'name'
 ) {
   update(() => {
-    console.log("now val", val);
-    console.log("now refOptions", refOptions);
-    console.log("now options", options);
-    console.log("now optionLabelKey", optionLabelKey);
+    console.log('now val', val);
+    console.log('now refOptions', refOptions);
+    console.log('now options', options);
+    console.log('now optionLabelKey', optionLabelKey);
     const needle = val.toLocaleLowerCase();
     refOptions.value = options.filter((option) =>
       (option[optionLabelKey as keyof typeof option] as string)
@@ -428,15 +397,15 @@ const classData: ClassOption[] = [];
 const classOptions = ref<ClassOption[]>([]);
 
 onMounted(async () => {
-  const result = (await Role.apiGetRoles([
-    { type: roleType.class, isEmergency: null },
-  ])) as typeof AxiosResponse;
-  if (result.data) {
-    classData.length = 0;
-    classData.push(...result.data);
-    classOptions.value = classData;
-    console.log("now classData", classData);
-  }
+  // const result = (await Role.apiGetRoles([
+  //   { type: roleType.class, isEmergency: null },
+  // ])) as typeof AxiosResponse;
+  // if (result.data) {
+  //   classData.length = 0;
+  //   classData.push(...result.data);
+  //   classOptions.value = classData;
+  //   console.log('now classData', classData);
+  // }
 });
 function classSelectFilterFunc(
   val: string,
@@ -446,8 +415,8 @@ function classSelectFilterFunc(
 }
 
 // 任務內容 Dialog Select 下拉
-const dialogClassName = ref("");
-const dialogMissionContent = ref("");
+const dialogClassName = ref('');
+const dialogMissionContent = ref('');
 const dialogClassNameSelect = ref();
 const dialogMissionContentSelect = ref();
 function dialogClassNameSelectUpdateFunc() {
@@ -461,60 +430,36 @@ const lazyTexts: optionItem[] = [];
 const missionLazyTextOptions = ref();
 
 onMounted(async () => {
-  const result = (await System.apiGetSystemItem(
-    systemType.EmergencyNotice
-  )) as typeof AxiosResponse;
-  if (result.data) {
-    lazyTexts.length = 0;
-    lazyTexts.push(...result.data);
-    missionLazyTextOptions.value = lazyTexts;
-  }
+  // const result = (await System.apiGetSystemItem(
+  //   systemType.EmergencyNotice
+  // )) as typeof AxiosResponse;
+  // if (result.data) {
+  //   lazyTexts.length = 0;
+  //   lazyTexts.push(...result.data);
+  //   missionLazyTextOptions.value = lazyTexts;
+  // }
 });
 
 // 發布任務方法
 async function handlePostMission() {
-  const roleName = classData.find(
-    (data) => data.description === dialogClassName.value
-  )?.name;
-
-  if (roleName) {
-    const params: postMissionParams = {
-      roleName,
-      deviceId: deviceData.value.deviceId,
-      content: dialogMissionContent.value,
-    };
-    // 打 api 發布
-    const result = (await emergencyMission.apiPostMission(
-      params
-    )) as typeof AxiosResponse;
-    if (result.data) {
-      $q.notify({
-        type: "positive",
-        message: "發布任務成功",
-        position: "top",
-      });
-      dialogClose();
-    } else {
-      $q.notify({
-        type: "negative",
-        message: "發布任務失敗",
-        position: "top",
-      });
-    }
-  }
+  $q.notify({
+    type: 'positive',
+    message: 'handlePostMission',
+    position: 'top',
+  });
 }
 function dialogClose() {
   deviceData.value = null;
   isDeviceDataOpen.value = false;
-  dialogClassName.value = "";
+  dialogClassName.value = '';
   nextTick(selectAndChangeIconColor);
 }
 
 // iconImage，選擇後變為藍色，反之變回原色
-function selectAndChangeIconColor(defaultColor = "#bdbbbb") {
-  let clickColor = "";
+function selectAndChangeIconColor(defaultColor = '#bdbbbb') {
+  let clickColor = '';
   const originColor = defaultColor;
-  const activeIconColor = "#2088e8"; // 藍
+  const activeIconColor = '#2088e8'; // 藍
   iconImageConfigs.forEach((config) => {
     const selectedNode = deviceData.value;
     if (config.id === selectedNode?.id) {
@@ -600,66 +545,6 @@ interface connectArrayType {
   label: string;
   id: string;
 }
-// 觸發探測器時顯示危害時間，有起火層才要顯示避難時間
-watch(processRunning, (newValue) => {
-  if (newValue) {
-    nextTick(() => {
-      countDown();
-      animate();
-    });
-  }
-});
-
-function countDown() {
-  const graphicLayerNode = graphicLayer.value?.getNode().getChildren();
-
-  const resultNode = graphicLayerNode?.find(
-    (item) => item.attrs?.deviceData?.deviceId === initialDetector.value?.id
-  );
-  if (resultNode) triggerDeviceNode.value = resultNode;
-  console.log("triggerDeviceNode", triggerDeviceNode);
-
-  if (triggerDeviceNode.value) {
-    const triggerConnectArray: Konva.NodeConfig[] = []; // 關聯陣列
-
-    triggerConnectArray.push(triggerDeviceNode.value?.attrs.connectArray);
-
-    const hazardTimeNodeArr: Konva.Node[] = [];
-    let connectCctvData = null;
-    // 取得 危害時間 Node
-    if (triggerConnectArray.length > 0) {
-      triggerConnectArray.forEach((connectArray) => {
-        connectArray.forEach((item: connectArrayType) => {
-          const result = graphicLayerNode?.find(
-            (node: Konva.Node) => node.attrs.id === item.id
-          );
-          if (result?.attrs.deviceData?.iconId === "fire_o3") {
-            connectCctvData = result?.attrs.deviceData;
-          }
-
-          if (result?.attrs.hazardTime && !hazardTimeNodeArr.includes(result)) {
-            hazardTimeNodeArr.push(result);
-          }
-        });
-      });
-    }
-
-    hazardTimeNodeArr.forEach((node) => {
-      const hazardTime = date.addToDate(triggerTime.value, {
-        seconds: node.attrs.hazardTime,
-      });
-      node.setAttrs({
-        text: `預估 ${date.formatDate(
-          hazardTime,
-          "HH:mm"
-        )} 造成人體危害，請盡快撤離`, // 格式化過的時間
-      });
-    });
-    showFireImage();
-    // 觸發探測器關聯的cctv
-    if (connectCctvData) deviceDataOpen(connectCctvData);
-  }
-}
 
 // 探測器為火災時換成火災圖片
 async function showFireImage() {
@@ -668,24 +553,24 @@ async function showFireImage() {
       config.deviceData?.deviceId ===
       triggerDeviceNode.value?.attrs.deviceData?.deviceId
     ) {
-      config.data = await loadSvg("/svgIcons/fire_fs.svg#fire_fs");
+      config.data = await loadSvg('/svgIcons/fire_fs.svg#fire_fs');
     }
   });
 }
 async function loadSvg(url: string) {
   const svgString = await fetch(url).then((res) => res.text());
   const parser = new DOMParser();
-  const doc = parser.parseFromString(svgString, "image/svg+xml");
-  const pathArray = doc.querySelectorAll("path");
+  const doc = parser.parseFromString(svgString, 'image/svg+xml');
+  const pathArray = doc.querySelectorAll('path');
   let data;
   if (pathArray.length > 1) {
     const dArray: string[] = [];
     pathArray.forEach((path) => {
-      dArray.push(path.getAttribute("d") as string);
+      dArray.push(path.getAttribute('d') as string);
     });
-    data = dArray.join(" ");
+    data = dArray.join(' ');
   } else {
-    data = pathArray[0]?.getAttribute("d") as string;
+    data = pathArray[0]?.getAttribute('d') as string;
   }
   return data;
 }
@@ -706,7 +591,7 @@ const initialStageSize = {
 const stageConfig = reactive<Konva.ShapeConfig>({
   width: initialStageSize.width,
   height: initialStageSize.height,
-  fill: "white",
+  fill: 'white',
   scale: { x: 1, y: 1 },
   draggable: true,
   x: 0,
@@ -722,7 +607,7 @@ const bgImageConfig = ref<{
 }>({
   width: initialStageSize.width,
   height: initialStageSize.height,
-  name: "background",
+  name: 'background',
   scaleX: 1,
   scaleY: 1,
 });
@@ -768,7 +653,7 @@ defineExpose({
   loadBackgroundImage,
   setStageSize,
   loadShapeFromJson,
-  getFloorGraphicJson,
+  // getFloorGraphicJson,
   canvasContainer,
   canvasObserver,
   resetCanvas,
@@ -806,21 +691,21 @@ function loadBackgroundImage(imageUrl: string) {
       height,
       scaleX: scale,
       scaleY: scale,
-      name: "background",
+      name: 'background',
     };
   };
 }
 function loadShapeFromJson(json: string) {
   JSON.parse(json).children[1].children.forEach((shape: Konva.Shape) => {
     shape.attrs.draggable = false;
-    if (shape.className === "Rect") {
+    if (shape.className === 'Rect') {
       shape.attrs.visible = false;
       rectangleConfigs.push(shape.attrs);
-    } else if (shape.className === "Text") textConfigs.push(shape.attrs);
-    else if (shape.className === "Line") {
+    } else if (shape.className === 'Text') textConfigs.push(shape.attrs);
+    else if (shape.className === 'Line') {
       shape.attrs.visible = false;
       polygonConfigs.push(shape.attrs);
-    } else if (shape.className === "Path") {
+    } else if (shape.className === 'Path') {
       iconImageConfigs.push(shape.attrs);
     }
   });
@@ -828,28 +713,24 @@ function loadShapeFromJson(json: string) {
   allDeviceAddressDataFormat();
   nextTick(() => {
     selectAndChangeIconColor();
-    getDeviceStatus();
-    if (processRunning.value) {
-      countDown();
-      animate();
-    }
+    // getDeviceStatus();
   });
 }
-async function getFloorGraphicJson(floorId: number) {
-  const result = (await Floors.apiGetFloorGraphicFile(
-    floorId
-  )) as typeof AxiosResponse;
-  if (result.data) {
-    const decodedData = atob(result.data);
-    // 將二進制數據轉換成UTF-8編碼的字串
-    const jsonData = new TextDecoder().decode(
-      new Uint8Array([...decodedData].map((char) => char.charCodeAt(0)))
-    );
-    return jsonData;
-  } else {
-    return "";
-  }
-}
+// async function getFloorGraphicJson(floorId: number) {
+//   const result = (await Floors.apiGetFloorGraphicFile(
+//     floorId
+//   )) as typeof AxiosResponse;
+//   if (result.data) {
+//     const decodedData = atob(result.data);
+//     // 將二進制數據轉換成UTF-8編碼的字串
+//     const jsonData = new TextDecoder().decode(
+//       new Uint8Array([...decodedData].map((char) => char.charCodeAt(0)))
+//     );
+//     return jsonData;
+//   } else {
+//     return '';
+//   }
+// }
 // 將設備點位資料轉成 Object
 const allAddressDataObj: { [key: string]: any } = {};
 
@@ -857,7 +738,7 @@ const allAddressDataObj: { [key: string]: any } = {};
 watch(
   nohmi03,
   (newValue) => {
-    console.log("nohmi03 Canvas", newValue);
+    console.log('nohmi03 Canvas', newValue);
     if (newValue) {
       const addressArr = Object.keys(newValue.points);
       addressArr.forEach((item) => {
@@ -880,7 +761,7 @@ watch(
 watch(
   fatek03,
   (newValue) => {
-    console.log("fatek03 canvas", newValue);
+    console.log('fatek03 canvas', newValue);
     if (newValue) {
       const addressArr = Object.keys(newValue.points);
       addressArr.forEach((item) => {
@@ -903,7 +784,7 @@ watch(
 watch(
   amsamotion02,
   (newValue) => {
-    console.log("amsamotion02 canvas", newValue);
+    console.log('amsamotion02 canvas', newValue);
     if (newValue) {
       const addressArr = Object.keys(newValue.points);
       addressArr.forEach((item) => {
@@ -1030,12 +911,12 @@ function hoverCursorPointer() {
   const stageNode = stage.value?.getNode() as Konva.Stage;
   const graphicLayerNode = graphicLayer.value?.getNode() as Konva.Layer;
   graphicLayerNode.getChildren().forEach((item) => {
-    if (item.getClassName() === "Path") {
-      item.on("mouseenter", () => {
-        stageNode.container().style.cursor = "pointer";
+    if (item.getClassName() === 'Path') {
+      item.on('mouseenter', () => {
+        stageNode.container().style.cursor = 'pointer';
       });
-      item.on("mouseleave", () => {
-        stageNode.container().style.cursor = "default";
+      item.on('mouseleave', () => {
+        stageNode.container().style.cursor = 'default';
       });
     }
   });
@@ -1071,8 +952,8 @@ function animate() {
               repeat: Infinity,
             });
 
-            blockNode.setAttr("tween", tween);
-            blockNode.getAttr("tween").play();
+            blockNode.setAttr('tween', tween);
+            blockNode.getAttr('tween').play();
           }
         });
       });
@@ -1083,19 +964,19 @@ function animate() {
           const tween = new Konva.Tween({
             node: iconNode,
             duration: 1,
-            fill: "#e31717",
+            fill: '#e31717',
             yoyo: true,
             repeat: Infinity,
           });
 
-          iconNode.setAttr("tween", tween);
-          iconNode.getAttr("tween").play();
+          iconNode.setAttr('tween', tween);
+          iconNode.getAttr('tween').play();
         }
       });
     }
     // 緊急應變時改變圖片大小並置中到起始點點位位置
     canvasObserver.stop();
-    if (triggerDeviceNode) {
+    if (triggerDeviceNode.value) {
       setEmergencyStartView(triggerDeviceNode.value?.attrs.id);
     }
   });
@@ -1109,27 +990,27 @@ function closeAnimate() {
       const rectNode = layerNode?.findOne(`#${config.id}`) as
         | Konva.Rect
         | Konva.Line;
-      if (rectNode?.getAttr("tween")) rectNode?.getAttr("tween").reset();
+      if (rectNode?.getAttr('tween')) rectNode?.getAttr('tween').reset();
     });
   });
 
   iconImageConfigs.forEach((config) => {
     const iconNode = layerNode?.findOne(`#${config.id}`) as Konva.Path;
-    if (iconNode?.getAttr("tween")) iconNode?.getAttr("tween").reset();
+    if (iconNode?.getAttr('tween')) iconNode?.getAttr('tween').reset();
   });
 }
 // 設備狀態為開時變色
 function deviceStatusTrigger() {
   iconImageConfigs.forEach((config) => {
     if (
-      config.deviceData.iconId !== "fire_a2" &&
-      config.deviceData.iconId !== "fire_p7" &&
-      config.deviceData.iconId !== "fire_o3"
+      config.deviceData.iconId !== 'fire_a2' &&
+      config.deviceData.iconId !== 'fire_p7' &&
+      config.deviceData.iconId !== 'fire_o3'
     ) {
       const layerNode = graphicLayer.value?.getNode();
       const iconNode = layerNode?.findOne(`#${config.id}`) as Konva.Path;
       config.deviceData.addressData?.forEach((item: { status: string }) => {
-        if (item.status === "開" && !iconNode?.getAttr("tween")) {
+        if (item.status === '開' && !iconNode?.getAttr('tween')) {
           const tween = new Konva.Tween({
             node: iconNode,
             duration: 1,
@@ -1137,10 +1018,10 @@ function deviceStatusTrigger() {
             yoyo: true,
             repeat: Infinity,
           });
-          iconNode.setAttr("tween", tween);
-          iconNode.getAttr("tween").play();
-        } else if (item.status === "關" && iconNode?.getAttr("tween")) {
-          iconNode?.getAttr("tween")?.reset();
+          iconNode.setAttr('tween', tween);
+          iconNode.getAttr('tween').play();
+        } else if (item.status === '關' && iconNode?.getAttr('tween')) {
+          iconNode?.getAttr('tween')?.reset();
         }
       });
     }
@@ -1157,50 +1038,12 @@ function clearCanvas() {
   polygonConfigs.length = 0;
   iconImageConfigs.length = 0;
 }
-// 取得設備初始狀態
-async function getDeviceStatus() {
-  iconImageConfigs.forEach(async (item) => {
-    const result = (await Device.apiGetDeviceStatus(
-      item.deviceData.deviceId
-    )) as typeof AxiosResponse;
-    result.data.forEach((status: any) => {
-      const { value, deviceAddress } = status;
-      const { system, address, number, master } = deviceAddress;
-      if (!master) return;
-      const { driver } = master.deviceType as { driver: string };
-      const addressStr = address
-        ? `${system}-${address}-${number}`
-        : `${system}-${number}`;
-      const trueValue = value === "False" ? "關" : "開";
-
-      allAddressDataObj[driver][addressStr].status = trueValue;
-
-      // 附值給 fatek、amsamotion、mitsubishi
-      if (driver === "fatek" && allAddressDataObj.fatek[addressStr]) {
-        if (fatek03.value) fatek03.value.points[addressStr] = trueValue;
-      } else if (
-        driver === "amsamotion" &&
-        allAddressDataObj.amsamotion[addressStr] &&
-        amsamotion02.value
-      ) {
-        amsamotion02.value.points[addressStr] = trueValue;
-      } else if (
-        driver === "mitsubishi" &&
-        allAddressDataObj.mitsubishi[addressStr] &&
-        mitsubishi.value
-      ) {
-        mitsubishi.value.points[addressStr] = trueValue;
-      }
-    });
-    console.log("getDeviceStatus", result.data);
-  });
-}
 
 // 移動端 Zoom
 Konva.hitOnDragEnabled = true; // 在拖動時啟用點擊檢測(出於性能原因，默認情況下是 false)
 interface FingerTouch {
-  x: globalThis.Touch["clientX"];
-  y: globalThis.Touch["clientY"];
+  x: globalThis.Touch['clientX'];
+  y: globalThis.Touch['clientY'];
 }
 function getDistance(p1: FingerTouch, p2: FingerTouch) {
   return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
@@ -1218,7 +1061,7 @@ onMounted(() => {
 
   const konvaStage = stage.value?.getStage();
   if (konvaStage) {
-    konvaStage.on("touchmove", (e) => {
+    konvaStage.on('touchmove', (e) => {
       e.evt.preventDefault();
       const touch1 = e.evt.touches[0];
       const touch2 = e.evt.touches[1];
@@ -1280,7 +1123,7 @@ onMounted(() => {
       }
     });
 
-    konvaStage.on("touchend", () => {
+    konvaStage.on('touchend', () => {
       lastDist = 0;
       lastCenter = null;
     });

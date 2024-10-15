@@ -11,7 +11,6 @@ import { storeToRefs } from 'pinia';
 import { useEventListener } from '@vueuse/core';
 import { openMultipleMonitors } from './utils/openMultipleMonitors';
 import PullToRefresh from 'pulltorefreshjs';
-import { initBeep } from './utils/beep';
 
 const $q = useQuasar();
 provide('$q', $q);
@@ -62,8 +61,6 @@ window.addEventListener('storage', (event) => {
     }, 2000);
   }
 });
-
-onMounted(initBeep); // TODO: 展覽先關掉詢問，之後看有沒有更好的做法
 </script>
 
 <style lang="scss">

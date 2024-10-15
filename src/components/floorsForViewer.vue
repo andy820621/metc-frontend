@@ -48,27 +48,21 @@
   </q-scroll-area>
 </template>
 <script setup lang="ts">
-// api
-import { FloorViewModel } from "src/api/floors";
 // pinia
-import { storeToRefs } from "pinia";
-import { useBuildingStore } from "src/stores/building.js";
-import { TriggeredDeviceData, useSignalRStore } from "src/stores/signalR";
+import { storeToRefs } from 'pinia';
+import { useBuildingStore } from 'src/stores/building.js';
 // utils
-import fileRead from "src/utils/fileRead";
-import { formatFloorsData } from "src/utils/formatUtils";
-import { getFloorsData } from "src/utils/getFloorsData";
-
-const signalRStore = useSignalRStore();
-const { triggeredDevices, initialDetector } = storeToRefs(signalRStore);
+import fileRead from 'src/utils/fileRead';
+import { formatFloorsData } from 'src/utils/formatUtils';
+import { getFloorsData } from 'src/utils/getFloorsData';
 
 const buildingStore = useBuildingStore();
 const { Bid } = storeToRefs(buildingStore);
 
 const { getFile } = fileRead();
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = inject('$q') as typeof QVueGlobals;
 
-const emit = defineEmits(["handleSelect"]);
+const emit = defineEmits(['handleSelect']);
 
 const props = withDefaults(
   defineProps<{
@@ -78,46 +72,46 @@ const props = withDefaults(
 );
 
 // 斷面圖樓層
-watch(
-  initialDetector,
-  (val) => {
-    if (val && Bid.value) {
-      if (val.building.id !== Bid.value) return;
+// watch(
+//   initialDetector,
+//   (val) => {
+//     if (val && Bid.value) {
+//       if (val.building.id !== Bid.value) return;
 
-      fireFloor.value = (val as TriggeredDeviceData).floor;
-      handleSelect(fireFloor.value);
-    }
-  },
-  { deep: true }
-);
+//       fireFloor.value = (val as TriggeredDeviceData).floor;
+//       handleSelect(fireFloor.value);
+//     }
+//   },
+//   { deep: true }
+// );
 
 onMounted(() => {
   const testtriggeredDevices = [
     {
       building: { id: Bid.value },
-      floor: "floor1",
+      floor: 'floor1',
       floors: [],
-      location: "",
+      location: '',
       id: 1,
     },
     {
       building: { id: Bid.value },
-      floor: "floor2",
-      floors: ["floor2", "floor3", "floor4"],
-      location: "",
+      floor: 'floor2',
+      floors: ['floor2', 'floor3', 'floor4'],
+      location: '',
       id: 2,
     },
     {
       building: { id: 2 },
-      floor: "floor5",
+      floor: 'floor5',
       floors: [],
-      location: "",
+      location: '',
       id: 3,
     },
   ];
 
   function test(val: typeof testtriggeredDevices) {
-    console.log("nowwwwwwwwwwww test val", val);
+    console.log('nowwwwwwwwwwww test val', val);
 
     const triggeredDevicesFloors = val
       .filter((item) => item.building.id === Bid.value)
@@ -133,53 +127,23 @@ onMounted(() => {
     // // loop sort[] 找到对应的 floorOption[]
     // const correspondingFloorOptions = uniqueSorts.map((sort) =>
     //   floorOptions.find((floor) => floor.sort === sort)
-    // ) as FloorViewModel[];
+    // ) as any[];
 
     return triggeredDevicesFloors;
   }
 
   const result = test(testtriggeredDevices);
 
-  console.log("nowwwwwwwwwwww test", result);
+  console.log('nowwwwwwwwwwww test', result);
 });
 
-watch(
-  triggeredDevices,
-  (val) => {
-    // 產出延燒層
-    if (val && Bid.value) {
-      // 過濾出當前建築的被觸發的延燒探測器，並處理 floors/floor 數據
-      const triggeredDevicesFloors = val
-        .filter((item) => item.building.id === Bid.value)
-        .flatMap((item) =>
-          item.floors && item.floors.length > 0 ? item.floors : [item.floor]
-        );
-
-      // sort 值不重複
-      const uniqueSorts = Array.from(
-        new Set(triggeredDevicesFloors.map((floor) => floor.sort))
-      );
-
-      // loop sort[] 找到对应的 floorOption[]
-      const correspondingFloorOptions = uniqueSorts.map((sort) =>
-        floorOptions.find((floor) => floor.sort === sort)
-      ) as FloorViewModel[];
-      // filter 掉初始探測器樓層然後附值到 spreadFloor
-      spreadFloor.value = correspondingFloorOptions.filter(
-        (item) => item.id !== fireFloor.value?.id
-      );
-    }
-  },
-  { deep: true }
-);
-
-const currentFloor = ref<FloorViewModel>();
-const floorOptions = reactive<FloorViewModel[]>([]);
+const currentFloor = ref<any>();
+const floorOptions = reactive<any[]>([]);
 const formattedFloorOptions = computed(() => formatFloorsData(floorOptions));
 watch(
   formattedFloorOptions,
   (val) => {
-    console.log("now formattedFloorOptions", val);
+    console.log('now formattedFloorOptions', val);
   },
   {
     immediate: true,
@@ -192,57 +156,31 @@ const fireFloor = ref();
 //   id: 443,
 // }
 // 警示層
-const alertFloor = ref<FloorViewModel[]>([]);
+const alertFloor = ref<any[]>([]);
 // 擴散層
-const spreadFloor = ref<FloorViewModel[]>([]);
+const spreadFloor = ref<any[]>([]);
 async function getAllFloors() {
+  console.log('getAllFloors');
   if (Bid.value) {
-    floorOptions.length = 0;
-    const floorResult = await getFloorsData(Bid.value);
-    floorOptions.push(...floorResult);
-    floorOptions.reverse();
-    console.log("now floorOptions", floorOptions);
-    if (floorOptions.length > 0) {
-      if (
-        initialDetector.value &&
-        initialDetector.value.building.id === Bid.value
-      ) {
-        const { sort } = initialDetector.value.floor;
-        if (sort) {
-          currentFloor.value = fireFloor.value = floorOptions.find(
-            (floor) => floor.sort === sort
-          ) as FloorViewModel;
-        }
-      } else {
-        currentFloor.value = floorOptions.find(
-          (item) => item.sort === 1
-        ) as FloorViewModel;
-      }
-      const floorZIndex: number[] = floorOptions
-        .map((i, index) => index)
-        .reverse();
-      floorOptions.forEach((item, index) => {
-        item.floorZIndex = floorZIndex[index];
-      });
-    }
+    console.log('getAllFloors Bid.value', Bid.value);
   }
 }
-async function handleSelect(floorData: FloorViewModel) {
+async function handleSelect(floorData: any) {
   await getFloorImage(floorData);
   scrollToFloor(floorData);
 }
-async function getFloorImage(floorData: FloorViewModel) {
+async function getFloorImage(floorData: any) {
   if (floorData) currentFloor.value = floorData;
 
   if (floorData?.floorPlanFileId) {
     const imageUrl = await getFile(null, floorData.floorPlanFileId);
-    emit("handleSelect", currentFloor.value, imageUrl);
+    emit('handleSelect', currentFloor.value, imageUrl);
   } else {
-    emit("handleSelect", currentFloor.value);
+    emit('handleSelect', currentFloor.value);
     $q.notify({
-      type: "negative",
-      message: "該樓層尚無平面圖",
-      position: "top",
+      type: 'negative',
+      message: '該樓層尚無平面圖',
+      position: 'top',
     });
   }
 }
@@ -263,14 +201,14 @@ watch(
 function findFloorIndex(targetFloorSort: number) {
   const nowFloorSort = targetFloorSort;
   const nowFloorIndex = formattedFloorOptions.value.findIndex(
-    (formattedFloorOption) =>
+    (formattedFloorOption: any) =>
       formattedFloorOption.floorZindex ===
       nowFloorSort * 2 + (formattedFloorOption.lastObjZindex as number)
   );
   return nowFloorIndex;
 }
 // 獲取滾動樓層資訊 & 滾動到樓層
-function scrollToFloor(floor: FloorViewModel) {
+function scrollToFloor(floor: any) {
   const { height } = floorDiv.value.getBoundingClientRect();
   const floorCount = formattedFloorOptions.value.length;
   const floorHeight = height / floorCount;
@@ -279,7 +217,7 @@ function scrollToFloor(floor: FloorViewModel) {
     targetFloorIndex * floorHeight - props.canvasContainerHeight / 2;
 
   nextTick(() => {
-    scrollAreaRef.value.setScrollPosition("vertical", scrollDelta, 400);
+    scrollAreaRef.value.setScrollPosition('vertical', scrollDelta, 400);
   });
 
   // TODO: 確認上二下一警示是否還需要

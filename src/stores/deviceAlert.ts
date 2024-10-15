@@ -1,28 +1,13 @@
-import { defineStore } from "pinia";
-import { date, Notify } from "quasar";
-import DeviceNotify, {
-  DeviceNotifyViewModel,
-  FormattedNotifyResults,
-  NotifyResultViewModel,
-  alertBtnOptions,
-} from "src/api/deviceNotify";
+import { defineStore } from 'pinia';
+import { date, Notify } from 'quasar';
 
-interface AlertDeviceData {
-  id: string;
-  label: string;
-  time: string;
-  options: {
-    all: boolean;
-    mail: boolean;
-    message: boolean;
-  };
-  processed: boolean;
-}
+type DeviceNotifyViewModel = any;
+type alertBtnOptions = any;
 
-export const useDeviceAlertStore = defineStore("deviceAlert", () => {
+export const useDeviceAlertStore = defineStore('deviceAlert', () => {
   const deviceAlertModel = ref(false); // 控制設備異常彈窗開關
   const ifAutoShowDeviceAlertDialog = ref(
-    +(localStorage.getItem("ifAutoShowDeviceAlertDialog") || "1")
+    +(localStorage.getItem('ifAutoShowDeviceAlertDialog') || '1')
   ); // 是否允許設備異常永遠自動彈出該視窗?
   const deviceNotify = ref<DeviceNotifyViewModel[]>([
     // {
@@ -261,7 +246,7 @@ export const useDeviceAlertStore = defineStore("deviceAlert", () => {
     return deviceNotify.value.map((item) => {
       item.dateTime = date.formatDate(
         new Date(item.dateTime),
-        "YYYY-MM-DD HH:mm:ss"
+        'YYYY-MM-DD HH:mm:ss'
       );
 
       // format notifyResult
@@ -302,45 +287,46 @@ export const useDeviceAlertStore = defineStore("deviceAlert", () => {
     formattedDeviceNotify.value.filter((item) => item.processed)
   );
 
-  async function getDeviceNotifyData() {
-    const newData = [];
+  // TODO：可刪掉？
+  // async function getDeviceNotifyData() {
+  //   const newData = [];
 
-    // 獲取未處理的設備
-    const processingResult = await DeviceNotify.apiGetData({
-      processed: false,
-      page: 1,
-      rowsPerPage: 0,
-    });
-    if (processingResult.data.rows) newData.push(...processingResult.data.rows);
-    else {
-      Notify.create({
-        type: "negative",
-        message: "獲取未處理的設備資料失敗",
-        position: "top",
-      });
-    }
+  //   // 獲取未處理的設備
+  //   const processingResult = await DeviceNotify.apiGetData({
+  //     processed: false,
+  //     page: 1,
+  //     rowsPerPage: 0,
+  //   });
+  //   if (processingResult.data.rows) newData.push(...processingResult.data.rows);
+  //   else {
+  //     Notify.create({
+  //       type: 'negative',
+  //       message: '獲取未處理的設備資料失敗',
+  //       position: 'top',
+  //     });
+  //   }
 
-    // 獲取已通知的設備
-    const processedResult = await DeviceNotify.apiGetData({
-      processed: true,
-      page: 1,
-      rowsPerPage: 0,
-    });
-    if (processedResult.data.rows) newData.push(...processedResult.data.rows);
-    else {
-      Notify.create({
-        type: "negative",
-        message: "獲取已通知的設備資料失敗",
-        position: "top",
-      });
-    }
+  //   // 獲取已通知的設備
+  //   const processedResult = await DeviceNotify.apiGetData({
+  //     processed: true,
+  //     page: 1,
+  //     rowsPerPage: 0,
+  //   });
+  //   if (processedResult.data.rows) newData.push(...processedResult.data.rows);
+  //   else {
+  //     Notify.create({
+  //       type: 'negative',
+  //       message: '獲取已通知的設備資料失敗',
+  //       position: 'top',
+  //     });
+  //   }
 
-    // 清空舊資料
-    deviceNotify.value.length = 0;
-    if (newData.length) deviceNotify.value.push(...newData);
-  }
+  //   // 清空舊資料
+  //   deviceNotify.value.length = 0;
+  //   if (newData.length) deviceNotify.value.push(...newData);
+  // }
 
-  function groupByDateTime(array: NotifyResultViewModel[]) {
+  function groupByDateTime(array: any[]) {
     // 按 dateTime 排序，早的在前
     const sortedArray = array.sort(
       (a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime()
@@ -349,7 +335,7 @@ export const useDeviceAlertStore = defineStore("deviceAlert", () => {
     return sortedArray.reduce((acc, item) => {
       const key = date.formatDate(
         new Date(item.dateTime),
-        "YYYY-MM-DD HH:mm:ss"
+        'YYYY-MM-DD HH:mm:ss'
       );
       if (!acc[key]) {
         acc[key] = [];
@@ -357,7 +343,7 @@ export const useDeviceAlertStore = defineStore("deviceAlert", () => {
       acc[key].push(item);
 
       return acc;
-    }, {} as FormattedNotifyResults);
+    }, {} as any);
   }
 
   function openDialog() {
@@ -371,7 +357,7 @@ export const useDeviceAlertStore = defineStore("deviceAlert", () => {
     deviceNotifiesLength,
     processingAlertDevice,
     processedAlertDevice,
-    getDeviceNotifyData,
+    // getDeviceNotifyData,
     openDialog,
   };
 });

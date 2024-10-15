@@ -20,9 +20,7 @@
       >
         <q-btn
           v-if="
-            !fireGuide?.guideDialogVisible &&
-            processRunning &&
-            fireGuide?.guideContent?.title
+            !fireGuide?.guideDialogVisible && fireGuide?.guideContent?.title
           "
           :color="
             fireGuide?.guideContent?.ePage === 'noneFire' ||
@@ -148,13 +146,11 @@
       </div>
     </div>
   </q-page>
-  <FireGuide ref="fireGuide" v-if="processRunning" />
 </template>
 
 <script setup lang="ts">
 // components
-import CanvasStage from "./components/CanvasStage.vue";
-import FireGuide from "./components/fireGuide.vue";
+import CanvasStage from './components/CanvasStage.vue';
 
 // icon
 import {
@@ -165,41 +161,35 @@ import {
   // matClose,
   // matArrowRight,
   // matSquare,
-} from "@quasar/extras/material-icons";
-// pinia store
-import { storeToRefs } from "pinia";
-import { useSignalRStore } from "src/stores/signalR";
+} from '@quasar/extras/material-icons';
 // utils
-import { useResizeObserver } from "@vueuse/core";
+import { useResizeObserver } from '@vueuse/core';
 
-const signalRStore = useSignalRStore();
-const { processRunning } = storeToRefs(signalRStore);
-
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = inject('$q') as typeof QVueGlobals;
 const deviceOperatingPower = ref(true);
 const fireGuide = ref();
 // 選擇設備
 const deviceFilter = ref(0);
-provide("deviceFilter", deviceFilter);
+provide('deviceFilter', deviceFilter);
 const deviceFilterOptions = reactive([
   {
-    label: "全選",
+    label: '全選',
     value: 0,
   },
   {
-    label: "消防設備及防火避難設施",
+    label: '消防設備及防火避難設施',
     value: 1,
   },
   {
-    label: "一般設備",
+    label: '一般設備',
     value: 2,
   },
 ]);
 // 圖控查看的控制列
 enum controlListIconLabels {
-  restorePosition = "復原位置",
-  zoomIn = "放大",
-  zoomOut = "縮小",
+  restorePosition = '復原位置',
+  zoomIn = '放大',
+  zoomOut = '縮小',
   // animate = "動畫",
   // animateClose = "關閉動畫",
   // deviceStatusTrigger = "其他設備為觸發狀態",
@@ -243,7 +233,7 @@ useResizeObserver(viewerPageRef, (entries) => {
   const entry = entries[0];
   const { width } = entry.contentRect;
   canvasWidth.value = width - 420;
-  console.log("now canvasWidth.value", canvasWidth.value, width);
+  console.log('now canvasWidth.value', canvasWidth.value, width);
 });
 
 const canvasStage = ref();

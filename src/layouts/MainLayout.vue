@@ -173,14 +173,10 @@
               </q-tab>
             </q-tabs>
           </q-footer>
-          <CenterMsg v-if="isBegin" ref="centerMsgComponent" />
-          <NotificationComponent v-else ref="notificationComponent" />
-          <FamilyStatusComponent ref="familyStatusComponent" />
         </template>
       </q-page>
     </q-page-container>
 
-    <MissionListDialog ref="missionListDialog" v-model="emgMissionVisible" />
     <!-- 提醒事項 -->
     <RemindList v-model="remindListVisible" />
   </q-layout>
@@ -188,23 +184,19 @@
 
 <script setup lang="ts">
 // utils
-import type { QExpansionItem } from "quasar";
+import type { QExpansionItem } from 'quasar';
 // pinia store
-import { storeToRefs } from "pinia";
-import { usePermissionStore } from "src/stores/permission";
+import { storeToRefs } from 'pinia';
+import { usePermissionStore } from 'src/stores/permission';
 // icon
 import {
   mdiAccountDetails,
   mdiFlagVariant,
   mdiAccountMultiple,
   mdiTextBoxEdit,
-} from "@quasar/extras/mdi-v6";
-import { useSignalRStore } from "src/stores/signalR";
-const signalRStore = useSignalRStore();
+} from '@quasar/extras/mdi-v6';
 
-const { isBegin, emergencyMsgVisible, emgMissionVisible } =
-  storeToRefs(signalRStore);
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = inject('$q') as typeof QVueGlobals;
 const router = useRouter();
 
 // 控制選單開合
@@ -216,7 +208,6 @@ const miniState = ref(false);
 const usePermission = usePermissionStore();
 const RouteData = usePermission.sideBarMenuRoutes;
 // 取得目前選單位置
-
 function toggleLeftDrawer() {
   if ($q.screen.xs || $q.screen.sm) {
     leftDrawerShowing.value = !leftDrawerShowing.value;
@@ -240,29 +231,29 @@ function menuMouseLeave() {
 }
 
 const route = useRoute();
-const isInHomePage = computed(() => route.path === "/");
+const isInHomePage = computed(() => route.path === '/');
 
 watch(
   () => route.path,
   (newPath) => {
-    console.log("newPath", newPath);
+    console.log('newPath', newPath);
     handleRoutePathChange(newPath);
   }
 );
 
 const expansionItems = ref<QExpansionItem[]>([]);
-const nowActiveListName = ref("");
+const nowActiveListName = ref('');
 
 function handleRoutePathChange(path: string): void {
-  nowActiveListName.value = path.split("/")[1];
+  nowActiveListName.value = path.split('/')[1];
   expansionItems.value.forEach((expansionItem) => {
     const expansionHeader = expansionItem.$el.childNodes[0].childNodes[0];
     if (expansionItem.labelLines === nowActiveListName.value) {
       expansionItem.show();
-      expansionHeader.classList.add("activeList");
+      expansionHeader.classList.add('activeList');
     } else {
       expansionItem.hide();
-      expansionHeader.classList.remove("activeList");
+      expansionHeader.classList.remove('activeList');
     }
   });
 }
@@ -270,8 +261,8 @@ onMounted(() => {
   if ($q.screen.xs) {
     leftDrawerShowing.value = false;
   } else if (
-    route.path === "/graphic/drawingControl" ||
-    route.path === "/graphic/viewerControl" ||
+    route.path === '/graphic/drawingControl' ||
+    route.path === '/graphic/viewerControl' ||
     $q.screen.sm
   ) {
     miniState.value = true;
@@ -284,66 +275,41 @@ const header = ref();
 const headerHeight = computed(() =>
   header.value ? header.value.$el.getBoundingClientRect().height : 0
 );
-provide("headerHeight", headerHeight);
+provide('headerHeight', headerHeight);
 
 // 手機版導覽
-const mobileNavbarTabs = ref("功能表");
+const mobileNavbarTabs = ref('功能表');
 enum mobileNavbarEnum {
-  familyMemberStatus = "家庭成員",
-  remindLists = "提醒事項",
-  missionLists = "任務列表",
-  notifications = "通知",
-  centerMag = "防災訊息",
-  menu = "功能表",
+  familyMemberStatus = '家庭成員',
+  remindLists = '提醒事項',
+  missionLists = '任務列表',
+  notifications = '通知',
+  centerMag = '防災訊息',
+  menu = '功能表',
 }
 
-const mobileNavbar = computed(() =>
-  isBegin.value
-    ? [
-        {
-          icon: mdiAccountMultiple,
-          label: mobileNavbarEnum.familyMemberStatus,
-        },
-        {
-          icon: mdiTextBoxEdit,
-          label: mobileNavbarEnum.remindLists,
-        },
-        {
-          icon: mdiFlagVariant,
-          label: mobileNavbarEnum.missionLists,
-        },
-        {
-          icon: "notifications",
-          label: mobileNavbarEnum.centerMag,
-        },
-        {
-          icon: mdiAccountDetails,
-          label: mobileNavbarEnum.menu,
-        },
-      ]
-    : [
-        {
-          icon: mdiAccountMultiple,
-          label: mobileNavbarEnum.familyMemberStatus,
-        },
-        {
-          icon: mdiTextBoxEdit,
-          label: mobileNavbarEnum.remindLists,
-        },
-        {
-          icon: mdiFlagVariant,
-          label: mobileNavbarEnum.missionLists,
-        },
-        {
-          icon: "notifications",
-          label: mobileNavbarEnum.notifications,
-        },
-        {
-          icon: mdiAccountDetails,
-          label: mobileNavbarEnum.menu,
-        },
-      ]
-);
+const mobileNavbar = computed(() => [
+  {
+    icon: mdiAccountMultiple,
+    label: mobileNavbarEnum.familyMemberStatus,
+  },
+  {
+    icon: mdiTextBoxEdit,
+    label: mobileNavbarEnum.remindLists,
+  },
+  {
+    icon: mdiFlagVariant,
+    label: mobileNavbarEnum.missionLists,
+  },
+  {
+    icon: 'notifications',
+    label: mobileNavbarEnum.notifications,
+  },
+  {
+    icon: mdiAccountDetails,
+    label: mobileNavbarEnum.menu,
+  },
+]);
 const centerMsgComponent = ref();
 // 通知
 const notificationComponent = ref();
@@ -354,55 +320,43 @@ const missionListDialog = ref();
 const withNewMission = computed(() => missionListDialog.value?.withNewMission);
 // 提醒事項
 const remindListVisible = ref(false);
-provide("remindListVisible", remindListVisible);
+provide('remindListVisible', remindListVisible);
 function mobileMenuChange(label: string) {
   if (label === mobileNavbarEnum.menu) {
-    router.push("/");
+    router.push('/');
     if (
       notificationComponent.value.visible ||
       familyStatusComponent.value.visible ||
-      emgMissionVisible.value ||
       remindListVisible.value
     ) {
       notificationComponent.value.visible = false;
       familyStatusComponent.value.visible = false;
-      emgMissionVisible.value = false;
       remindListVisible.value = false;
     }
   } else if (label === mobileNavbarEnum.centerMag) {
-    emergencyMsgVisible.value = !emergencyMsgVisible.value;
     if (centerMsgComponent.value.visible) {
       notificationComponent.value.visible = false;
       familyStatusComponent.value.visible = false;
-      emgMissionVisible.value = false;
       remindListVisible.value = false;
     }
   } else if (label === mobileNavbarEnum.notifications) {
     notificationComponent.value.handleNotifyDrawer();
     if (notificationComponent.value.visible) {
       familyStatusComponent.value.visible = false;
-      emgMissionVisible.value = false;
       remindListVisible.value = false;
     }
   } else if (label === mobileNavbarEnum.missionLists) {
-    emgMissionVisible.value = !emgMissionVisible.value;
-    if (emgMissionVisible.value && notificationComponent.value) {
-      notificationComponent.value.visible = false;
-      familyStatusComponent.value.visible = false;
-      remindListVisible.value = false;
-    }
+    console.log('todo');
   } else if (label === mobileNavbarEnum.remindLists) {
     remindListVisible.value = !remindListVisible.value;
     if (remindListVisible.value && notificationComponent.value) {
       notificationComponent.value.visible = false;
       familyStatusComponent.value.visible = false;
-      emgMissionVisible.value = false;
     }
   } else if (label === mobileNavbarEnum.familyMemberStatus) {
     familyStatusComponent.value.visible = !familyStatusComponent.value.visible;
     if (familyStatusComponent.value.visible) {
       notificationComponent.value.visible = false;
-      emgMissionVisible.value = false;
       remindListVisible.value = false;
     }
   }
@@ -428,7 +382,7 @@ function showBadge(item: { icon: string; label: mobileNavbarEnum }) {
   background-color: #eee6c9 !important;
   overflow: hidden;
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: 0;

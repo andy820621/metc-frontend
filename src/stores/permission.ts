@@ -1,61 +1,40 @@
-import { defineStore } from "pinia";
-import { AxiosResponse } from "axios";
-import { computed, reactive } from "vue";
-import { sideBarMenuPages, userDropdownOptionsPages } from "./../router/routes";
-import { RouteRecordRaw } from "vue-router";
-import { extend } from "quasar";
-import Role from "src/api/role";
+import { defineStore } from 'pinia';
+import { computed, reactive } from 'vue';
+import routes from '../router/routes';
+import { RouteRecordRaw } from 'vue-router';
 
-export const usePermissionStore = defineStore("permission", () => {
+export const usePermissionStore = defineStore('permission', () => {
   const sideBarMenuRoutes = reactive<RouteRecordRaw[]>([]);
   const userDropdownOptionsRoutes = reactive<RouteRecordRaw[]>([]);
-  const permissionRouteNames = reactive<string[]>([]);
 
-  const hasPermissionRoutes = computed(() => sideBarMenuRoutes.length);
+  // 初始化 sideBarMenuRoutes 和 userDropdownOptionsRoutes
+  function initRoutes() {
+    const mainRoute = routes.find((route) => route.path === '/');
+    if (mainRoute && mainRoute.children) {
+      sideBarMenuRoutes.push(
+        ...mainRoute.children.filter(
+          (route) => route.meta && route.meta.icon && route.path !== ''
+        )
+      );
 
-  async function getPermissionRoutes() {
-    const result = (await Role.apiGetRoleMenu()) as AxiosResponse;
-    if (result.data) {
-      permissionRouteNames.push(...result.data);
-      setPermissionRoutes(result.data);
-      return result.data;
+      // 假設這些路由應該出現在用戶下拉選單中
+      const userDropdownPaths = ['profile', 'settings', 'accountSetting'];
+      userDropdownOptionsRoutes.push(
+        ...mainRoute.children.filter((route) =>
+          userDropdownPaths.includes(route.path)
+        )
+      );
     }
-    return [];
   }
 
-  function setPermissionRoutes(data: string[]) {
-    sideBarMenuRoutes.length = 0;
+  // 立即調用初始化函數
+  initRoutes();
 
-    sideBarMenuPages.forEach((route) => {
-      const addRoute = extend({}, route) as RouteRecordRaw;
-      if (data.includes(addRoute.name as string)) {
-        sideBarMenuRoutes.push(addRoute);
-      }
-
-      if (addRoute.children && addRoute.children.length) {
-        addRoute.children = addRoute.children?.filter((child) =>
-          data.includes(child.name as string)
-        );
-        if (addRoute.children && addRoute.children.length) {
-          sideBarMenuRoutes.push(addRoute);
-        }
-      }
-    });
-
-    userDropdownOptionsPages.forEach((route) => {
-      const addRoute = extend({}, route) as RouteRecordRaw;
-      if (data.includes(addRoute.name as string)) {
-        userDropdownOptionsRoutes.push(addRoute);
-      }
-    });
-  }
+  const hasPermissionRoutes = computed(() => sideBarMenuRoutes.length > 0);
 
   return {
     sideBarMenuRoutes,
     userDropdownOptionsRoutes,
-    permissionRouteNames,
     hasPermissionRoutes,
-    setPermissionRoutes,
-    getPermissionRoutes,
   };
 });

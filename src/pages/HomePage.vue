@@ -73,7 +73,7 @@
                 size="md"
                 push
                 v-close-popup
-                @click.prevent="logout"
+                @click.prevent="() => console.log('登出')"
               />
             </div>
           </q-btn-dropdown>
@@ -154,11 +154,11 @@
             </div>
             <div class="flex items-center text-h3 text-bold text-deepBrown">
               <div class="border-2 bg-white rounded-xl" style="padding: 14px">
-                {{ nowTime.split(":")[0] }}
+                {{ nowTime.split(':')[0] }}
               </div>
               <span class="q-px-md">:</span>
               <div class="border-2 bg-white rounded-xl" style="padding: 14px">
-                {{ nowTime.split(":")[1] }}
+                {{ nowTime.split(':')[1] }}
               </div>
             </div>
           </div>
@@ -197,7 +197,7 @@
                   label="登出"
                   push
                   v-close-popup
-                  @click.prevent="logout"
+                  @click.prevent="() => console.log('登出')"
                   class="text-h6 text-bold"
                 />
               </div>
@@ -266,14 +266,14 @@
                     class="border-2 bg-white rounded-xl"
                     style="padding: 14px"
                   >
-                    {{ nowTime.split(":")[0] }}
+                    {{ nowTime.split(':')[0] }}
                   </div>
                   <span class="q-px-md">:</span>
                   <div
                     class="border-2 bg-white rounded-xl"
                     style="padding: 14px"
                   >
-                    {{ nowTime.split(":")[1] }}
+                    {{ nowTime.split(':')[1] }}
                   </div>
                 </div>
               </div>
@@ -315,7 +315,7 @@
                       label="登出"
                       push
                       v-close-popup
-                      @click.prevent="logout"
+                      @click.prevent="() => console.log('登出')"
                       class="text-h6 text-bold"
                     />
                   </div>
@@ -478,31 +478,30 @@
 </template>
 
 <script setup lang="ts">
-import { useNow, useDateFormat, useCloned } from "@vueuse/core";
+import { useNow, useDateFormat, useCloned } from '@vueuse/core';
 
 // pinia store
-import { usePermissionStore } from "src/stores/permission";
-import { useBuildingStore } from "src/stores/building.js";
-import { useAuthStore } from "src/stores/auth";
-import { useUserStore } from "src/stores/user";
-import { storeToRefs } from "pinia";
+import { usePermissionStore } from 'src/stores/permission';
+import { useBuildingStore } from 'src/stores/building.js';
+import { useUserStore } from 'src/stores/user';
+import { storeToRefs } from 'pinia';
 // utils
-import type { tableConfigItem } from "src/utils/tableMixin";
-import tableMixin from "src/utils/tableMixin";
-import { RouteRecordRaw } from "vue-router";
+import type { tableConfigItem } from 'src/utils/tableMixin';
+import tableMixin from 'src/utils/tableMixin';
+import { RouteRecordRaw } from 'vue-router';
 
 const buildingStore = useBuildingStore();
 const userStore = useUserStore();
 
 const { buildingData } = storeToRefs(buildingStore);
 const { userData, userMugShotUrl, roleName } = storeToRefs(userStore);
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = inject('$q') as typeof QVueGlobals;
 //  大樓基本資料 dialog
 const { dialogAttrs } = tableMixin();
 const dialogConfig = ref<tableConfigItem[]>([]);
 async function openDialog() {
   dialogAttrs.value.visible = true;
-  dialogAttrs.value.dialogTitle = "大樓基本資料";
+  dialogAttrs.value.dialogTitle = '大樓基本資料';
   if (buildingData.value) dialogAttrs.value.tempData = buildingData.value;
   dialogConfig.value = buildingStore.buildingTableConfig.filter(
     (item) => item.isTable
@@ -514,7 +513,7 @@ const fireManagerName = computed(() => {
   return function (item: { name: string }) {
     return dialogAttrs.value.tempData[item.name]
       .map((data: { fullname: string }) => data.fullname)
-      .join(" , ");
+      .join(' , ');
   };
 });
 
@@ -539,30 +538,30 @@ onMounted(() => setTimeout(stop, 10000));
 const nameOrderArray = computed(() => {
   if ($q.screen.xs || $q.screen.sm) {
     return [
-      "historyAnalysis",
-      "graphic",
-      "accountSetting",
-      "deviceData",
+      'historyAnalysis',
+      'graphic',
+      'accountSetting',
+      'deviceData',
       // "systemTest", // 固定 layout 設計的話
-      "normal",
-      "emergency",
+      'normal',
+      'emergency',
     ];
   }
   // 系統管理員
   return [
-    "graphic",
-    "normal",
-    "deviceData",
-    "emergency",
-    "historyAnalysis",
-    "accountSetting",
+    'graphic',
+    'normal',
+    'deviceData',
+    'emergency',
+    'historyAnalysis',
+    'accountSetting',
   ];
 });
 
 const filteredRoutes = computed(() => {
-  if (roleName.value.includes("Mercury")) {
+  if (roleName.value.includes('Mercury')) {
     return usePermission.sideBarMenuRoutes.filter(
-      (item) => item.name !== "systemTest"
+      (item) => item.name !== 'systemTest'
     );
   }
   return usePermission.sideBarMenuRoutes;
@@ -587,17 +586,6 @@ const pageRouteData = computed(() => {
 
 // 登出
 const router = useRouter();
-const authStore = useAuthStore();
-function logout() {
-  authStore.logout();
-  // 清除該帳號權限才擁有的選單設定
-  usePermission.userDropdownOptionsRoutes.length = 0;
-  usePermission.sideBarMenuRoutes.length = 0;
-  usePermission.permissionRouteNames.length = 0;
-  nextTick(() => {
-    router.push("/login");
-  });
-}
 
 // 動態載入圖片
 const getAssetsFile = (title: string) => {
@@ -605,8 +593,8 @@ const getAssetsFile = (title: string) => {
 };
 
 // 現在時間
-const formatterDate = ref("YYYY/MM/DD (dd)");
-const formatterTime = ref("HH:mm");
+const formatterDate = ref('YYYY/MM/DD (dd)');
+const formatterTime = ref('HH:mm');
 const nowDate = useDateFormat(useNow(), formatterDate);
 const nowTime = useDateFormat(useNow(), formatterTime);
 </script>
