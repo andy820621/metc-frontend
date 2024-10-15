@@ -1,0 +1,20 @@
+<svg id="sideBarBtn" stroke="currentColor" data-name="側欄按鈕" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="clippath">
+      <rect x="151.49317" width="160.31928" height="362.7493" style="fill: none;"/>
+    </clipPath>
+  </defs>
+  <g style="clip-path: url(#clippath);">
+    <g id="_组_1367" data-name=" 组 1367">
+      <g id="_椭圆_1112-2" data-name=" 椭圆 1112-2">
+        <ellipse cx="151.49317" cy="171.47271" rx="151.49317" ry="140.51542" style="fill: #8b694e;"/>
+        <ellipse cx="151.49317" cy="171.4727" rx="150.8345" ry="139.85675" style="fill: none; stroke: #707070; stroke-width: .3px;"/>
+      </g>
+      <g id="_组_1366" data-name=" 组 1366">
+        <line id="_直线_100" data-name=" 直线 100" x1="170.2432" y1="142.93051" x2="236.10979" y2="142.93051" style="fill: none; stroke: #fff; stroke-linecap: round; stroke-width: 6px;"/>
+        <line id="_直线_101" data-name=" 直线 101" x1="170.2432" y1="173.66825" x2="236.10979" y2="173.66825" style="fill: none; stroke: #fff; stroke-linecap: round; stroke-width: 6px;"/>
+        <line id="_直线_102" data-name=" 直线 102" x1="170.2432" y1="204.406" x2="236.10979" y2="204.406" style="fill: none; stroke: #fff; stroke-linecap: round; stroke-width: 6px;"/>
+      </g>
+    </g>
+  </g>
+  </svg>
