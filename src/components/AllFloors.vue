@@ -70,6 +70,7 @@ async function getAllFloors() {
 // );
 function handleSelect(floorData: any) {
   if (props.justFloorId) {
+    console.log('justFloorId');
     currentFloor.value = floorData;
     emit('handleSelect', floorData);
   } else {

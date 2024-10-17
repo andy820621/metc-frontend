@@ -1035,8 +1035,10 @@ onKeyStroke((e) => {
 
 // 載入背景圖
 function loadBackgroundImage(imageUrl: string) {
+  console.log('loadBackgroundImage', imageUrl);
   const image = new window.Image();
   image.src = imageUrl;
+  console.log('loadBackgroundImage image', image);
   image.onload = () => {
     let scale;
     const { width, height } = image;
@@ -1320,12 +1322,68 @@ function handleClickControlBtn(
     clearAnchorPointsAndResetPolyId();
   }
 }
+const floorViewModelData = [
+  {
+    id: 1,
+    building: { id: 101, name: 'Main Building' },
+    area: { id: 201, name: 'North Wing' },
+    name: 'First Floor',
+    isUnderground: false,
+    dataFileId: 301,
+    dataFilePath: '/files/floor1_data.json',
+    floorPlanFileId: 401,
+    floorPlanFilePath: '/images/floor1_plan.png',
+    evacuationRouteFileId: 501,
+    evacuationRouteFilePath: '/images/floor1_evacuation.png',
+    sort: 1,
+    floorZIndex: 0,
+    floor1: 1,
+  },
+  {
+    id: 2,
+    building: { id: 102, name: 'Annex Building' },
+    area: null,
+    name: 'Basement',
+    isUnderground: true,
+    dataFileId: null,
+    dataFilePath: null,
+    floorPlanFileId: 402,
+    floorPlanFilePath: '/images/basement_plan.png',
+    evacuationRouteFileId: null,
+    evacuationRouteFilePath: null,
+    sort: 0,
+    floorZIndex: -1,
+  },
+  {
+    id: 3,
+    building: { id: 101, name: 'Main Building' },
+    area: { id: 202, name: 'South Wing' },
+    name: 'Second Floor',
+    isUnderground: false,
+    dataFileId: 302,
+    dataFilePath: '/files/floor2_data.json',
+    floorPlanFileId: 403,
+    floorPlanFilePath: '/images/floor2_plan.png',
+    evacuationRouteFileId: 502,
+    evacuationRouteFilePath: '/images/floor2_evacuation.png',
+    sort: 2,
+    floorZIndex: 1,
+    floor1: 2,
+  },
+];
+
 const currentFloor = ref<any>();
+
+onMounted(() => {
+  currentFloor.value = floorViewModelData[0];
+  handleSelect(currentFloor.value);
+});
 async function handleSelect(floorData: any, imageUrl?: string) {
   console.log('now floorData', floorData);
   // 儲存 Canvas 資料，並清空畫布
   resetCanvas();
-  if (!imageUrl) return;
+  // if (!imageUrl) return;
+  imageUrl = '/Graphic/1F 1比50.png';
   // 如果有 AllFloors 裡面有拿到 floorImage 且 emit handleSelect 的話 => 載入圖片
   Object.values(BlockTypeLabels).forEach((label) => {
     blockType.value.push(label);

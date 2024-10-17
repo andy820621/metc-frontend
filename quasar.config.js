@@ -81,7 +81,7 @@ module.exports = configure(function (ctx) {
           ? 'https://localhost:5001'
           : 'https://present.metcfire.com.tw',
         Url: ctx.dev
-          ? 'https://localhost:5001'
+          ? 'https://localhost:5000'
           : 'https://present.metcfire.com.tw',
       },
       // rawDefine: {}
