@@ -1,6 +1,4 @@
-import { Notify, uid } from "quasar";
-import Screen from "src/api/screen";
-import { sideBarPathMaps } from "src/router/routes";
+import { Notify, uid } from 'quasar';
 
 function createPopup(
   url: string,
@@ -14,13 +12,13 @@ function createPopup(
     `top=${screenY}`,
     `width=${width}`,
     `height=${height}`,
-    "menubar=no",
-    "toolbar=no",
-    "location=no",
-    "status=no",
-    "resizable=yes",
-    "scrollbars=no",
-  ].join(",");
+    'menubar=no',
+    'toolbar=no',
+    'location=no',
+    'status=no',
+    'resizable=yes',
+    'scrollbars=no',
+  ].join(',');
 
   return window.open(url, uid(), features);
 }
@@ -44,7 +42,7 @@ declare global {
 let cachedScreens: ScreenDetails;
 let popupMonitor: number | undefined; // 用於監聽彈出視窗的關閉
 const popups: Window[] = [];
-const isSupported = "getScreens" in window || "getScreenDetails";
+const isSupported = 'getScreens' in window || 'getScreenDetails';
 
 async function getScreensInfo() {
   if (isSupported) {
@@ -52,7 +50,7 @@ async function getScreensInfo() {
       return cachedScreens.screens;
     } else {
       cachedScreens =
-        "getScreens" in window
+        'getScreens' in window
           ? await window.getScreens()
           : await (window as Window).getScreenDetails();
       // cachedScreens.addEventListener("screenschange", async (e) => {
@@ -66,7 +64,7 @@ async function getScreensInfo() {
       return cachedScreens.screens;
     }
   } else {
-    alert("您的瀏覽器不支援多螢幕偵測，因此無法開啟彈出視窗。");
+    alert('您的瀏覽器不支援多螢幕偵測，因此無法開啟彈出視窗。');
   }
   return [window.screen];
 }
@@ -105,7 +103,7 @@ export async function openMultipleMonitors() {
 
   if (result.data) {
     const nowPaths: string[] = JSON.parse(
-      localStorage.getItem("visitedPages") || "[]"
+      localStorage.getItem('visitedPages') || '[]'
     );
 
     urlArray = result.data
@@ -118,9 +116,9 @@ export async function openMultipleMonitors() {
 
   if (!urlArray.length) {
     Notify.create({
-      type: "warning",
-      message: "尚未設定任何視窗，請先設定視窗 / 所有視窗已被開啟",
-      position: "top",
+      type: 'warning',
+      message: '尚未設定任何視窗，請先設定視窗 / 所有視窗已被開啟',
+      position: 'top',
     });
     return;
   }
@@ -150,7 +148,7 @@ export async function openMultipleMonitors() {
 
       if (!popup) {
         alert(
-          "看起來您已封鎖彈出窗口。請按照 https://goo.gle/allow-popups 中的說明允許它們。"
+          '看起來您已封鎖彈出窗口。請按照 https://goo.gle/allow-popups 中的說明允許它們。'
         );
         return;
       }

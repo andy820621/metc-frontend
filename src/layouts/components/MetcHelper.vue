@@ -111,9 +111,6 @@
     v-model="simulationTestVisible"
     :simulationTestVisible="simulationTestVisible"
   />
-
-  <!-- 消防支援 -->
-  <FireSupport v-model:visible="fireSupportVisible" />
 </template>
 
 <script setup lang="ts">
