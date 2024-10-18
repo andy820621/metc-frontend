@@ -1416,6 +1416,27 @@ async function getFloorGraphicJson(floorId: number) {
 
 async function saveGraphicFile() {
   console.log('saveGraphicFile');
+  // 儲存圖控資料之前要先把被點選變色後的 icon 還原
+  const transformerNode = transformer.value?.getNode() as Konva.Transformer;
+  transformerNode.nodes([]);
+  selectAndChangeIconColor('#bdbbbb'); // 灰
+  getJsonData();
+  if (jsonData.value) {
+    jsonData.value.attrs.editTime = date.formatDate(
+      new Date().toISOString(),
+      'YYYY-MM-DD HH:mm'
+    );
+  }
+  const jsonStr = JSON.stringify(jsonData.value);
+  const fileContent = new File([jsonStr], currentFloor.value?.floor1 + '.txt', {
+    type: '',
+  });
+  console.log('fileContent', fileContent);
+  const formData = new FormData();
+  const fileName = `${Bid}_${currentFloor.value?.id}.txt`;
+  formData.append('file', fileContent, fileName);
+
+  console.log('saveGraphicFile formData: ', formData);
 }
 function clearCanvas() {
   // 清除節點
