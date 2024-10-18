@@ -163,6 +163,36 @@ async function getAllFloors() {
   console.log('getAllFloors');
   if (Bid.value) {
     console.log('getAllFloors Bid.value', Bid.value);
+    floorOptions.length = 0;
+    const floorResult = await getFloorsData(Bid.value);
+    console.log('nowwwww floorResult: ', floorResult);
+
+    floorOptions.push(...floorResult);
+    floorOptions.reverse();
+    console.log('now floorOptions', floorOptions);
+    // if (floorOptions.length > 0) {
+    //   if (
+    //     initialDetector.value &&
+    //     initialDetector.value.building.id === Bid.value
+    //   ) {
+    //     const { sort } = initialDetector.value.floor;
+    //     if (sort) {
+    //       currentFloor.value = fireFloor.value = floorOptions.find(
+    //         (floor) => floor.sort === sort
+    //       ) as FloorViewModel;
+    //     }
+    //   } else {
+    //     currentFloor.value = floorOptions.find(
+    //       (item) => item.sort === 1
+    //     ) as FloorViewModel;
+    //   }
+    //   const floorZIndex: number[] = floorOptions
+    //     .map((i, index) => index)
+    //     .reverse();
+    //   floorOptions.forEach((item, index) => {
+    //     item.floorZIndex = floorZIndex[index];
+    //   });
+    // }
   }
 }
 async function handleSelect(floorData: any) {

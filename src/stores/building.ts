@@ -4,7 +4,7 @@ import { ref } from 'vue';
 type BuildingViewModel = any;
 
 export const useBuildingStore = defineStore('building', () => {
-  const Bid = ref<number>();
+  const Bid = ref<number>(1);
   const nowFloorId = ref<number>(); // 消防支援需要
   const buildingDataList = ref<BuildingViewModel[]>([]);
   const buildingData = ref<BuildingViewModel>();

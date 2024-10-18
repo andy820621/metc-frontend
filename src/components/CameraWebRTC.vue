@@ -21,15 +21,15 @@
 </template>
 
 <script setup lang="ts">
-import "webrtc-adapter";
-import { ref, onMounted } from "vue";
-import Cctv, { RTCIceCandidateInit, RTCSdpType } from "src/api/Cctv";
-import { uid } from "quasar";
+import 'webrtc-adapter';
+import { ref, onMounted } from 'vue';
+import Cctv, { RTCIceCandidateInit, RTCSdpType } from 'src/api/Cctv';
+import { uid } from 'quasar';
 
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = inject('$q') as typeof QVueGlobals;
 
 // 定義元件的 props
-const props = defineProps(["deviceId", "title"]);
+const props = defineProps(['deviceId', 'title']);
 
 const videoElement = ref(); // 參考用於存取 video 元件
 const peerConnection = ref<RTCPeerConnection>(); // 反應性屬性用於儲存 peerConnection
@@ -37,7 +37,7 @@ const peerConnection = ref<RTCPeerConnection>(); // 反應性屬性用於儲存 
 // 在元件掛載後的生命週期方法中啟動播放
 onMounted(() => {
   if (!window.RTCPeerConnection) {
-    console.log("WebRTC is not supported.");
+    console.log('WebRTC is not supported.');
     // $q.notify({
     //   type: "negative",
     //   message: "目前環境不支援 WebRTC",
@@ -74,10 +74,10 @@ async function startPlaying() {
   pc.onicecandidate = async function (event) {
     // 如果事件中有 candidate，則傳送到遠端伺服器
     if (event.candidate) {
-      console.log("event.candidate", event.candidate);
-      console.log("nowww event.candidate.toJSON(): ", event.candidate.toJSON());
+      console.log('event.candidate', event.candidate);
+      console.log('nowww event.candidate.toJSON(): ', event.candidate.toJSON());
       console.log(
-        "nowww event.candidate JSON.stringify(event.candidate): ",
+        'nowww event.candidate JSON.stringify(event.candidate): ',
         JSON.stringify(event.candidate)
       );
 
@@ -122,26 +122,26 @@ async function startPlaying() {
 
   // 當 ICE gathering state 變化時，打印其狀態
   pc.onicegatheringstatechange = function () {
-    console.log("ICE gathering state change: " + pc.iceGatheringState);
+    console.log('ICE gathering state change: ' + pc.iceGatheringState);
     // 可以在這裡增加對特定收集狀態的處理
-    if (pc.iceGatheringState === "complete") {
+    if (pc.iceGatheringState === 'complete') {
       // 收集完成，可以進行下一步操作或檢查
-      console.log("ICE gathering complete");
+      console.log('ICE gathering complete');
     }
   };
 
   // 當ICE connection state 變化時，打印其狀態
   pc.oniceconnectionstatechange = function () {
-    console.log("ICE connection state change: " + pc.iceConnectionState);
+    console.log('ICE connection state change: ' + pc.iceConnectionState);
     // 增加對特定狀態的處理
     if (
-      pc.iceConnectionState === "failed" ||
-      pc.iceConnectionState === "disconnected" ||
-      pc.iceConnectionState === "closed"
+      pc.iceConnectionState === 'failed' ||
+      pc.iceConnectionState === 'disconnected' ||
+      pc.iceConnectionState === 'closed'
     ) {
       // 處理連接問題，例如重新連接或通知用戶
       console.error(
-        "ICE connection state indicates failure: ",
+        'ICE connection state indicates failure: ',
         pc.iceConnectionState
       );
       // $q.notify({
@@ -168,9 +168,9 @@ async function startPlaying() {
 
   pc.onicecandidateerror = function (event: any) {
     console.error(
-      "ICE candidate error:",
+      'ICE candidate error:',
       event.errorText,
-      "Code:",
+      'Code:',
       event.errorCode
     );
     // $q.notify({
@@ -181,7 +181,7 @@ async function startPlaying() {
   };
 
   pc.onsignalingstatechange = () => {
-    console.log("Signaling state change:", pc.signalingState);
+    console.log('Signaling state change:', pc.signalingState);
     // $q.notify({
     //   type: "info",
     //   message: `Signaling state changed to: ${pc.signalingState}`,
@@ -190,9 +190,9 @@ async function startPlaying() {
   };
 
   pc.onconnectionstatechange = () => {
-    console.log("Connection state change:", pc.connectionState);
-    if (pc.connectionState === "failed") {
-      console.error("Connection has failed.");
+    console.log('Connection state change:', pc.connectionState);
+    if (pc.connectionState === 'failed') {
+      console.error('Connection has failed.');
       // $q.notify({
       //   type: "negative",
       //   message: `Connection state changed to: ${pc.connectionState}, the connection has failed.`,
@@ -218,7 +218,7 @@ async function startPlaying() {
     if (offerData.data && pc) {
       const offer = offerData.data;
 
-      console.log("got offer: ", offer);
+      console.log('got offer: ', offer);
 
       offer.type = RTCSdpType[offer.type];
       // 設置遠端描述為獲取的 offer
@@ -231,7 +231,7 @@ async function startPlaying() {
         })
         .then(async function () {
           if (!pc.localDescription) return;
-          console.log("pc.localDescription: ", pc.localDescription);
+          console.log('pc.localDescription: ', pc.localDescription);
           const { type, sdp } = pc.localDescription;
           const payload = { type: RTCSdpType[type], sdp };
 
@@ -247,7 +247,7 @@ async function startPlaying() {
         })
         .catch(function (error) {
           console.error(
-            "Error during answer creation or local description setting: ",
+            'Error during answer creation or local description setting: ',
             error
           );
           // $q.notify({
@@ -270,7 +270,7 @@ async function startPlaying() {
 function closePeer() {
   const pc = peerConnection.value;
   if (pc != null) {
-    console.log("Closing peer");
+    console.log('Closing peer');
     pc.close();
   }
 }

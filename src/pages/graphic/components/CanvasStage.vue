@@ -206,13 +206,13 @@
         color="white"
         v-close-popup
       />
-      <CameraWebRTC
+      <!-- <CameraWebRTC
         v-touch-pan.mouse="onPan"
         style="cursor: grab"
         :device-id="deviceData.deviceId"
         :title="`${deviceData.location ? deviceData.location + ' - ' : ''}
       ${deviceData.name}`"
-      />
+      /> -->
     </q-card>
   </q-dialog>
 </template>

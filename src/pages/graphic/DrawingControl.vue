@@ -543,6 +543,7 @@ import { IRect } from 'konva/lib/types';
 // pinia store
 import { storeToRefs } from 'pinia';
 import { useBuildingStore } from 'src/stores/building.js';
+import { floorViewModelData } from './fakeData';
 const buildingStore = useBuildingStore();
 const { Bid } = storeToRefs(buildingStore);
 
@@ -1322,55 +1323,6 @@ function handleClickControlBtn(
     clearAnchorPointsAndResetPolyId();
   }
 }
-const floorViewModelData = [
-  {
-    id: 1,
-    building: { id: 101, name: 'Main Building' },
-    area: { id: 201, name: 'North Wing' },
-    name: 'First Floor',
-    isUnderground: false,
-    dataFileId: 301,
-    dataFilePath: '/files/floor1_data.json',
-    floorPlanFileId: 401,
-    floorPlanFilePath: '/images/floor1_plan.png',
-    evacuationRouteFileId: 501,
-    evacuationRouteFilePath: '/images/floor1_evacuation.png',
-    sort: 1,
-    floorZIndex: 0,
-    floor1: 1,
-  },
-  {
-    id: 2,
-    building: { id: 102, name: 'Annex Building' },
-    area: null,
-    name: 'Basement',
-    isUnderground: true,
-    dataFileId: null,
-    dataFilePath: null,
-    floorPlanFileId: 402,
-    floorPlanFilePath: '/images/basement_plan.png',
-    evacuationRouteFileId: null,
-    evacuationRouteFilePath: null,
-    sort: 0,
-    floorZIndex: -1,
-  },
-  {
-    id: 3,
-    building: { id: 101, name: 'Main Building' },
-    area: { id: 202, name: 'South Wing' },
-    name: 'Second Floor',
-    isUnderground: false,
-    dataFileId: 302,
-    dataFilePath: '/files/floor2_data.json',
-    floorPlanFileId: 403,
-    floorPlanFilePath: '/images/floor2_plan.png',
-    evacuationRouteFileId: 502,
-    evacuationRouteFilePath: '/images/floor2_evacuation.png',
-    sort: 2,
-    floorZIndex: 1,
-    floor1: 2,
-  },
-];
 
 const currentFloor = ref<any>();
 
@@ -1436,6 +1388,8 @@ async function saveGraphicFile() {
   const fileName = `${Bid}_${currentFloor.value?.id}.txt`;
   formData.append('file', fileContent, fileName);
 
+  console.log('saveGraphicFile jsonData: ', jsonData.value);
+  console.log('saveGraphicFile jsonStr: ', jsonStr);
   console.log('saveGraphicFile formData: ', formData);
 }
 function clearCanvas() {
