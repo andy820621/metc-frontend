@@ -923,7 +923,9 @@ function hoverCursorPointer() {
 }
 
 function animate() {
+  console.log('invoke animate');
   const layerNode = graphicLayer.value?.getNode();
+  console.log('layerNode', layerNode);
   nextTick(() => {
     const connectIdArr: string[] = [];
     // 塞入關聯設備 id

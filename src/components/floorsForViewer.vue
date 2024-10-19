@@ -90,71 +90,71 @@ const props = withDefaults(
 //   { deep: true }
 // );
 
-onMounted(() => {
-  const testtriggeredDevices = [
-    {
-      building: { id: Bid.value },
-      floor: 'floor1',
-      floors: [],
-      location: '',
-      id: 1,
-    },
-    {
-      building: { id: Bid.value },
-      floor: 'floor2',
-      floors: ['floor2', 'floor3', 'floor4'],
-      location: '',
-      id: 2,
-    },
-    {
-      building: { id: 2 },
-      floor: 'floor5',
-      floors: [],
-      location: '',
-      id: 3,
-    },
-  ];
+// onMounted(() => {
+//   const testtriggeredDevices = [
+//     {
+//       building: { id: Bid.value },
+//       floor: 'floor1',
+//       floors: [],
+//       location: '',
+//       id: 1,
+//     },
+//     {
+//       building: { id: Bid.value },
+//       floor: 'floor2',
+//       floors: ['floor2', 'floor3', 'floor4'],
+//       location: '',
+//       id: 2,
+//     },
+//     {
+//       building: { id: 2 },
+//       floor: 'floor5',
+//       floors: [],
+//       location: '',
+//       id: 3,
+//     },
+//   ];
 
-  function test(val: typeof testtriggeredDevices) {
-    console.log('nowwwwwwwwwwww test val', val);
+//   function test(val: typeof testtriggeredDevices) {
+//     console.log('nowwwwwwwwwwww test val', val);
 
-    const triggeredDevicesFloors = val
-      .filter((item) => item.building.id === Bid.value)
-      .flatMap((item) =>
-        item.floors && item.floors.length > 0 ? item.floors : [item.floor]
-      );
+//     const triggeredDevicesFloors = val
+//       .filter((item) => item.building.id === Bid.value)
+//       .flatMap((item) =>
+//         item.floors && item.floors.length > 0 ? item.floors : [item.floor]
+//       );
 
-    // sort 值不重複
-    // const uniqueSorts = Array.from(
-    //   new Set(triggeredDevicesFloors.map((floor) => floor.sort))
-    // );
+//     // sort 值不重複
+//     // const uniqueSorts = Array.from(
+//     //   new Set(triggeredDevicesFloors.map((floor) => floor.sort))
+//     // );
 
-    // // loop sort[] 找到对应的 floorOption[]
-    // const correspondingFloorOptions = uniqueSorts.map((sort) =>
-    //   floorOptions.find((floor) => floor.sort === sort)
-    // ) as any[];
+//     // // loop sort[] 找到对应的 floorOption[]
+//     // const correspondingFloorOptions = uniqueSorts.map((sort) =>
+//     //   floorOptions.find((floor) => floor.sort === sort)
+//     // ) as any[];
 
-    return triggeredDevicesFloors;
-  }
+//     return triggeredDevicesFloors;
+//   }
 
-  const result = test(testtriggeredDevices);
+//   const result = test(testtriggeredDevices);
 
-  console.log('nowwwwwwwwwwww test', result);
-});
+//   console.log('nowwwwwwwwwwww test', result);
+// });
 
 const currentFloor = ref<any>();
 const floorOptions = reactive<any[]>([]);
 const formattedFloorOptions = computed(() => formatFloorsData(floorOptions));
-watch(
-  formattedFloorOptions,
-  (val) => {
-    console.log('now formattedFloorOptions', val);
-  },
-  {
-    immediate: true,
-    deep: true,
-  }
-);
+// watch(
+//   formattedFloorOptions,
+//   (val) => {
+//     console.log('now formattedFloorOptions', val);
+//   },
+//   {
+//     immediate: true,
+//     deep: true,
+//   }
+// );
 // 起火層
 const fireFloor = ref();
 //   {
@@ -165,16 +165,12 @@ const alertFloor = ref<any[]>([]);
 // 擴散層
 const spreadFloor = ref<any[]>([]);
 async function getAllFloors() {
-  console.log('getAllFloors');
   if (Bid.value) {
-    console.log('getAllFloors Bid.value', Bid.value);
     floorOptions.length = 0;
     const floorResult = await getFloorsData(Bid.value);
-    console.log('nowwwww floorResult: ', floorResult);
 
     floorOptions.push(...floorResult);
     floorOptions.reverse();
-    console.log('now floorOptions', floorOptions);
     if (floorOptions.length > 0) {
       if (
         initialDetector.value &&
@@ -209,7 +205,6 @@ async function getFloorImage(floorData: any) {
 
   if (floorData?.floorPlanFilePath) {
     const imageUrl = new URL(floorData.floorPlanFilePath, import.meta.url);
-    console.log('barz imageUrl', imageUrl);
     emit('handleSelect', currentFloor.value, imageUrl);
   } else {
     emit('handleSelect', currentFloor.value);

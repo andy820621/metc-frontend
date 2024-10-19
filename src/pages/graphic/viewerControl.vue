@@ -154,6 +154,8 @@ import CanvasStage from './components/CanvasStage.vue';
 
 // icon
 import {
+  matAnimation,
+  matClose,
   matRoom,
   matZoomIn,
   matZoomOut,
@@ -191,8 +193,8 @@ enum controlListIconLabels {
   restorePosition = '復原位置',
   zoomIn = '放大',
   zoomOut = '縮小',
-  // animate = "動畫",
-  // animateClose = "關閉動畫",
+  animate = '動畫',
+  animateClose = '關閉動畫',
   // deviceStatusTrigger = "其他設備為觸發狀態",
   // openGuide = "開啟導引",
 }
@@ -213,14 +215,14 @@ const controlListIcon = [
   //   label: controlListIconLabels.deviceStatusTrigger,
   //   icon: matArrowRight,
   // },
-  // {
-  //   label: controlListIconLabels.animate,
-  //   icon: matAnimation,
-  // },
-  // {
-  //   label: controlListIconLabels.animateClose,
-  //   icon: matClose,
-  // },
+  {
+    label: controlListIconLabels.animate,
+    icon: matAnimation,
+  },
+  {
+    label: controlListIconLabels.animateClose,
+    icon: matClose,
+  },
   // {
   //   label: controlListIconLabels.openGuide,
   //   icon: matSquare,
@@ -234,7 +236,7 @@ useResizeObserver(viewerPageRef, (entries) => {
   const entry = entries[0];
   const { width } = entry.contentRect;
   canvasWidth.value = width - 420;
-  console.log('now canvasWidth.value', canvasWidth.value, width);
+  // console.log('now canvasWidth.value', canvasWidth.value, width);
 });
 
 const canvasStage = ref();
@@ -250,13 +252,12 @@ function handleClickControlBtn(target: { label: string; icon: string }) {
     canvasStage.value.zoomCanvas(1);
   } else if (target.label === controlListIconLabels.zoomOut) {
     canvasStage.value.zoomCanvas(-1);
+  } else if (target.label === controlListIconLabels.animate) {
+    canvasStage.value.animate();
+  } else if (target.label === controlListIconLabels.animateClose) {
+    canvasStage.value.closeAnimate();
+    canvasStage.value.resetCanvas();
   }
-  // else if (target.label === controlListIconLabels.animate) {
-  //   canvasStage.value.animate();
-  // } else if (target.label === controlListIconLabels.animateClose) {
-  //   canvasStage.value.closeAnimate();
-  //   canvasStage.value.resetCanvas();
-  // }
   // else if (target.label === controlListIconLabels.deviceStatusTrigger) {
   //   // 設備狀態為1時變色
   //   canvasStage.value.deviceStatusTrigger();
