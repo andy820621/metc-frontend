@@ -230,8 +230,9 @@ import {
   useDeviceAddressStore,
 } from 'src/stores/deviceAddress';
 // websocket signalR
-import { useSignalRStore } from 'src/stores/signalR';
+import { TriggeredDeviceData, useSignalRStore } from 'src/stores/signalR';
 import { storeToRefs } from 'pinia';
+import { triggeredDeviceData } from '../fakeData';
 
 const deviceAddressStore = useDeviceAddressStore();
 const { nohmi03, fatek03, amsamotion02, mitsubishi } =
@@ -556,8 +557,12 @@ watch(processRunning, (newValue) => {
   if (newValue) {
     nextTick(() => {
       // 設定假的 initialDetector
-      countDown();
-      animate();
+      initialDetector.value =
+        triggeredDeviceData as unknown as TriggeredDeviceData;
+      setTimeout(() => {
+        countDown();
+        animate();
+      }, 300);
     });
   }
 });
@@ -566,10 +571,10 @@ function countDown() {
   const graphicLayerNode = graphicLayer.value?.getNode().getChildren();
 
   const resultNode = graphicLayerNode?.find(
-    (item) => item.attrs?.deviceData?.deviceId === initialDetector.value?.id
+    (item) => item.attrs?.deviceData?.id === initialDetector.value?.id
   );
+
   if (resultNode) triggerDeviceNode.value = resultNode;
-  console.log('triggerDeviceNode', triggerDeviceNode);
 
   if (triggerDeviceNode.value) {
     const triggerConnectArray: Konva.NodeConfig[] = []; // 關聯陣列
@@ -682,6 +687,7 @@ const bgImageConfig = ref<{
 // 調整舞台寬高和縮放比例
 function resetCanvas() {
   const stageNode = stage.value?.getStage() as Konva.Stage;
+  if (!stageNode) return;
   stageNode.x(0);
   stageNode.y(0);
   stageConfig.x = 0; // 這裡因為之原因需要兩個地方值都調整才能正常歸零
@@ -990,9 +996,7 @@ function hoverCursorPointer() {
 }
 
 function animate() {
-  console.log('invoke animate');
   const layerNode = graphicLayer.value?.getNode();
-  console.log('layerNode', layerNode);
   nextTick(() => {
     const connectIdArr: string[] = [];
     // 塞入關聯設備 id
@@ -1051,6 +1055,7 @@ function animate() {
   });
 }
 function closeAnimate() {
+  initialDetector.value = undefined;
   const layerNode = graphicLayer.value?.getNode();
   const blockConfigs = [rectangleConfigs, polygonConfigs];
   blockConfigs.forEach((blockConfig) => {

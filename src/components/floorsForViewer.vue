@@ -77,18 +77,18 @@ const props = withDefaults(
 );
 
 // 斷面圖樓層
-// watch(
-//   initialDetector,
-//   (val) => {
-//     if (val && Bid.value) {
-//       if (val.building.id !== Bid.value) return;
+watch(
+  initialDetector,
+  (val) => {
+    if (val && Bid.value) {
+      if (val.building.id !== Bid.value) return;
 
-//       fireFloor.value = (val as TriggeredDeviceData).floor;
-//       handleSelect(fireFloor.value);
-//     }
-//   },
-//   { deep: true }
-// );
+      fireFloor.value = (val as TriggeredDeviceData).floor;
+      handleSelect(fireFloor.value);
+    }
+  },
+  { deep: true }
+);
 
 // onMounted(() => {
 //   const testtriggeredDevices = [

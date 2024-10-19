@@ -167,6 +167,13 @@ import {
 // utils
 import { useResizeObserver } from '@vueuse/core';
 import { fakeJson } from './fakeData';
+// stores
+import { TriggeredDeviceData, useSignalRStore } from 'src/stores/signalR';
+import { storeToRefs } from 'pinia';
+
+const signalRStore = useSignalRStore();
+const { processRunning, initialDetector, triggerTime } =
+  storeToRefs(signalRStore);
 
 const $q = inject('$q') as typeof QVueGlobals;
 const deviceOperatingPower = ref(true);
@@ -253,10 +260,13 @@ function handleClickControlBtn(target: { label: string; icon: string }) {
   } else if (target.label === controlListIconLabels.zoomOut) {
     canvasStage.value.zoomCanvas(-1);
   } else if (target.label === controlListIconLabels.animate) {
-    canvasStage.value.animate();
+    // canvasStage.value.animate();
+    processRunning.value = true;
   } else if (target.label === controlListIconLabels.animateClose) {
     canvasStage.value.closeAnimate();
     canvasStage.value.resetCanvas();
+    // refresh website
+    window.location.reload();
   }
   // else if (target.label === controlListIconLabels.deviceStatusTrigger) {
   //   // 設備狀態為1時變色
