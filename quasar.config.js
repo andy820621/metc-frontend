@@ -81,7 +81,7 @@ module.exports = configure(function (ctx) {
           ? 'https://localhost:5001'
           : 'https://present.metcfire.com.tw',
         Url: ctx.dev
-          ? 'https://localhost:5000'
+          ? 'https://localhost:5001'
           : 'https://present.metcfire.com.tw',
       },
       // rawDefine: {}
@@ -165,7 +165,7 @@ module.exports = configure(function (ctx) {
       //   cert: fs.readFileSync('./SSL/mkcert/localhost.pem', 'utf8'),
       // },
       open: true, // opens browser window automatically
-      port: ctx.mode.spa ? 5000 : ctx.mode.pwa ? 9000 : 9090,
+      port: ctx.mode.spa ? 5001 : ctx.mode.pwa ? 9000 : 9090,
       proxy: {
         // 將所有以/api開頭的請求代理
         '/api': {

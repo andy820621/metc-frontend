@@ -268,6 +268,7 @@ function handleClickControlBtn(target: { label: string; icon: string }) {
 
 async function handleSelect(floorData: { id: number }, imageUrl?: string) {
   // 如果有 floorsForViewer 裡面有拿到 floorImage 且 emit handleSelect 的話 => 載入 Canvas 資料，並設定舞台尺寸
+  // imageUrl = '/Graphic/1F 1比50.png';
   canvasStage.value.clearCanvas();
   if (!imageUrl) return;
   nextTick(async () => {
