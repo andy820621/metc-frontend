@@ -164,6 +164,7 @@ import {
 } from '@quasar/extras/material-icons';
 // utils
 import { useResizeObserver } from '@vueuse/core';
+import { fakeJson } from './fakeData';
 
 const $q = inject('$q') as typeof QVueGlobals;
 const deviceOperatingPower = ref(true);
@@ -271,7 +272,8 @@ async function handleSelect(floorData: { id: number }, imageUrl?: string) {
   if (!imageUrl) return;
   nextTick(async () => {
     canvasStage.value.loadBackgroundImage(imageUrl);
-    const jsonData = await canvasStage.value.getFloorGraphicJson(floorData.id);
+    // const jsonData = await canvasStage.value.getFloorGraphicJson(floorData.id);
+    const jsonData = JSON.stringify(fakeJson);
     canvasStage.value.setStageSize(); // 先設定 Stage Size
     if (jsonData) canvasStage.value.loadShapeFromJson(jsonData); // 載入JsonData
     setTimeout(canvasStage.value.canvasObserver.stop, 1000); // 再次調整 Stage Size

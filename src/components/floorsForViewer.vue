@@ -50,11 +50,16 @@
 <script setup lang="ts">
 // pinia
 import { storeToRefs } from 'pinia';
+import { FloorViewModel } from 'src/api/floors';
 import { useBuildingStore } from 'src/stores/building.js';
+import { TriggeredDeviceData, useSignalRStore } from 'src/stores/signalR';
 // utils
 import fileRead from 'src/utils/fileRead';
 import { formatFloorsData } from 'src/utils/formatUtils';
 import { getFloorsData } from 'src/utils/getFloorsData';
+
+const signalRStore = useSignalRStore();
+const { triggeredDevices, initialDetector } = storeToRefs(signalRStore);
 
 const buildingStore = useBuildingStore();
 const { Bid } = storeToRefs(buildingStore);
@@ -170,29 +175,29 @@ async function getAllFloors() {
     floorOptions.push(...floorResult);
     floorOptions.reverse();
     console.log('now floorOptions', floorOptions);
-    // if (floorOptions.length > 0) {
-    //   if (
-    //     initialDetector.value &&
-    //     initialDetector.value.building.id === Bid.value
-    //   ) {
-    //     const { sort } = initialDetector.value.floor;
-    //     if (sort) {
-    //       currentFloor.value = fireFloor.value = floorOptions.find(
-    //         (floor) => floor.sort === sort
-    //       ) as FloorViewModel;
-    //     }
-    //   } else {
-    //     currentFloor.value = floorOptions.find(
-    //       (item) => item.sort === 1
-    //     ) as FloorViewModel;
-    //   }
-    //   const floorZIndex: number[] = floorOptions
-    //     .map((i, index) => index)
-    //     .reverse();
-    //   floorOptions.forEach((item, index) => {
-    //     item.floorZIndex = floorZIndex[index];
-    //   });
-    // }
+    if (floorOptions.length > 0) {
+      if (
+        initialDetector.value &&
+        initialDetector.value.building.id === Bid.value
+      ) {
+        const { sort } = initialDetector.value.floor;
+        if (sort) {
+          currentFloor.value = fireFloor.value = floorOptions.find(
+            (floor) => floor.sort === sort
+          ) as FloorViewModel;
+        }
+      } else {
+        currentFloor.value = floorOptions.find(
+          (item) => item.sort === 1
+        ) as FloorViewModel;
+      }
+      const floorZIndex: number[] = floorOptions
+        .map((i, index) => index)
+        .reverse();
+      floorOptions.forEach((item, index) => {
+        item.floorZIndex = floorZIndex[index];
+      });
+    }
   }
 }
 async function handleSelect(floorData: any) {
@@ -202,8 +207,9 @@ async function handleSelect(floorData: any) {
 async function getFloorImage(floorData: any) {
   if (floorData) currentFloor.value = floorData;
 
-  if (floorData?.floorPlanFileId) {
-    const imageUrl = await getFile(null, floorData.floorPlanFileId);
+  if (floorData?.floorPlanFilePath) {
+    const imageUrl = new URL(floorData.floorPlanFilePath, import.meta.url);
+    console.log('barz imageUrl', imageUrl);
     emit('handleSelect', currentFloor.value, imageUrl);
   } else {
     emit('handleSelect', currentFloor.value);

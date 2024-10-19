@@ -182,6 +182,7 @@ export default function fileRead() {
 
     if (filePath) {
       console.log('getFile filePath:', filePath);
+      const fileUrl = new URL(filePath);
     } else if (fileId) {
       console.log('getFile fileId:', fileId);
     } else {
@@ -195,7 +196,7 @@ export default function fileRead() {
     } else {
       Notify.create({
         type: 'negative',
-        message: '獲取檔案失敗',
+        message: 'fileRead 獲取檔案失敗',
         position: 'top',
       });
       return false;
@@ -204,34 +205,10 @@ export default function fileRead() {
     if (type && wordFileTypes.includes(type)) {
       const tempContainer = document.createElement('div');
 
-      // 添加新的 styleContainer 元素用於樣式
-      // const styleContainer = document.createElement("style");
-      // styleContainer.innerHTML = `
-      //   .docx-continer {
-      //     padding: 0 !important;
-      //   }
-      // `;
-      // document.head.appendChild(styleContainer);
-
       tempContainer.style.display = 'none';
       document.body.appendChild(tempContainer);
 
       try {
-        // 修改 renderAsync 調用,包括 styleContainer 和選項
-        // await renderAsync(file.value, tempContainer, styleContainer, {
-        //   className: "docx-continer", // string: 默認和文黨樣式 class 名稱/前贅
-        //   inWrapper: true, // boolean: 啟用圍繞文件內容的包裝炫覽器
-        //   ignoreWidth: false, // boolean: 禁用頁面的渲染寬度
-        //   ignoreHeight: false, // boolean: 禁止渲染頁面高度
-        //   ignoreFonts: false, // boolean: 禁用字體渲染
-        //   breakPages: true, // boolean: 在分頁浮上啟用分頁
-        //   ignoreLastRenderedPageBreak: true, // boolean: 在 lastRenderedPageBreak 元素上禁用分頁
-        //   experimental: false, // boolean:啟用實驗性功能 (制表符停止計算)
-        //   trimXmlDeclaration: true, // boolean: 如果為true, 解析前會從 xml 文件中移除 xml 聲明
-        //   useBase64URL: false, // boolean: 如果為true, 圖片、字體等会會轉為 base 64 URL,否則使用 URL.createObjectURL
-        //   useMathMLPolyfill: true, // boolean: 包括用于 chrome、edge 等的 MathML polyfill。
-        //   debug: false, // boolean: 啟用额外的日志紀錄
-        // })
         await renderAsync(file.value, tempContainer);
       } catch (error) {
         throw new Error('docx 轉換失敗: ' + error);
