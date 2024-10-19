@@ -505,6 +505,7 @@ import {
   iconObjectOptions,
   NodeGroup,
   iconLabels,
+  nodeDataArray,
 } from 'src/pages/emergency/flow/processIconOptions';
 // 類型、Config、Options
 import type { QTreeNode } from 'quasar';
@@ -1482,6 +1483,10 @@ async function handleDeleteProcess(processProps: {
   });
 }
 
+onMounted(() => {
+  console.log({ nodeDataArray });
+  nodesData.value = nodeTypeOptions.value = nodeDataArray;
+});
 // 取得節點資料
 onMounted(getNodesData);
 interface NodeData {
@@ -1520,7 +1525,7 @@ watch(
   (val) => {
     console.log('now formattedNodesData', formattedNodesData.value);
   },
-  { deep: true }
+  { deep: true, immediate: true }
 );
 
 // 搜尋節點
