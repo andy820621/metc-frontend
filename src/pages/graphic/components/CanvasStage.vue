@@ -230,11 +230,16 @@ import {
   useDeviceAddressStore,
 } from 'src/stores/deviceAddress';
 // websocket signalR
+import { useSignalRStore } from 'src/stores/signalR';
 import { storeToRefs } from 'pinia';
 
 const deviceAddressStore = useDeviceAddressStore();
 const { nohmi03, fatek03, amsamotion02, mitsubishi } =
   storeToRefs(deviceAddressStore);
+
+const signalRStore = useSignalRStore();
+const { processRunning, initialDetector, triggerTime } =
+  storeToRefs(signalRStore);
 const $q = inject('$q') as typeof QVueGlobals;
 
 // 選擇設備
@@ -544,6 +549,68 @@ const triggerDeviceNode = ref<Konva.Node>(); // 觸發的設備
 interface connectArrayType {
   label: string;
   id: string;
+}
+
+// 觸發探測器時顯示危害時間，有起火層才要顯示避難時間
+watch(processRunning, (newValue) => {
+  if (newValue) {
+    nextTick(() => {
+      // 設定假的 initialDetector
+      countDown();
+      animate();
+    });
+  }
+});
+
+function countDown() {
+  const graphicLayerNode = graphicLayer.value?.getNode().getChildren();
+
+  const resultNode = graphicLayerNode?.find(
+    (item) => item.attrs?.deviceData?.deviceId === initialDetector.value?.id
+  );
+  if (resultNode) triggerDeviceNode.value = resultNode;
+  console.log('triggerDeviceNode', triggerDeviceNode);
+
+  if (triggerDeviceNode.value) {
+    const triggerConnectArray: Konva.NodeConfig[] = []; // 關聯陣列
+
+    triggerConnectArray.push(triggerDeviceNode.value?.attrs.connectArray);
+
+    const hazardTimeNodeArr: Konva.Node[] = [];
+    let connectCctvData = null;
+    // 取得 危害時間 Node
+    if (triggerConnectArray.length > 0) {
+      triggerConnectArray.forEach((connectArray) => {
+        connectArray.forEach((item: connectArrayType) => {
+          const result = graphicLayerNode?.find(
+            (node: Konva.Node) => node.attrs.id === item.id
+          );
+          if (result?.attrs.deviceData?.iconId === 'fire_o3') {
+            connectCctvData = result?.attrs.deviceData;
+          }
+
+          if (result?.attrs.hazardTime && !hazardTimeNodeArr.includes(result)) {
+            hazardTimeNodeArr.push(result);
+          }
+        });
+      });
+    }
+
+    hazardTimeNodeArr.forEach((node) => {
+      const hazardTime = date.addToDate(triggerTime.value, {
+        seconds: node.attrs.hazardTime,
+      });
+      node.setAttrs({
+        text: `預估 ${date.formatDate(
+          hazardTime,
+          'HH:mm'
+        )} 造成人體危害，請盡快撤離`, // 格式化過的時間
+      });
+    });
+    showFireImage();
+    // 觸發探測器關聯的cctv
+    if (connectCctvData) deviceDataOpen(connectCctvData);
+  }
 }
 
 // 探測器為火災時換成火災圖片
