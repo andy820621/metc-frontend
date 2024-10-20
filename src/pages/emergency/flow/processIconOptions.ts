@@ -245,7 +245,12 @@ function convertToNodeDataArray(originalData: IconOptions[]): NodeData[] {
       icon: value.iconImg,
       name: nodeTypeValue,
       id,
-      isStart: value.nodeType === iconLabels.Start,
+      isStart:
+        value.nodeType === iconLabels.Start
+          ? true
+          : value.nodeType === iconLabels.End
+          ? false
+          : undefined,
       nodeType: { key: value.nodeType, value: nodeTypeValue },
       stepType: value.group,
     };

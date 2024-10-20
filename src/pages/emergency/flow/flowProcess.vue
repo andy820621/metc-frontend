@@ -535,6 +535,11 @@ import { Background } from '@vue-flow/background';
 import { Controls } from '@vue-flow/controls';
 // pinia store
 import { useBuildingStore } from 'src/stores/building.js';
+import {
+  basicProcessNodesData,
+  fireMarshallingProcessNodesData,
+  mockWfNodes,
+} from './fakeData';
 
 const buildingStore = useBuildingStore();
 
@@ -589,7 +594,7 @@ const wfFilter = ref('');
 const stringOptions: string[] = []; // 這裡之後可以寫在系統設定
 const wfFilterOptions = ref(stringOptions);
 
-const wfNodesString: wfNode[] = [];
+let wfNodesString: wfNode[] = [];
 const wfNodes = ref<QTreeNode[]>(wfNodesString);
 
 // 取得樓層和班別名稱的下拉選單
@@ -1056,6 +1061,9 @@ interface withErrors {
   errors: string;
 }
 async function doSaveFile() {
+  const payload = clientToServer();
+  if (!payload) return;
+  console.log('doSaveFile payload', payload);
   $q.notify({
     type: 'positive',
     message: 'doSaveFile 儲存成功',
@@ -1342,6 +1350,7 @@ interface classData {
 }
 async function getRoleTreeForProcess() {
   console.log('getRoleTreeForProcess() called');
+  wfNodes.value = wfNodesString = mockWfNodes;
 }
 function formatRoleTreeData(
   data: typeof AxiosResponse,
@@ -1451,7 +1460,7 @@ async function handleEditProcess(
 }
 const nowProcess = ref();
 async function handleClickProcess(
-  prop: { key: string; node: object },
+  prop: { key: string; node: wfNode },
   force = false
 ) {
   if (!force && nowProcess.value && nowProcess.value.key === prop.key) return;
@@ -1462,7 +1471,17 @@ async function handleClickProcess(
   nowState.value = toObject();
   saveStateToArray(history.value);
 
-  console.log('handleClickProcess');
+  nextTick(() => {
+    console.log('handleClickProcess prop', prop);
+    const copyProcessData = JSON.parse(
+      JSON.stringify(
+        prop.node.id === '111'
+          ? fireMarshallingProcessNodesData
+          : basicProcessNodesData
+      )
+    );
+    serverToClient(copyProcessData);
+  });
 }
 async function handleDeleteProcess(processProps: {
   id: string;
