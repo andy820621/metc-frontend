@@ -584,9 +584,9 @@ interface stepDefinition {
   inputs: object;
   outputs: object;
 }
-onMounted(() => {
-  console.log('iconObjectOptions', iconObjectOptions);
-});
+// onMounted(() => {
+//   console.log('iconObjectOptions', iconObjectOptions);
+// });
 
 const $q = inject('$q') as typeof QVueGlobals;
 
@@ -1351,7 +1351,6 @@ interface classData {
   children?: classData[] | { id: string; label: string }[];
 }
 async function getRoleTreeForProcess() {
-  console.log('getRoleTreeForProcess() called');
   wfNodes.value = wfNodesString = mockWfNodes;
 }
 function formatRoleTreeData(
@@ -1397,19 +1396,6 @@ function formatRoleTreeData(
       header,
     };
   });
-}
-onMounted(getRoleNameObjectOptions);
-async function getRoleNameObjectOptions() {
-  console.log('getRoleNameObjectOptions() called');
-  // const payload = [
-  //   { type: roleType.role, isEmergency: null },
-  //   { type: roleType.class, isEmergency: null },
-  // ];
-  // const result = (await Role.apiGetRoles(payload)) as typeof AxiosResponse;
-  // if (result.data) {
-  //   roleNameObjectOptions.value = result.data;
-  //   console.log('roleNameObjectOptions.value: ', roleNameObjectOptions.value);
-  // }
 }
 // 新增 icon 給各班別的方法
 // 之後有真實欄位後請後端回傳真實資料就可以把這個方法改成用 enum 去寫
@@ -1505,11 +1491,10 @@ async function handleDeleteProcess(processProps: {
 }
 
 onMounted(() => {
-  console.log({ nodeDataArray });
   nodesData.value = nodeTypeOptions.value = nodeDataArray;
 });
-// 取得節點資料
-onMounted(getNodesData);
+
+// 節點資料
 interface NodeData {
   icon: string;
   name: string;
@@ -1519,11 +1504,6 @@ interface NodeData {
   stepType: string;
 }
 const nodesData = ref<NodeData[]>([]);
-async function getNodesData(
-  pagination = { filters: '', page: 1, rowsPerPage: 0 }
-) {
-  console.log('getNodesData() called');
-}
 const formattedNodesData = computed(() => {
   return nodesData.value.reduce((a, b) => {
     const newNode = JSON.parse(JSON.stringify(b));
@@ -1541,13 +1521,13 @@ const formattedNodesData = computed(() => {
     return a;
   }, [] as { name?: string; label: string; children: NodeData[] }[]);
 });
-watch(
-  formattedNodesData,
-  (val) => {
-    console.log('now formattedNodesData', formattedNodesData.value);
-  },
-  { deep: true, immediate: true }
-);
+// watch(
+//   formattedNodesData,
+//   (val) => {
+//     console.log('now formattedNodesData', formattedNodesData.value);
+//   },
+//   { deep: true, immediate: true }
+// );
 
 // 搜尋節點
 const searchContent = ref('');
