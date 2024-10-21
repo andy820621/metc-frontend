@@ -220,13 +220,15 @@ const iconOptions: IconOptions[] = [
 interface objWithStringKey {
   [index: string]: IconOptions;
 }
-const iconObjectOptions = iconOptions.reduce((obj: objWithStringKey, item) => {
-  obj[item.nodeType] = item;
-  return obj;
-}, {});
+export const iconObjectOptions = iconOptions.reduce(
+  (obj: objWithStringKey, item) => {
+    obj[item.nodeType] = item;
+    return obj;
+  },
+  {}
+);
 
 export default iconOptions;
-export { iconObjectOptions };
 
 export interface NodeData {
   icon: string;
@@ -236,14 +238,43 @@ export interface NodeData {
   nodeType: { key: number; value: string };
   stepType: string;
 }
+
+export type TypeFrom<T> = T[keyof T];
+export const iconChLabels = {
+  Wait: '等待節點',
+  Start: '起始點',
+  Stop: '結束點',
+  SubWorkflow: '連接流程圖',
+  Broadcast: '全部通知',
+  MessageSend: '簡訊推播',
+  LinePush: 'Line 推播',
+  NotificationSend: '手機、電腦推播',
+  Voice: '聲音廣播',
+  CountDown: '倒數計時',
+  InPosition: '已定位',
+  Retreat: '已撤退',
+  Not: '非火災',
+  Fire: '火災',
+  False: '誤報',
+  Failure: '滅火失敗',
+  Success: '滅火成功',
+  BootFailure: '引導失敗',
+  BootSuccess: '引導成功',
+  Lift: '狀況解除',
+  Begin: '統計開始',
+  End: '統計結束',
+} as const;
+export type iconChLabel = TypeFrom<typeof iconChLabels>;
+
 function convertToNodeDataArray(originalData: IconOptions[]): NodeData[] {
   return Object.entries(originalData).map(([key, value]) => {
     const id = parseInt(key) + 1;
     const nodeTypeValue = iconLabels[value.nodeType];
+    const name = iconChLabels[nodeTypeValue as keyof typeof iconChLabels];
 
     return {
       icon: value.iconImg,
-      name: nodeTypeValue,
+      name,
       id,
       isStart:
         value.nodeType === iconLabels.Start

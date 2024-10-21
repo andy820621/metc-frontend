@@ -539,6 +539,7 @@ import {
   basicProcessNodesData,
   fireMarshallingProcessNodesData,
   mockWfNodes,
+  roleOptions,
 } from './fakeData';
 
 const buildingStore = useBuildingStore();
@@ -703,7 +704,7 @@ function formatSecondsToTime(seconds: number): string {
 }
 
 // 身分
-const roleNameObjectOptions = ref();
+const roleNameObjectOptions = ref(roleOptions);
 // 節點類型
 const nodeTypeOptions = ref();
 // 流程圖 options
@@ -854,6 +855,7 @@ function getNodeType(isStart: boolean | null) {
   return 'flowNode';
 }
 function onDragStart(node: QTreeNode) {
+  console.log({ node });
   if (!nowProcess.value) return;
   const typeString = getNodeType(node.isStart);
 
