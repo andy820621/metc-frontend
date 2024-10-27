@@ -88,7 +88,7 @@ module.exports = configure(function (ctx) {
       // ignorePublicFolder: true,
       // minify: false,
       // polyfillModulePreload: true,
-      // distDir
+      distDir: ctx.mode.spa ? 'dist/spa' : `dist/${ctx.modeName}`,
 
       extendViteConf(viteConf) {
         viteConf.base = '/';
@@ -246,42 +246,11 @@ module.exports = configure(function (ctx) {
       swFilename: 'sw.js',
       manifestFilename: 'manifest.json',
       useCredentialsForManifestTag: false,
-      manifest: {
-        name: 'Mercuryfire Engineering Technology Company',
-        short_name: 'METC',
-        description:
-          'Smart Fire Website of Mercuryfire Engineering Technology Company Limited',
-        display: 'standalone',
-        orientation: 'portrait',
-        background_color: '#ffffff',
-        theme_color: '#8b694e',
-        icons: [
-          {
-            src: 'icons/favicon-16x16.png',
-            sizes: '16x16',
-            type: 'image/png',
-          },
-          {
-            src: 'icons/favicon-32x32.png',
-            sizes: '32x32',
-            type: 'image/png',
-          },
-          {
-            src: 'icons/favicon-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: 'icons/favicon-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-          {
-            src: 'icons/apple-touch-icon.png',
-            sizes: '180x180',
-            type: 'image/png',
-          },
-        ],
+      // 確保 base URL 正確
+      workboxOptions: {
+        cleanupOutdatedCaches: true,
+        skipWaiting: true,
+        clientsClaim: true,
       },
     },
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#sourcefiles

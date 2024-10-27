@@ -21,6 +21,7 @@
     "src/**/*.vue",
     "./auto-imports.d.ts",
     "./components.d.ts",
-    ".eslintrc.cjs"
+    ".eslintrc.cjs",
+    "quasar.config.js"
   ]
 }
