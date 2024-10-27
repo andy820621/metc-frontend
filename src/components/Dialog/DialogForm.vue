@@ -339,7 +339,7 @@
                       >
                         <span class="text-grey-8 fz-16 q-mr-xs"
                           >{{ config.label }}
-                          {{ config.required ? " *" : "" }}</span
+                          {{ config.required ? ' *' : '' }}</span
                         >
                       </q-toggle>
                       <!-- 電話 -->
@@ -383,33 +383,33 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
-import { date } from "quasar";
+import { date } from 'quasar';
 
 // api
-import User from "src/api/user";
+import User from 'src/api/user';
 // utils
 import type {
   dialogAttrsType,
   blockAttrsType,
   tempDataType,
   tableConfigItem,
-} from "src/utils/tableMixin";
-import { useCloned } from "@vueuse/core";
-import { phoneRules, phoneRulesMask } from "src/utils/quasarRules";
-import { linkUrlAction } from "src/utils/urlActions";
+} from 'src/utils/tableMixin';
+import { useCloned } from '@vueuse/core';
+import { phoneRules, phoneRulesMask } from 'src/utils/quasarRules';
+import { linkUrlAction } from 'src/utils/urlActions';
 // icon
 
-import { matKeyboardTab } from "@quasar/extras/material-icons";
-import tableMixin from "src/utils/tableMixin";
+import { matKeyboardTab } from '@quasar/extras/material-icons';
+import tableMixin from 'src/utils/tableMixin';
 
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = inject('$q') as typeof QVueGlobals;
 
 const emit = defineEmits([
-  "handleDialog",
-  "selectListChange",
-  "updateLatestData",
-  "handleDate",
-  "selectStringFilterFn",
+  'handleDialog',
+  'selectListChange',
+  'updateLatestData',
+  'handleDate',
+  'selectStringFilterFn',
 ]);
 const props = withDefaults(
   defineProps<{
@@ -427,18 +427,19 @@ const { dialogAttrs, blockAttrs, hideDialog } = tableMixin();
 
 const tableConfig = computed(() => {
   if (
-    dialogAttrs.value.status === "add" ||
-    dialogAttrs.value.status === "edit" ||
-    dialogAttrs.value.status === "updateMany"
+    dialogAttrs.value.status === 'add' ||
+    dialogAttrs.value.status === 'edit' ||
+    dialogAttrs.value.status === 'updateMany'
   ) {
     return blockAttrs.value.tableConfig;
   } else if (props.customTableConfig?.length) {
     return props.customTableConfig;
   }
+  return [];
 });
 const dialogActiveTab = ref({
-  label: "",
-  value: "",
+  label: '',
+  value: '',
 });
 watch(
   () => props.blockAttrs?.tableConfig,
@@ -455,7 +456,7 @@ watch(
   (newVal, oldVal) => {
     dialogAttrs.value = useCloned(props.dialogAttrs).cloned.value;
     if (dialogAttrs.value.visible) {
-      if (dialogAttrs.value.status === "updateMany") {
+      if (dialogAttrs.value.status === 'updateMany') {
         if (
           newVal[0] !== oldVal[0] &&
           Object.getOwnPropertyNames(oldVal[0]).length === 0
@@ -496,13 +497,13 @@ watch(
 
 const dialogStatusTitle = computed(() => {
   const result =
-    dialogAttrs.value.status === "add"
-      ? "- 新增"
-      : dialogAttrs.value.status === "edit"
-      ? "- 編輯"
-      : dialogAttrs.value.status === "updateMany"
-      ? "- 多筆編輯"
-      : "";
+    dialogAttrs.value.status === 'add'
+      ? '- 新增'
+      : dialogAttrs.value.status === 'edit'
+      ? '- 編輯'
+      : dialogAttrs.value.status === 'updateMany'
+      ? '- 多筆編輯'
+      : '';
 
   return `${dialogAttrs.value.dialogTitle} ${result}`;
 });
@@ -510,17 +511,17 @@ const dialogStatusTitle = computed(() => {
 function handleDialog() {
   isSave.value = true;
   if (isSave.value) {
-    console.log("handleDialog", dialogAttrs.value.status);
+    console.log('handleDialog', dialogAttrs.value.status);
 
-    if (dialogAttrs.value.status === "updateMany") {
+    if (dialogAttrs.value.status === 'updateMany') {
       emit(
-        "handleDialog",
+        'handleDialog',
         dialogAttrs.value.status,
         dialogAttrs.value.selectArray
       );
     } else {
       emit(
-        "handleDialog",
+        'handleDialog',
         dialogAttrs.value.status,
         dialogAttrs.value.tempData
       );
@@ -544,8 +545,8 @@ function DialogTabChange(tempData: tempDataType) {
     }
   }
 
-  if (dialogAttrs.value.status === "add") {
-    dialogActiveTab.value.value = "add";
+  if (dialogAttrs.value.status === 'add') {
+    dialogActiveTab.value.value = 'add';
   } else if (Object.getOwnPropertyNames(tempData).length > 0) {
     dialogActiveTab.value = {
       label: tempData.name,
@@ -555,34 +556,34 @@ function DialogTabChange(tempData: tempDataType) {
   dialogAttrs.value.tempData = tempData;
 }
 function selectListChange(configName: string, tempData: tempDataType) {
-  emit("selectListChange", configName, tempData);
+  emit('selectListChange', configName, tempData);
 }
 function selectStringFilterFn(
   inputValue: string,
   doneFn: (func: () => void) => void,
   abortFn: () => void
 ): void {
-  emit("selectStringFilterFn", inputValue, doneFn, abortFn);
+  emit('selectStringFilterFn', inputValue, doneFn, abortFn);
 }
 
 function handleSelectString() {
-  if (dialogAttrs.value.status === "updateMany") {
+  if (dialogAttrs.value.status === 'updateMany') {
     emit(
-      "updateLatestData",
+      'updateLatestData',
       dialogAttrs.value.tempData,
       dialogAttrs.value.selectArray
     );
   } else {
-    emit("updateLatestData", dialogAttrs.value.tempData);
+    emit('updateLatestData', dialogAttrs.value.tempData);
   }
 }
 function updateDate(val: string, configName: string) {
   dialogAttrs.value.tempData[configName] = val;
-  emit("updateLatestData", dialogAttrs.value.tempData);
+  emit('updateLatestData', dialogAttrs.value.tempData);
 }
 
 function handleDate(configName: string) {
-  emit("handleDate", configName);
+  emit('handleDate', configName);
 }
 export interface radioOptionsType {
   label: string;
@@ -595,10 +596,10 @@ function closeDialog() {
   } else {
     setTimeout(() => {
       $q.dialog({
-        title: "提示",
-        message: "是否確定關閉視窗?",
-        ok: "確定",
-        cancel: "取消",
+        title: '提示',
+        message: '是否確定關閉視窗?',
+        ok: '確定',
+        cancel: '取消',
       }).onOk(() => {
         hideDialog();
       });
@@ -642,7 +643,7 @@ function closeDialog() {
   align-items: center;
 }
 
-:deep(.q-field__native[type="date"]::-webkit-calendar-picker-indicator) {
+:deep(.q-field__native[type='date']::-webkit-calendar-picker-indicator) {
   cursor: pointer;
   position: absolute;
   right: 0;

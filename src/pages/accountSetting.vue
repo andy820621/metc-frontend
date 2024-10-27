@@ -71,10 +71,10 @@
               :offset="[10, 10]"
             >
               {{
-                btn.status === "accountStatus"
+                btn.status === 'accountStatus'
                   ? scoped?.data?.lockout
-                    ? "未啟用"
-                    : "啟用中"
+                    ? '未啟用'
+                    : '啟用中'
                   : btn.label
               }}
             </q-tooltip>
@@ -128,7 +128,7 @@
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6 text-bold">
           {{ dialogAttrs.dialogTitle }}
-          {{ dialogTableTitle ? `- ${dialogTableTitle}` : "" }}
+          {{ dialogTableTitle ? `- ${dialogTableTitle}` : '' }}
         </div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
@@ -166,65 +166,64 @@
 import AccountSetting, {
   UserViewModel,
   userTableConfig,
-} from "src/api/accountSetting";
-import Building, { BuildingViewModel } from "src/api/building";
-import Floors, { FloorViewModel } from "src/api/floors";
-import Role, { RoleViewModel, roleType } from "src/api/role";
-import AddressPlate, { AddressPlateViewModel } from "src/api/addressPlate";
-import UserAccount, { beControlledDataConfig } from "src/api/userAccount";
+} from 'src/api/accountSetting';
+import Building, { BuildingViewModel } from 'src/api/building';
+import Floors, { FloorViewModel } from 'src/api/floors';
+import Role, { RoleViewModel, roleType } from 'src/api/role';
+import AddressPlate, { AddressPlateViewModel } from 'src/api/addressPlate';
+import UserAccount, { beControlledDataConfig } from 'src/api/userAccount';
 
 // utils
-import cellPhoneMixin from "src/utils/cellPhoneMixin";
-import { useCloned } from "@vueuse/core";
-import FileReadMixin from "src/utils/fileRead";
-import tableMixin, { setBlockLoading } from "src/utils/tableMixin";
-import { dataItem } from "src/components/Dialog/DialogImportExcel.vue";
+import cellPhoneMixin from 'src/utils/cellPhoneMixin';
+import { useCloned } from '@vueuse/core';
+import FileReadMixin from 'src/utils/fileRead';
+import tableMixin, { setBlockLoading } from 'src/utils/tableMixin';
+import { dataItem } from 'src/components/Dialog/DialogImportExcel.vue';
 
 import type {
   blockRefType,
   tempDataType,
   tableConfigItem,
   blockAttrsType,
-} from "src/utils/tableMixin";
+} from 'src/utils/tableMixin';
 import searchFiltersGenerator, {
   generateFiltersObject,
-} from "src/utils/advancedSearchFilters";
-import type { FilterColumn, FilterColumnCollection } from "src/api/api.type";
+} from 'src/utils/advancedSearchFilters';
+import type { FilterColumn, FilterColumnCollection } from 'src/api/api.type';
 // icon
 import {
   mdiToggleSwitch,
   mdiToggleSwitchOff,
   mdiAccount,
   mdiAccountAlert,
-} from "@quasar/extras/mdi-v6";
-import { formatExcelDate } from "src/utils/formatUtils";
-import { rolesTempDataType } from "src/components/UserForm.vue";
+} from '@quasar/extras/mdi-v6';
+import { formatExcelDate } from 'src/utils/formatUtils';
 
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = inject('$q') as typeof QVueGlobals;
 
 // 客製 button
 const customHeaderButtons = ref([
   {
-    label: "多筆啟用",
+    label: '多筆啟用',
     icon: mdiToggleSwitch,
-    status: "accountStatusMany",
+    status: 'accountStatusMany',
   },
   {
-    label: "多筆更改角色",
+    label: '多筆更改角色',
     icon: mdiAccountAlert,
-    status: "changeRolesMany",
+    status: 'changeRolesMany',
   },
 ]);
 const customTableButtons = ref([
   {
-    label: "附屬帳號",
+    label: '附屬帳號',
     icon: mdiAccount,
-    status: "accounts",
+    status: 'accounts',
   },
   {
-    label: "是否啟用",
+    label: '是否啟用',
     icon: mdiToggleSwitchOff,
-    status: "accountStatus",
+    status: 'accountStatus',
   },
 ]);
 function handleClickOption(
@@ -277,12 +276,12 @@ const tableEvent = computed(() => {
 });
 const roleTableConfig = ref<tableConfigItem[]>([
   {
-    label: "角色/身分",
-    name: "roles",
-    field: "roles",
-    align: "left",
-    formType: "selectMany",
-    message: "請選擇 角色/身分",
+    label: '角色/身分',
+    name: 'roles',
+    field: 'roles',
+    align: 'left',
+    formType: 'selectMany',
+    message: '請選擇 角色/身分',
     isTable: true,
     isDialogForm: true,
     required: true,
@@ -298,16 +297,16 @@ async function handleBlock<T>(
   data: T extends UserViewModel ? T : tempDataType
 ) {
   const userMugShotFileConfigObj = userTableConfig.find(
-    (item) => item.name === "mugShotFileId"
+    (item) => item.name === 'mugShotFileId'
   );
   const accountsMugShotFileConfigObj = beControlledDataConfig.find(
-    (item) => item.name === "mugShotFileId"
+    (item) => item.name === 'mugShotFileId'
   );
   const passwordConfigObj = userTableConfig.find(
-    (item) => item.name === "password"
+    (item) => item.name === 'password'
   );
-  if (btn.status === "edit" || btn.status === "updateMany") {
-    if (btn.status === "edit") {
+  if (btn.status === 'edit' || btn.status === 'updateMany') {
+    if (btn.status === 'edit') {
       data.userMugShotUrl = await getFile(null, data.mugShotFileId);
     } else {
       dialogAttrs.value.selectArray.forEach(async (item) => {
@@ -319,9 +318,9 @@ async function handleBlock<T>(
     if (accountsMugShotFileConfigObj) {
       accountsMugShotFileConfigObj.isDialogForm = true;
     }
-  } else if (btn.status === "add") {
-    cellPhoneArr.value = [""];
-    emgyCellPhoneArr.value = [""];
+  } else if (btn.status === 'add') {
+    cellPhoneArr.value = [''];
+    emgyCellPhoneArr.value = [''];
     if (passwordConfigObj) passwordConfigObj.isDialogForm = true;
     if (userMugShotFileConfigObj) userMugShotFileConfigObj.isDialogForm = false;
     if (accountsMugShotFileConfigObj) {
@@ -330,7 +329,7 @@ async function handleBlock<T>(
   }
 
   if (API === UserAccount) {
-    if (btn.status === "edit") {
+    if (btn.status === 'edit') {
       readPhoneNumber(data);
     }
 
@@ -341,9 +340,9 @@ async function handleBlock<T>(
   } else {
     handleBlockMixin(btn, data, API, getData);
 
-    if (btn.status === "edit") {
+    if (btn.status === 'edit') {
       readPhoneNumber(dialogAttrs.value.tempData);
-    } else if (btn.status === "updateMany") {
+    } else if (btn.status === 'updateMany') {
       dialogAttrs.value.selectArray.forEach((item) => {
         readPhoneNumber(item);
       });
@@ -353,18 +352,18 @@ async function handleBlock<T>(
     }
   }
   // 帳號是否啟用
-  if (btn.status === "accountStatus") {
+  if (btn.status === 'accountStatus') {
     $q.dialog({
-      title: "提示",
+      title: '提示',
       message: `目前帳號為「${
-        data.lockout ? "未啟用" : "啟用"
-      } 」狀態，是否將帳號設定為 「${data.lockout ? "啟用" : "不啟用"}」?`,
+        data.lockout ? '未啟用' : '啟用'
+      } 」狀態，是否將帳號設定為 「${data.lockout ? '啟用' : '不啟用'}」?`,
       persistent: true,
       ok: {
         push: true,
-        label: "確定",
+        label: '確定',
       },
-      cancel: "取消",
+      cancel: '取消',
     }).onOk(async () => {
       const accountStatus: { [key: string]: boolean } = {};
       accountStatus[data.id] = !data.lockout;
@@ -373,33 +372,33 @@ async function handleBlock<T>(
       )) as typeof AxiosResponse;
       if (result.data) {
         $q.notify({
-          type: "positive",
-          message: "更改成功",
-          position: "top",
+          type: 'positive',
+          message: '更改成功',
+          position: 'top',
         });
         getData();
       } else {
         $q.notify({
-          type: "negative",
-          message: "更改失敗",
-          position: "top",
+          type: 'negative',
+          message: '更改失敗',
+          position: 'top',
         });
       }
     });
-  } else if (btn.status === "accountStatusMany") {
+  } else if (btn.status === 'accountStatusMany') {
     if (
       dialogAttrs.value.selectArray &&
       dialogAttrs.value.selectArray.length > 0
     ) {
       $q.dialog({
-        title: "提示",
-        message: "是否啟用目前所選取的帳號?",
+        title: '提示',
+        message: '是否啟用目前所選取的帳號?',
         persistent: true,
         ok: {
           push: true,
-          label: "確定",
+          label: '確定',
         },
-        cancel: "取消",
+        cancel: '取消',
       }).onOk(async () => {
         const accountStatus: { [key: string]: boolean } = {};
         dialogAttrs.value.selectArray.forEach((item) => {
@@ -410,34 +409,34 @@ async function handleBlock<T>(
         )) as typeof AxiosResponse;
         if (result.data) {
           $q.notify({
-            type: "positive",
-            message: "更改成功",
-            position: "top",
+            type: 'positive',
+            message: '更改成功',
+            position: 'top',
           });
           getData();
         } else {
           $q.notify({
-            type: "negative",
-            message: "更改失敗",
-            position: "top",
+            type: 'negative',
+            message: '更改失敗',
+            position: 'top',
           });
         }
       });
     } else {
       $q.notify({
-        type: "negative",
-        message: "請勾選要更新的資料列",
-        position: "top",
+        type: 'negative',
+        message: '請勾選要更新的資料列',
+        position: 'top',
       });
     }
-  } else if (btn.status === "exportExcel") {
+  } else if (btn.status === 'exportExcel') {
     $q.loading.show({
-      message: "資料加載中...",
-      spinnerColor: "warning",
-      messageColor: "warning",
+      message: '資料加載中...',
+      spinnerColor: 'warning',
+      messageColor: 'warning',
     });
     const result = (await AccountSetting.apiGetData({
-      filters: "",
+      filters: '',
       page: 0,
       rowsPerPage: 0,
     })) as typeof AxiosResponse;
@@ -445,34 +444,34 @@ async function handleBlock<T>(
     if (result.data.rows) {
       fullBlockDataForExcel.value = formatBlockData(result.data.rows);
     }
-  } else if (btn.status === "accounts") {
+  } else if (btn.status === 'accounts') {
     normalAccountData.value = data as UserViewModel;
 
     const { cloned } = useCloned(data);
     dialogAttrs.value.tempData = cloned.value;
     dialogTableVisible.value = true;
-    dialogTableTitle.value = "附屬帳號";
+    dialogTableTitle.value = '附屬帳號';
     nextTick(() => {
       tableAttrs.value.tableConfig = beControlledDataConfig;
-      tableAttrs.value.headerButtons = ["add", "deleteMany"];
-      tableAttrs.value.tableButtons = ["edit", "delete"];
+      tableAttrs.value.headerButtons = ['add', 'deleteMany'];
+      tableAttrs.value.tableButtons = ['edit', 'delete'];
     });
-  } else if (btn.status === "changeRolesMany") {
+  } else if (btn.status === 'changeRolesMany') {
     // 多筆更改角色
     if (
       dialogAttrs.value.selectArray &&
       dialogAttrs.value.selectArray.length > 0
     ) {
-      cellPhoneArr.value = [""];
-      emgyCellPhoneArr.value = [""];
+      cellPhoneArr.value = [''];
+      emgyCellPhoneArr.value = [''];
       dialogAttrs.value.visible = true;
       dialogAttrs.value.tempData.roles = [];
       dialogAttrs.value.tempData.id = 1;
     } else {
       $q.notify({
-        type: "negative",
-        message: "請勾選要更新的資料列",
-        position: "top",
+        type: 'negative',
+        message: '請勾選要更新的資料列',
+        position: 'top',
       });
     }
   }
@@ -497,17 +496,17 @@ async function handleDialog(status: string, data: tempDataType) {
     formatPhoneNumber(data);
   }
   if (API === UserAccount) {
-    if (status === "add") {
+    if (status === 'add') {
       data.user = normalAccountData.value;
     }
     handleDialogMixin(status, API, getTableData, data);
   } else {
-    if (status === "add") {
+    if (status === 'add') {
       data.emailConfirmed = false;
       data.lockout = false;
       data.switchs = 0;
     }
-    if (status === "changeRolesMany") {
+    if (status === 'changeRolesMany') {
       // 多筆更改角色
       const { roleBuildings, roleAddressPlates, roles } = data;
       dialogAttrs.value.selectArray.forEach((item) => {
@@ -517,7 +516,7 @@ async function handleDialog(status: string, data: tempDataType) {
           item.roleAddressPlates = roleAddressPlates;
         }
       });
-      handleDialogMixin("edit", API, getData, dialogAttrs.value.selectArray);
+      handleDialogMixin('edit', API, getData, dialogAttrs.value.selectArray);
     } else {
       handleDialogMixin(status, API, getData, data);
     }
@@ -534,8 +533,8 @@ async function handleDialog(status: string, data: tempDataType) {
 // 取得分頁資料
 const { filters } = searchFiltersGenerator(userTableConfig);
 async function getData(
-  pagination: blockRefType["pagination"] = {
-    filters: "",
+  pagination: blockRefType['pagination'] = {
+    filters: '',
     page: 1,
     rowsPerPage: 25,
   }
@@ -543,11 +542,11 @@ async function getData(
   API = AccountSetting;
   // 產出 filters 物件 (filtersObject)
   const searchText = pagination.filters;
-  console.log("searchText", searchText);
+  console.log('searchText', searchText);
   const filtersObject: FilterColumnCollection[] = generateFiltersObject(
     filters,
     searchText,
-    "User"
+    'User'
   );
   const jsonFilters = JSON.stringify(filtersObject);
   const payload = useCloned(pagination).cloned.value;
@@ -560,10 +559,10 @@ async function getData(
 }
 // dialogTable
 const dialogTableVisible = ref(false);
-const dialogTableTitle = ref("");
+const dialogTableTitle = ref('');
 async function getTableData(
-  pagination: blockRefType["pagination"] = {
-    filters: "",
+  pagination: blockRefType['pagination'] = {
+    filters: '',
     page: 1,
     rowsPerPage: 12,
   }
@@ -573,33 +572,39 @@ async function getTableData(
   await getTableMixin(API, pagination);
 }
 function init() {
-  dialogAttrs.value.dialogTitle = "帳號管理";
+  dialogAttrs.value.dialogTitle = '帳號管理';
   blockAttrs.value.tableConfig = userTableConfig;
   blockAttrs.value.headerButtons = [
-    "updateMany",
-    "add",
-    "deleteMany",
-    "importExcel",
-    "exportExcel",
+    'updateMany',
+    'add',
+    'deleteMany',
+    'importExcel',
+    'exportExcel',
   ];
-  blockAttrs.value.tableButtons = ["edit", "delete"];
+  blockAttrs.value.tableButtons = ['edit', 'delete'];
 }
 onMounted(() => {
   init();
 });
 
 // 每次點取變換下拉選單內容
+export interface rolesTempDataType {
+  buildings: BuildingViewModel | BuildingViewModel[];
+  role?: RoleViewModel & { rolesTempData: rolesTempDataType | undefined };
+  floor?: FloorViewModel;
+  addressPlates?: AddressPlateViewModel[];
+}
 const userFormRef = ref<{
   rolesConfig: tableConfigItem[];
   rolesTempData: rolesTempDataType;
 }>();
 const userFormSelectOption = ref<tempDataType[]>([]);
 async function selectListChange(props: string) {
-  console.log("selectListChange", props);
-  if (props === "buildings") {
+  console.log('selectListChange', props);
+  if (props === 'buildings') {
     const result = (await Building.apiGetAllBuilding()) as typeof AxiosResponse;
     userFormSelectOption.value = result.data;
-  } else if (props === "floor") {
+  } else if (props === 'floor') {
     const Bid = Array.isArray(userFormRef.value?.rolesTempData.buildings)
       ? userFormRef.value?.rolesTempData.buildings[0].id
       : userFormRef.value?.rolesTempData.buildings?.id;
@@ -610,13 +615,13 @@ async function selectListChange(props: string) {
       userFormSelectOption.value = result.data;
     } else {
       $q.notify({
-        type: "warning",
-        message: "請先選擇大樓，再選擇樓層",
-        position: "top",
+        type: 'warning',
+        message: '請先選擇大樓，再選擇樓層',
+        position: 'top',
       });
       userFormSelectOption.value = [];
     }
-  } else if (props === "addressPlates") {
+  } else if (props === 'addressPlates') {
     if (userFormRef.value?.rolesTempData.floor?.id) {
       const result = (await AddressPlate.apiGetAddressPlate(
         userFormRef.value?.rolesTempData.floor.id
@@ -625,13 +630,13 @@ async function selectListChange(props: string) {
       userFormSelectOption.value = result.data;
     } else {
       $q.notify({
-        type: "warning",
-        message: "請先選擇樓層，再選擇地址",
-        position: "top",
+        type: 'warning',
+        message: '請先選擇樓層，再選擇地址',
+        position: 'top',
       });
       userFormSelectOption.value = [];
     }
-  } else if (props === "roles") {
+  } else if (props === 'roles') {
     // 系統角色
     const result = await Role.apiGetRoles([
       { type: roleType.role, isEmergency: null },
@@ -640,36 +645,36 @@ async function selectListChange(props: string) {
 
     // 手動更改角色名稱
     dialogAttrs.value.selectOption = result.data.map((item) => {
-      if (item.name === "Manager") item.description = "防火管理人";
+      if (item.name === 'Manager') item.description = '防火管理人';
       return item;
     });
   }
 }
 
 // Excel
-const tableConfigForExcel = ref<blockAttrsType["tableConfig"]>([]);
-const blockDataForExcel = ref<blockAttrsType["blockData"]>([]);
-const fullBlockDataForExcel = ref<blockAttrsType["blockData"]>([]);
+const tableConfigForExcel = ref<blockAttrsType['tableConfig']>([]);
+const blockDataForExcel = ref<blockAttrsType['blockData']>([]);
+const fullBlockDataForExcel = ref<blockAttrsType['blockData']>([]);
 
-async function setDataForDataConfig(blockData: blockAttrsType["blockData"]) {
+async function setDataForDataConfig(blockData: blockAttrsType['blockData']) {
   const newBlockData = useCloned(blockData).cloned.value;
   tableConfigForExcel.value = userTableConfig;
-  console.log("newBlockData", newBlockData);
+  console.log('newBlockData', newBlockData);
 
   blockDataForExcel.value = formatBlockData(newBlockData);
   tableConfigForExcel.value.forEach((item) => {
     const { label, name } = item;
     rowsChKeyToEngNameObject[label] = name;
   });
-  console.log("tableConfigForExcel", tableConfigForExcel.value);
+  console.log('tableConfigForExcel', tableConfigForExcel.value);
 }
-function formatBlockData(blockData: blockAttrsType["blockData"]) {
+function formatBlockData(blockData: blockAttrsType['blockData']) {
   return blockData.map((item) => {
-    item.sex = item.sex ? "女" : item.sex === false ? "男" : "尚未設定";
-    item.isDisability = item.isDisability ? "是" : "否";
+    item.sex = item.sex ? '女' : item.sex === false ? '男' : '尚未設定';
+    item.isDisability = item.isDisability ? '是' : '否';
     item.roles = item.roles
       .map((role: RoleViewModel) => role.description)
-      .join("、");
+      .join('、');
     item.houseNumber = item.roleAddressPlates?.length
       ? item.roleAddressPlates
           .flatMap((p: { addressPlates: AddressPlateViewModel[] }) =>
@@ -679,15 +684,15 @@ function formatBlockData(blockData: blockAttrsType["blockData"]) {
             (value: any, index: any, self: string | any[]) =>
               self.indexOf(value) === index
           )
-          .join("、")
-      : "";
+          .join('、')
+      : '';
     return item;
   });
 }
 // Excel 匯入 => 多筆新增
 const dialogImportExcelRef = ref();
 const sampleFile = computed(() => {
-  return "/excelSample/帳號資料.xlsx";
+  return '/excelSample/帳號資料.xlsx';
 });
 const rowsChKeyToEngNameObject = reactive<{ [key: string]: string }>({});
 
@@ -697,7 +702,7 @@ function formatImportData(data: dataItem[]) {
     for (const key in item) {
       const newKey = rowsChKeyToEngNameObject[key];
       if (newKey) {
-        if (newKey === "sex") {
+        if (newKey === 'sex') {
           item[newKey as keyof typeof item] = JSON.parse(item[key]);
         } else {
           item[newKey as keyof typeof item] = item[key];
@@ -706,7 +711,7 @@ function formatImportData(data: dataItem[]) {
       delete item[key];
     }
     item.birthday = formatExcelDate(item.birthday);
-    item.password = "1234"; // 預設密碼
+    item.password = '1234'; // 預設密碼
     item.emailConfirmed = false;
     item.lockout = false;
     item.switchs = 0;
@@ -716,7 +721,7 @@ function formatImportData(data: dataItem[]) {
 }
 
 async function saveImportData(formattedTableData: dataItem[]) {
-  await handleDialogMixin("add", API, getData, formattedTableData);
+  await handleDialogMixin('add', API, getData, formattedTableData);
   dialogImportExcelRef.value.hide();
 }
 </script>
