@@ -6,14 +6,14 @@
 
 declare const self: ServiceWorkerGlobalScope & typeof globalThis;
 
-import { clientsClaim } from "workbox-core";
+import { clientsClaim } from 'workbox-core';
 import {
   precacheAndRoute,
   cleanupOutdatedCaches,
   createHandlerBoundToURL,
-} from "workbox-precaching";
-import { registerRoute, NavigationRoute } from "workbox-routing";
-import { StaleWhileRevalidate } from "workbox-strategies";
+} from 'workbox-precaching';
+import { registerRoute, NavigationRoute } from 'workbox-routing';
+import { StaleWhileRevalidate } from 'workbox-strategies';
 
 self.__WB_DISABLE_DEV_LOGS = true; // ? 停用 console.log
 self.skipWaiting();
@@ -26,7 +26,7 @@ cleanupOutdatedCaches(); // 清理过时的缓存
 
 // 非 SSR 情况下回退到 index.html
 // Production SSR fallback to offline.html (except for dev)
-if (process.env.MODE !== "ssr" || process.env.PROD) {
+if (process.env.MODE !== 'ssr' || process.env.PROD) {
   registerRoute(
     new NavigationRoute(
       createHandlerBoundToURL(process.env.PWA_FALLBACK_HTML),
@@ -37,8 +37,8 @@ if (process.env.MODE !== "ssr" || process.env.PROD) {
 
 // 解決 workbox console alert => 緩存 SVG 圖檔
 registerRoute(
-  ({ url }) => url.pathname.startsWith("/svgIcons/"),
+  ({ url }) => url.pathname.startsWith('/svgIcons/'),
   new StaleWhileRevalidate({
-    cacheName: "svg-icon-cache",
+    cacheName: 'svg-icon-cache',
   })
 );

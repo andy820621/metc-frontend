@@ -61,6 +61,15 @@ window.addEventListener('storage', (event) => {
     }, 2000);
   }
 });
+
+// Pwa 用
+const broadcast = new BroadcastChannel('app-update');
+
+broadcast.onmessage = (event) => {
+  if (event.data === 'update') {
+    location.reload();
+  }
+};
 </script>
 
 <style lang="scss">

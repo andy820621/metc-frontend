@@ -99,43 +99,41 @@
 
 <script setup lang="ts">
 // pinia
-import { storeToRefs } from "pinia";
-import { useAuthStore } from "src/stores/auth.js";
-import { LoginPartialParams, LoginRequest } from "src/api/basic";
-import { useUserStore } from "src/stores/user";
+import { storeToRefs } from 'pinia';
+import { LoginPartialParams, LoginRequest } from 'src/api/basic';
+import { useUserStore } from 'src/stores/user';
 // utils
-import FingerprintJS from "@fingerprintjs/fingerprintjs";
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
 
 // 生出設備指紋
-const visitorId = ref("");
+const visitorId = ref('');
 const fpPromise = FingerprintJS.load();
 fpPromise
   .then((fp) => fp.get())
   .then((result) => {
     visitorId.value = result.visitorId;
-    console.log("visitorId", visitorId.value);
+    console.log('visitorId', visitorId.value);
   })
   .catch((error) => console.error(error));
 
 const userStore = useUserStore();
 const { fcmToken } = storeToRefs(userStore);
 
-const authStore = useAuthStore();
 const router = useRouter();
 const route = useRoute();
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = inject('$q') as typeof QVueGlobals;
 
 const isPwd = ref(true);
 
-const account = ref("");
+const account = ref('');
 const loginData = reactive<LoginRequest>({
-  account: "",
-  email: "",
-  phoneNumber: "",
-  password: "",
-  visitorId: "",
-  loginProvider: "Web",
-  token: "",
+  account: '',
+  email: '',
+  phoneNumber: '',
+  password: '',
+  visitorId: '',
+  loginProvider: 'Web',
+  token: '',
 });
 watch(
   fcmToken,
@@ -161,68 +159,37 @@ watch(
 
 function determineAccountString(
   accounrString: string
-): "email" | "phoneNumber" | "account" {
+): 'email' | 'phoneNumber' | 'account' {
   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const phoneNumberPattern = /^\d{10}$/;
   if (emailPattern.test(accounrString)) {
-    loginData.account = "";
-    loginData.phoneNumber = "";
-    return "email";
+    loginData.account = '';
+    loginData.phoneNumber = '';
+    return 'email';
   } else if (phoneNumberPattern.test(accounrString)) {
-    loginData.account = "";
-    loginData.email = "";
-    return "phoneNumber";
+    loginData.account = '';
+    loginData.email = '';
+    return 'phoneNumber';
   } else {
-    loginData.email = "";
-    loginData.phoneNumber = "";
-    return "account";
+    loginData.email = '';
+    loginData.phoneNumber = '';
+    return 'account';
   }
 }
 
 type Info = LoginPartialParams & { password: string };
 async function handleSubmit() {
-  try {
-    // Login
-    const key = determineAccountString(account.value);
-    loginData[key] = account.value;
-    const loginResult = await authStore.login(loginData);
-    if (loginResult) {
-      if (isRememberMe.value) {
-        const info: Info = { password: loginData.password };
-        info[key] = loginData[key];
-        localStorage.setItem("info", JSON.stringify(info));
-      } else {
-        localStorage.removeItem("info");
-      }
-      // Redirect
-      const redirectUrl = `${route.query.redirect || "/"}`;
-      router.push(redirectUrl);
-    } else {
-      $q.notify({
-        type: "negative",
-        message: "登入失敗，請確認帳號密碼是否正確",
-        position: "top",
-      });
-    }
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      $q.notify({
-        type: "negative",
-        message: String(err),
-        position: "top",
-      });
-    }
-  }
+  console.log('handleSubmit');
 }
 
 const isRememberMe = ref(false);
 
 onMounted(() => {
-  const info = localStorage.getItem("info");
+  const info = localStorage.getItem('info');
   if (info) {
     const parsedInfo = JSON.parse(info);
     Object.keys(parsedInfo).forEach((key) => {
-      if (key === "password") {
+      if (key === 'password') {
         loginData.password = parsedInfo[key];
       } else {
         account.value = parsedInfo[key];
@@ -234,25 +201,25 @@ onMounted(() => {
 
 // 展場硬寫
 onMounted(() => {
-  if (router.currentRoute.value.query?.nfc === "1") {
-    account.value = "滅火班";
-    loginData.password = "p@$$w0rd";
-  } else if (router.currentRoute.value.query?.nfc === "2") {
-    account.value = "避難引導班";
-    loginData.password = "p@$$w0rd";
-  } else if (router.currentRoute.value.query?.nfc === "3") {
-    account.value = "救護班";
-    loginData.password = "p@$$w0rd";
-  } else if (router.currentRoute.value.query?.nfc === "4") {
-    account.value = "安全防護班";
-    loginData.password = "p@$$w0rd";
-  } else if (router.currentRoute.value.query?.nfc === "5") {
-    account.value = "通報班";
-    loginData.password = "p@$$w0rd";
-  } else if (router.currentRoute.value.query?.nfc === "6") {
-    account.value = "住戶";
-    loginData.password = "p@$$w0rd";
-  } else if (router.currentRoute.value.query?.nfc === "7") {
+  if (router.currentRoute.value.query?.nfc === '1') {
+    account.value = '滅火班';
+    loginData.password = 'p@$$w0rd';
+  } else if (router.currentRoute.value.query?.nfc === '2') {
+    account.value = '避難引導班';
+    loginData.password = 'p@$$w0rd';
+  } else if (router.currentRoute.value.query?.nfc === '3') {
+    account.value = '救護班';
+    loginData.password = 'p@$$w0rd';
+  } else if (router.currentRoute.value.query?.nfc === '4') {
+    account.value = '安全防護班';
+    loginData.password = 'p@$$w0rd';
+  } else if (router.currentRoute.value.query?.nfc === '5') {
+    account.value = '通報班';
+    loginData.password = 'p@$$w0rd';
+  } else if (router.currentRoute.value.query?.nfc === '6') {
+    account.value = '住戶';
+    loginData.password = 'p@$$w0rd';
+  } else if (router.currentRoute.value.query?.nfc === '7') {
     // account.value = "";
     // loginData.password = "p@$$w0rd";
   }

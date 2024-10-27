@@ -10,6 +10,7 @@ module.exports = {
   parserOptions: {
     parser: require.resolve('@typescript-eslint/parser'),
     extraFileExtensions: ['.vue'],
+    project: ['./tsconfig.json', './src-pwa/tsconfig.json'],
   },
 
   env: {
@@ -136,8 +137,8 @@ module.exports = {
       'error',
       {
         maxDepth: 10,
-        ignoreExternal: true
-      }
+        ignoreExternal: true,
+      },
     ],
   },
 };

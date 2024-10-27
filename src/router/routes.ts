@@ -204,12 +204,6 @@ const routes: RouteRecordRaw[] = [
         meta: { title: '帳號管理', icon: 'accountSetting' },
       },
       {
-        path: 'settings',
-        name: 'settings',
-        component: () => import('pages/systemSetting/settingPage.vue'),
-        meta: { title: '系統設定' },
-      },
-      {
         path: 'communityAndBuilding',
         name: 'communityAndBuilding',
         component: () => import('pages/communityAndBuilding.vue'),
