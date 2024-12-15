@@ -1335,7 +1335,7 @@ async function handleSelect(floorData: any, imageUrl?: string) {
   // 儲存 Canvas 資料，並清空畫布
   resetCanvas();
   // if (!imageUrl) return;
-  imageUrl = '/Graphic/1F 1比50.png';
+  imageUrl = '/Graphic/1F.png';
   // 如果有 AllFloors 裡面有拿到 floorImage 且 emit handleSelect 的話 => 載入圖片
   Object.values(BlockTypeLabels).forEach((label) => {
     blockType.value.push(label);
