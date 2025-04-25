@@ -138,7 +138,7 @@ export const useDeviceAddressStore = defineStore('deviceAddress', () => {
           number === undefined || number === null
             ? `${system}-${address}`
             : `${system}-${address}-${number}`;
-        if (!isNaN(+value!)) points[key] = Number(value); // 水位計用
+        if (value && !isNaN(+value)) points[key] = Number(value); // 水位計用
         else points[key] = value === 'False' ? '關' : '開';
 
         // 設備警示資料整理
@@ -193,7 +193,7 @@ export const useDeviceAddressStore = defineStore('deviceAddress', () => {
         } = point;
         const { system, number, device } = deviceAddress;
         const key = `${system}-${number}`;
-        if (!isNaN(+value!)) points[key] = Number(value); // 水位計用
+        if (value && !isNaN(+value)) points[key] = Number(value); // 水位計用
         else points[key] = value === 'False' ? '關' : '開';
 
         // 設備警示資料整理
