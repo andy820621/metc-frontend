@@ -203,8 +203,17 @@ async function handleSelect(floorData: any) {
 async function getFloorImage(floorData: any) {
   if (floorData) currentFloor.value = floorData;
 
-  if (floorData?.floorPlanFilePath) {
-    const imageUrl = new URL(floorData.floorPlanFilePath, import.meta.url);
+  console.log('floorPlanFilePath:', floorData?.floorPlanFilePath);
+
+  // 防呆：floorPlanFilePath 必須是非空字串且以 / 開頭
+  if (
+    typeof floorData?.floorPlanFilePath === 'string' &&
+    floorData.floorPlanFilePath.startsWith('/')
+  ) {
+    const imageUrl = new URL(
+      floorData.floorPlanFilePath,
+      window.location.origin
+    );
     emit('handleSelect', currentFloor.value, imageUrl);
   } else {
     emit('handleSelect', currentFloor.value);
