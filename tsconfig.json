@@ -1,11 +1,15 @@
 {
-  "extends": "@quasar/app-vite/tsconfig-preset",
+  "extends": "./.quasar/tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
     "lib": ["es2019", "dom", "webworker"],
+    "types": ["node"],
     "paths": {
+      "#q-app/*": [".quasar/*"],
+      "@/*": ["src/*"],
       "src/*": ["src/*"],
-      "app/*": ["*"],
+      "app/*": [".quasar/*"],
+      "@assets/*": ["src/assets/*"],
       "components/*": ["src/components/*"],
       "layouts/*": ["src/layouts/*"],
       "pages/*": ["src/pages/*"],
@@ -22,6 +26,6 @@
     "./auto-imports.d.ts",
     "./components.d.ts",
     ".eslintrc.cjs",
-    "quasar.config.js"
+    "quasar.config.ts"
   ]
 }

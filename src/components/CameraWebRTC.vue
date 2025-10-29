@@ -23,10 +23,11 @@
 <script setup lang="ts">
 import 'webrtc-adapter';
 import { ref, onMounted } from 'vue';
-import Cctv, { RTCIceCandidateInit, RTCSdpType } from 'src/api/Cctv';
+import type { RTCIceCandidateInit } from 'src/api/Cctv';
+import Cctv, { RTCSdpType } from 'src/api/Cctv';
 import { uid } from 'quasar';
 
-const $q = inject('$q') as typeof QVueGlobals;
+const $q = useQuasar();
 
 // 定義元件的 props
 const props = defineProps(['deviceId', 'title']);
@@ -46,7 +47,7 @@ onMounted(() => {
   }
 
   setTimeout(() => {
-    startPlaying();
+    void startPlaying();
   }, 500);
 });
 
@@ -59,7 +60,7 @@ async function startPlaying() {
 
   // 創建新的 RTCPeerConnection 物件
   const pc = new RTCPeerConnection();
-  peerConnection.value = pc as RTCPeerConnection; // 保存到反應性的 peerConnection 參數中
+  peerConnection.value = pc; // 保存到反應性的 peerConnection 參數中
 
   // 當 track 事件被觸發時（表示遠端 track 已經被添加到連接中）
   pc.ontrack = ({ track, streams: [stream] }) => {
@@ -78,14 +79,14 @@ async function startPlaying() {
       console.log('nowww event.candidate.toJSON(): ', event.candidate.toJSON());
       console.log(
         'nowww event.candidate JSON.stringify(event.candidate): ',
-        JSON.stringify(event.candidate)
+        JSON.stringify(event.candidate),
       );
 
       try {
         await Cctv.apiAddIceCandidate(
           uniqueKey,
           // event.candidate.toJSON() as unknown as RTCIceCandidateInit
-          JSON.stringify(event.candidate) as unknown as RTCIceCandidateInit
+          JSON.stringify(event.candidate) as unknown as RTCIceCandidateInit,
         );
         // $q.notify({
         //   type: "positive",
@@ -142,7 +143,7 @@ async function startPlaying() {
       // 處理連接問題，例如重新連接或通知用戶
       console.error(
         'ICE connection state indicates failure: ',
-        pc.iceConnectionState
+        pc.iceConnectionState,
       );
       // $q.notify({
       //   type: "negative",
@@ -171,7 +172,7 @@ async function startPlaying() {
       'ICE candidate error:',
       event.errorText,
       'Code:',
-      event.errorCode
+      event.errorCode,
     );
     // $q.notify({
     //   type: "negative",
@@ -212,7 +213,7 @@ async function startPlaying() {
   try {
     const offerData = (await Cctv.apiGetOffer(
       uniqueKey,
-      props.deviceId
+      props.deviceId,
     )) as typeof AxiosResponse;
 
     if (offerData.data && pc) {
@@ -248,7 +249,7 @@ async function startPlaying() {
         .catch(function (error) {
           console.error(
             'Error during answer creation or local description setting: ',
-            error
+            error,
           );
           // $q.notify({
           //   type: "negative",

@@ -1,9 +1,9 @@
 import { req } from "boot/axios";
-import { ApiResponse, pagination } from "./api.type";
-import { ReceiveViewModel } from "src/stores/deviceAddress";
-import { SendViewModel } from "src/stores/signalR";
+import type { ApiResponse, pagination } from "./api.type";
+import type { ReceiveViewModel } from "src/stores/deviceAddress";
+import type { SendViewModel } from "src/stores/signalR";
 import { date } from "quasar";
-import { FireStatus } from "src/pages/emergency/pplStatus/index.type";
+import type { FireStatus } from "src/pages/emergency/pplStatus/index.type";
 import { Domains, Providers } from "src/api/fireMarshalling";
 export enum formalOrEmergency {
   emergency = 1,

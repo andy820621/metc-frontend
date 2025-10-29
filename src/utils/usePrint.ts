@@ -5,18 +5,37 @@ export interface tdContent {
   [key: keyof thObjectType]: string;
 }
 /**
- * 將資料陣列進行轉換，將與 tableTitleObject 中的鍵匹配的每個值加上段落標籤。
+ * 將資料陣列進行轉換,將與 tableTitleObject 中的鍵匹配的每個值加上段落標籤。
  * @param data - 資料物件的陣列。
  * @param tableTitleObject - 包含要匹配的鍵的物件。
  * @returns 轉換後的資料陣列。
  */
-// 如果全部欄位都是單純文字可用這個方法，不是的話得在外頭寫客製方法
-export function getTdContent<T>(data: T[], tableTitleObject: object) {
+// 如果全部欄位都是單純文字可用這個方法,不是的話得在外頭寫客製方法
+export function getTdContent<T extends Record<string, unknown>>(
+  data: T[],
+  tableTitleObject: object,
+) {
   return data.map((item) => {
     const transformedItem: { [key: string]: string } = {};
     for (const key in item) {
       if (Object.prototype.hasOwnProperty.call(tableTitleObject, key)) {
-        transformedItem[key] = `<p>${item[key]}</p>`;
+        const value = item[key];
+        // 確保值可以被安全地轉換為字串
+        let stringValue = '';
+        if (value === null || value === undefined) {
+          stringValue = '';
+        } else if (
+          typeof value === 'string' ||
+          typeof value === 'number' ||
+          typeof value === 'boolean'
+        ) {
+          stringValue = String(value);
+        } else if (typeof value === 'object') {
+          stringValue = JSON.stringify(value);
+        } else {
+          stringValue = String(value);
+        }
+        transformedItem[key] = `<p>${stringValue}</p>`;
       }
     }
     return transformedItem;
@@ -24,15 +43,15 @@ export function getTdContent<T>(data: T[], tableTitleObject: object) {
 }
 export function getTable(
   thObject: thObjectType,
-  tdContent: tdContent[]
+  tdContent: tdContent[],
 ): string {
-  console.log("tdContent", tdContent);
+  console.log('tdContent', tdContent);
   const header = `<tr>
     ${Object.values(thObject)
       .map((item) => {
         return `<th style="padding: 5px; width: 10%">${item}</th>`;
       })
-      .join("")}
+      .join('')}
   </tr>`;
   const body = tdContent
     .map((content) => {
@@ -41,10 +60,10 @@ export function getTable(
       .map((key) => {
         return `<td><div>${content[key]}</div></td>`;
       })
-      .join("")}
+      .join('')}
   </tr>`;
     })
-    .join("");
+    .join('');
 
   return `<table>${header + body}</table>`;
 }
@@ -115,7 +134,7 @@ export function print(
   mainContent: string,
   title: string,
   isLandscape = false,
-  extraCss = ""
+  extraCss = '',
 ) {
   let css = initialCSS + extraCss;
   if (isLandscape) {
@@ -124,9 +143,9 @@ export function print(
     }`;
   }
   // 開一個新視窗
-  const newWin = window.open("", "列印");
+  const newWin = window.open('', '列印');
   if (newWin) {
-    newWin.document.write("列印");
+    newWin.document.write('列印');
     newWin.document.open();
     // <h2 style="margin-bottom: 1rem">樓層 : 1F ( 總人數: 7 人 )</h2>
     newWin.document.write(
@@ -141,7 +160,7 @@ export function print(
           <h1 style="font-size: 1.7rem">${title}</h1>
           ${mainContent}
         </body>
-      </html>`
+      </html>`,
     );
     newWin.document.close();
     setTimeout(function () {

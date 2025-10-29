@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-const $q = inject('$q') as typeof QVueGlobals;
+const $q = useQuasar();
 
 const drawerRef = ref();
 </script>

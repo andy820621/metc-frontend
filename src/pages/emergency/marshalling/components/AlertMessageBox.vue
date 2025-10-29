@@ -30,23 +30,23 @@
 </template>
 
 <script setup lang="ts">
-import { fasTriangleExclamation } from "@quasar/extras/fontawesome-v6";
-const $q = inject("$q") as typeof QVueGlobals;
+import { fasTriangleExclamation } from '@quasar/extras/fontawesome-v6';
+const $q = useQuasar();
 
 const props = withDefaults(
   defineProps<{
     bgType: string;
   }>(),
   {
-    bgType: "process",
-    messageBtnText: "關閉",
-  }
+    bgType: 'process',
+    messageBtnText: '關閉',
+  },
 );
 
-const emit = defineEmits(["handleAlertMessageBox"]);
+const emit = defineEmits(['handleAlertMessageBox']);
 
 function handleClick() {
-  emit("handleAlertMessageBox");
+  emit('handleAlertMessageBox');
 }
 </script>
 

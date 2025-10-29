@@ -1,6 +1,6 @@
-import { Dialog, Notify } from "quasar";
-import { useCloned } from "@vueuse/core";
-import type { FilterTypes, pagination } from "src/api/api.type";
+import { Dialog, Notify } from 'quasar';
+import { useCloned } from '@vueuse/core';
+import type { FilterTypes, pagination } from 'src/api/api.type';
 
 export interface tempDataType {
   [index: string]: any;
@@ -80,12 +80,12 @@ export interface expandAttrsType {
 export default function tableMixin(blockRef?: Ref<blockRefType>) {
   const expandTableAttrs = ref<expandAttrsType>({
     isExpand: false,
-    expandKey: "",
+    expandKey: '',
     expandConfig: [],
   });
   /** Block */
   const blockAttrs = ref<blockAttrsType>({
-    blockTitle: "",
+    blockTitle: '',
     headerButtons: [],
     tableButtons: [],
     tableConfig: [],
@@ -93,7 +93,7 @@ export default function tableMixin(blockRef?: Ref<blockRefType>) {
     totalNum: 0,
   });
   const tableAttrs = ref<blockAttrsType>({
-    blockTitle: "",
+    blockTitle: '',
     headerButtons: [],
     tableButtons: [],
     tableConfig: [],
@@ -105,135 +105,139 @@ export default function tableMixin(blockRef?: Ref<blockRefType>) {
     btn: { label: string; icon: string; status: string; isShow?: boolean },
     data: tempDataType,
     API?: any,
-    getData?: (pagination?: blockRefType["pagination"]) => void
+    getData?: (pagination?: blockRefType['pagination']) => void | Promise<void>,
   ) {
     dialogAttrs.value.status = btn.status;
-    if (btn.status === "edit" || btn.status === "add") {
+    if (btn.status === 'edit' || btn.status === 'add') {
       dialogAttrs.value.visible = true;
-      if (btn.status === "edit") {
+      if (btn.status === 'edit') {
         const { cloned } = useCloned(data);
         dialogAttrs.value.tempData = cloned.value;
-      } else if (btn.status === "add") {
+      } else if (btn.status === 'add') {
         dialogAttrs.value.tempData = {};
       }
-    } else if (btn.status === "updateMany") {
+    } else if (btn.status === 'updateMany') {
       if (
         dialogAttrs.value.selectArray &&
         dialogAttrs.value.selectArray.length > 0
       ) {
         dialogAttrs.value.visible = true;
         dialogAttrs.value.tempData = dialogAttrs.value.selectArray[0];
-        console.log("updateMany", dialogAttrs.value.selectArray);
+        console.log('updateMany', dialogAttrs.value.selectArray);
       } else {
         Notify.create({
-          type: "negative",
-          message: "請勾選要更新的資料列",
-          position: "top",
+          type: 'negative',
+          message: '請勾選要更新的資料列',
+          position: 'top',
         });
       }
-    } else if (btn.status === "delete") {
-      console.log("delete", data);
+    } else if (btn.status === 'delete') {
+      console.log('delete', data);
       Dialog.create({
-        title: "提示",
-        message: "是否確定刪除該筆資料?",
-        ok: "確定",
-        cancel: "取消",
+        title: '提示',
+        message: '是否確定刪除該筆資料?',
+        ok: '確定',
+        cancel: '取消',
       })
-        .onOk(async () => {
-          const result = (await API.apiDeleteData([
-            data.id,
-          ])) as typeof AxiosResponse;
-          if (result.data[data.id]) {
-            Notify.create({
-              type: "positive",
-              message: "刪除成功",
-              position: "top",
-            });
-            const pagination = Array.isArray(blockRef?.value)
-              ? blockRef?.value[0]?.pagination
-              : blockRef?.value?.pagination;
-            if (getData) getData(pagination);
-          } else {
-            Notify.create({
-              type: "negative",
-              message: "刪除失敗",
-              position: "top",
-            });
-          }
+        .onOk(() => {
+          void (async () => {
+            const result = (await API.apiDeleteData([
+              data.id,
+            ])) as typeof AxiosResponse;
+            if (result.data[data.id]) {
+              Notify.create({
+                type: 'positive',
+                message: '刪除成功',
+                position: 'top',
+              });
+              const pagination = Array.isArray(blockRef?.value)
+                ? blockRef?.value[0]?.pagination
+                : blockRef?.value?.pagination;
+              if (getData) getData(pagination);
+            } else {
+              Notify.create({
+                type: 'negative',
+                message: '刪除失敗',
+                position: 'top',
+              });
+            }
+          })();
         })
         .onCancel(() => {
           resetSelect();
         });
-    } else if (btn.status === "deleteMany") {
+    } else if (btn.status === 'deleteMany') {
       if (
         dialogAttrs.value.selectArray &&
         dialogAttrs.value.selectArray.length > 0
       ) {
         const deleteArray = dialogAttrs.value.selectArray.map(
-          (item: tempDataType) => item.id
+          (item: tempDataType) => item.id,
         );
-        console.log("deleteArray", deleteArray);
+        console.log('deleteArray', deleteArray);
         Dialog.create({
-          title: "提示",
-          message: "是否確定刪除所勾選的資料?",
-          ok: "確定",
-          cancel: "取消",
+          title: '提示',
+          message: '是否確定刪除所勾選的資料?',
+          ok: '確定',
+          cancel: '取消',
         })
-          .onOk(async () => {
-            const result = (await API.apiDeleteData(
-              deleteArray
-            )) as typeof AxiosResponse;
+          .onOk(() => {
+            void (async () => {
+              const result = (await API.apiDeleteData(
+                deleteArray,
+              )) as typeof AxiosResponse;
 
-            deleteArray.forEach((id: string) => {
-              if (result.data[id]) {
-                Notify.create({
-                  type: "positive",
-                  message: "刪除成功",
-                  position: "top",
-                });
-              } else {
-                Notify.create({
-                  type: "negative",
-                  message: "刪除失敗",
-                  position: "top",
-                });
-              }
-            });
-            const pagination = Array.isArray(blockRef?.value)
-              ? blockRef?.value[0]?.pagination
-              : blockRef?.value?.pagination;
-            if (getData) getData(pagination);
+              deleteArray.forEach((id: string) => {
+                if (result.data[id]) {
+                  Notify.create({
+                    type: 'positive',
+                    message: '刪除成功',
+                    position: 'top',
+                  });
+                } else {
+                  Notify.create({
+                    type: 'negative',
+                    message: '刪除失敗',
+                    position: 'top',
+                  });
+                }
+              });
+              const pagination = Array.isArray(blockRef?.value)
+                ? blockRef?.value[0]?.pagination
+                : blockRef?.value?.pagination;
+              if (getData) getData(pagination);
+            })();
           })
           .onCancel(() => {
             resetSelect();
           });
       } else {
         Notify.create({
-          type: "negative",
-          message: "請勾選要刪除的資料列",
-          position: "top",
+          type: 'negative',
+          message: '請勾選要刪除的資料列',
+          position: 'top',
         });
       }
-    } else if (btn.status === "upload") {
+    } else if (btn.status === 'upload') {
       dialogAttrs.value.uploadVisible = true;
       dialogAttrs.value.tempData = data;
-    } else if (btn.status === "exportExcel") {
-      console.log("exportExcel", btn, data);
-      console.log("exportExcel dialogAttrs.value", dialogAttrs.value);
+    } else if (btn.status === 'exportExcel') {
+      console.log('exportExcel', btn, data);
+      console.log('exportExcel dialogAttrs.value', dialogAttrs.value);
       dialogAttrs.value.exportExcelVisible = true;
-    } else if (btn.status === "importExcel") {
-      console.log("importExcel", btn, data);
-      console.log("importExcel dialogAttrs.value", dialogAttrs.value);
+    } else if (btn.status === 'importExcel') {
+      console.log('importExcel', btn, data);
+      console.log('importExcel dialogAttrs.value', dialogAttrs.value);
       dialogAttrs.value.importExcelVisible = true;
     }
   }
 
   /** Dialog */
   const dialogAttrs = ref<dialogAttrsType>({
-    dialogTitle: "",
+    dialogTitle: '',
     visible: false,
     selectArray: [],
-    status: "",
+    status: '',
     tempData: {},
     selectOption: [],
   });
@@ -242,38 +246,38 @@ export default function tableMixin(blockRef?: Ref<blockRefType>) {
   async function handleDialogMixin(
     status: string,
     API: any,
-    getData?: (pagination?: blockRefType["pagination"]) => void,
-    data?: tempDataType
+    getData?: (pagination?: blockRefType['pagination']) => void | Promise<void>,
+    data?: tempDataType,
   ) {
-    if (status === "edit" && data) {
+    if (status === 'edit' && data) {
       const tempDataResult = Array.isArray(data) ? data : [data];
       const result = (await API.apiPatchData(
-        tempDataResult
+        tempDataResult,
       )) as typeof AxiosResponse;
 
       tempDataResult.forEach((item: tempDataType) => {
         if (result.data[item.id]) {
           Notify.create({
-            type: "positive",
-            message: "修改成功",
-            position: "top",
+            type: 'positive',
+            message: '修改成功',
+            position: 'top',
           });
           // hideDialog();
         } else {
           Notify.create({
-            type: "negative",
-            message: "修改失敗",
-            position: "top",
+            type: 'negative',
+            message: '修改失敗',
+            position: 'top',
           });
         }
       });
-      console.log("編輯", result.data);
-    } else if (status === "add") {
+      console.log('編輯', result.data);
+    } else if (status === 'add') {
       const tempDataResult: tempDataType = Array.isArray(data) ? data : [data];
       const result = (await API.apiPostData(
-        tempDataResult
+        tempDataResult,
       )) as typeof AxiosResponse;
-      console.log("nowwww result", result);
+      console.log('nowwww result', result);
 
       result.data.forEach((id: string, index: number) => {
         if (!Array.isArray(tempDataResult)) {
@@ -283,37 +287,37 @@ export default function tableMixin(blockRef?: Ref<blockRefType>) {
         }
         if (id) {
           Notify.create({
-            type: "positive",
-            message: "新增成功",
-            position: "top",
+            type: 'positive',
+            message: '新增成功',
+            position: 'top',
           });
 
           hideDialog();
         } else {
           Notify.create({
-            type: "negative",
-            message: "新增失敗",
-            position: "top",
+            type: 'negative',
+            message: '新增失敗',
+            position: 'top',
           });
         }
       });
       resetSelect();
-      console.log("新增", result.data);
-    } else if (status === "updateMany") {
+      console.log('新增', result.data);
+    } else if (status === 'updateMany') {
       const result = (await API.apiPatchData(data)) as typeof AxiosResponse;
       data?.forEach((item: { id: string }) => {
         if (result.data[item.id]) {
           Notify.create({
-            type: "positive",
-            message: "修改成功",
-            position: "top",
+            type: 'positive',
+            message: '修改成功',
+            position: 'top',
           });
           // hideDialog();
         } else {
           Notify.create({
-            type: "negative",
-            message: "修改失敗",
-            position: "top",
+            type: 'negative',
+            message: '修改失敗',
+            position: 'top',
           });
         }
       });
@@ -326,7 +330,7 @@ export default function tableMixin(blockRef?: Ref<blockRefType>) {
   }
   // 隱藏 dialog 觸發的方法
   function hideDialog() {
-    console.log("hideDialog");
+    console.log('hideDialog');
     dialogAttrs.value.visible = false;
     dialogAttrs.value.uploadVisible = false;
     dialogAttrs.value.tempData = {};
@@ -336,27 +340,27 @@ export default function tableMixin(blockRef?: Ref<blockRefType>) {
   // getDataMixin
   async function getDataMixin(
     API: any,
-    pagination?: blockRefType["pagination"],
-    dataAttrs = blockAttrs.value
+    pagination?: blockRefType['pagination'],
+    dataAttrs = blockAttrs.value,
   ) {
     if (pagination) {
       const result = (await API.apiGetData(pagination)) as typeof AxiosResponse;
       dataAttrs.blockData = result.data.rows;
       dataAttrs.totalNum = result.data.rowsNumber;
-      console.log("getData", dataAttrs.blockData);
+      console.log('getData', dataAttrs.blockData);
     }
   }
   async function getTableMixin(
     API: any,
-    pagination: blockRefType["pagination"]
+    pagination: blockRefType['pagination'],
   ) {
     if (pagination) {
       const result = (await API.apiGetTableData(
-        pagination
+        pagination,
       )) as typeof AxiosResponse;
       tableAttrs.value.blockData = result.data.rows;
       tableAttrs.value.totalNum = result.data.rowsNumber;
-      console.log("getTableData", tableAttrs.value.blockData);
+      console.log('getTableData', tableAttrs.value.blockData);
     }
   }
   // 取得多選資料的內容
@@ -364,7 +368,7 @@ export default function tableMixin(blockRef?: Ref<blockRefType>) {
     if (Array.isArray(selected)) {
       dialogAttrs.value.selectArray = selected;
     }
-    console.log("selectArray", dialogAttrs.value.selectArray);
+    console.log('selectArray', dialogAttrs.value.selectArray);
   }
   // 清除多選資料的內容
   function resetSelect() {
@@ -379,7 +383,7 @@ export default function tableMixin(blockRef?: Ref<blockRefType>) {
 
   function updateLatestData(
     tempData: tempDataType,
-    selectArray: tempDataType[]
+    selectArray: tempDataType[],
   ) {
     dialogAttrs.value.tempData = tempData;
     if (selectArray) dialogAttrs.value.selectArray = selectArray;
@@ -404,7 +408,7 @@ export default function tableMixin(blockRef?: Ref<blockRefType>) {
 export // 設定 loading 狀態
 function setBlockLoading(
   blockRef: Ref<blockRefType | undefined>,
-  loading: boolean = false
+  loading: boolean = false,
 ) {
   if (Array.isArray(blockRef?.value)) {
     blockRef?.value.forEach((block) => {

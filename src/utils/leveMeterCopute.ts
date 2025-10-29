@@ -21,7 +21,7 @@ export function getCurrentVolume(status: number, poolData?: any) {
   return 0;
 }
 
-export function toPercentage(value: number, poolData: any | null) {
+export function toPercentage(value: number, poolData) {
   if (!poolData) return 0;
 
   const { area, high, legal, invalid, total, zero } = poolData;

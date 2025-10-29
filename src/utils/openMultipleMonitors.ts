@@ -1,11 +1,38 @@
 import { Notify, uid } from 'quasar';
+import Screen from 'src/api/screen';
+
+// 選單名稱到路由路徑的映射
+const sideBarPathMaps: Record<string, string> = {
+  '圖控編輯': '/graphic/drawingControl',
+  '圖控顯示': '/graphic/viewerControl',
+  '監視畫面': '/emergency/cctv',
+  '公告欄': '/normal/announcementMgmt',
+  '基本資料': '/normal/basic',
+  '維護保養': '/normal/maintenance',
+  '例行檢查': '/normal/routineInsp',
+  '驗證頁面': '/normal/verifyDataMgmt',
+  '消防安全指南': '/normal/fire-safety-guide',
+  '設備清單': '/deviceData/devicesManagement',
+  '設備點位': '/deviceData/deviceAddressManagement',
+  '流程指令': '/emergency/instruction',
+  '流程編輯': '/emergency/process',
+  '消防編組': '/emergency/sDFMViewer',
+  '編輯編組': '/emergency/sDFMEdit',
+  '設備狀況': '/emergency/emergencyDeviceStatus',
+  '人員狀況': '/emergency/emergencyPplStatus',
+  '歷史紀錄': '/emergency/emergencyHistory',
+  '災害紀錄': '/historyAnalysis/disasterRecord',
+  '設備歷程': '/historyAnalysis/deviceLog',
+  '系統測試': '/systemTest/systemTestPage',
+  '帳號設定': '/accountSetting',
+};
 
 function createPopup(
   url: string,
   screenX: number,
   screenY: number,
   width: number,
-  height: number
+  height: number,
 ) {
   const features = [
     `left=${screenX}`,
@@ -103,7 +130,7 @@ export async function openMultipleMonitors() {
 
   if (result.data) {
     const nowPaths: string[] = JSON.parse(
-      localStorage.getItem('visitedPages') || '[]'
+      localStorage.getItem('visitedPages') || '[]',
     );
 
     urlArray = result.data
@@ -132,23 +159,22 @@ export async function openMultipleMonitors() {
 
   popups.length = 0;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   screens.forEach((screen: any, index: number) => {
     const screenMonitorNums = indexCounts[index];
     const width = Math.floor(
       (screen.availWidth - screenMonitorNums * WINDOW_CHROME_X) /
-        screenMonitorNums
+        screenMonitorNums,
     );
     const height = screen.availHeight;
     for (let i = 0; i < screenMonitorNums; i++) {
       const screenX = i * width + screen.availLeft + i * WINDOW_CHROME_X;
       const screenY = screen.availTop + WINDOW_CHROME_Y;
       const url = urlArray.shift()?.url;
-      const popup = createPopup(url as string, screenX, screenY, width, height); // 創建彈出視窗
+      const popup = createPopup(url, screenX, screenY, width, height); // 創建彈出視窗
 
       if (!popup) {
         alert(
-          '看起來您已封鎖彈出窗口。請按照 https://goo.gle/allow-popups 中的說明允許它們。'
+          '看起來您已封鎖彈出窗口。請按照 https://goo.gle/allow-popups 中的說明允許它們。',
         );
         return;
       }

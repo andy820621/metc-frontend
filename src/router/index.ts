@@ -1,11 +1,12 @@
-/* eslint-disable indent */
+ 
 import { route } from 'quasar/wrappers';
+import type {
+  Router} from 'vue-router';
 import {
   createMemoryHistory,
   createRouter,
   createWebHashHistory,
-  createWebHistory,
-  Router,
+  createWebHistory
 } from 'vue-router';
 
 import routes from './routes';

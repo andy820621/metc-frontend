@@ -54,12 +54,12 @@ function embedJitsiWidget() {
   jitsiApi.value = new JitsiMeetExternalAPI(props.domain, opts);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 function executeCommand(command: string, ...value: executeCommandArgs) {
   if (jitsiApi.value) jitsiApi.value.executeCommand(command, ...value);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 function addEventListener(event: string, fn: () => void) {
   if (jitsiApi.value) jitsiApi.value.on(event, fn);
 }

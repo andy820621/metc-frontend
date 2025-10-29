@@ -66,23 +66,23 @@
 </template>
 <script setup lang="ts">
 // api
-import { FloorViewModel } from "src/api/floors";
+import type { FloorViewModel } from 'src/api/floors';
 // pinia store
-import { useBuildingStore } from "src/stores/building.js";
-import { storeToRefs } from "pinia";
+import { useBuildingStore } from 'src/stores/building.js';
+import { storeToRefs } from 'pinia';
 
 // utils
-import useFileRead from "src/utils/fileRead";
-import { formatFloorsData } from "src/utils/formatUtils";
-import type { formattedFloorOption } from "src/utils/formatUtils";
-import { getFloorsData } from "src/utils/getFloorsData";
+import useFileRead from 'src/utils/fileRead';
+import { formatFloorsData } from 'src/utils/formatUtils';
+import type { formattedFloorOption } from 'src/utils/formatUtils';
+import { getFloorsData } from 'src/utils/getFloorsData';
 
 const { getFile } = useFileRead();
 const buildingStore = useBuildingStore();
 const { Bid } = storeToRefs(buildingStore);
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = useQuasar();
 
-const emit = defineEmits(["handleSelect"]);
+const emit = defineEmits(['handleSelect']);
 
 // 斷面圖樓層
 const floorsData = reactive<FloorViewModel[]>([]);
@@ -110,7 +110,7 @@ const overgroundFloorsObject = computed(() => {
       tempArray.push(floor);
     } else {
       const keyName =
-        tempArray[0].name + " ~ " + tempArray[tempArray.length - 1].name;
+        tempArray[0].name + ' ~ ' + tempArray[tempArray.length - 1].name;
       result[keyName] = [...formatFloorsData(tempArray)];
       tempArray.length = 0;
       startKey = endNum;
@@ -119,7 +119,7 @@ const overgroundFloorsObject = computed(() => {
     }
     if (index === overgroundFloors.length - 1) {
       const keyName =
-        tempArray[0].name + " ~ " + tempArray[tempArray.length - 1].name;
+        tempArray[0].name + ' ~ ' + tempArray[tempArray.length - 1].name;
       result[keyName] = [...formatFloorsData(tempArray)];
     }
   });
@@ -135,7 +135,7 @@ const floorsTabsArray = ref<{ key: string }[]>([]);
 
 watch(
   () => combinedFloorsObject.value,
-  (val) => {
+  async (val) => {
     if (floorsData.length && val && Object.keys(val).length) {
       floorsTabsArray.value.length = 0;
       Object.keys(val).forEach((key) => {
@@ -149,28 +149,28 @@ watch(
 
         const newCurrentFloor = currentFinalFloorsData
           .flatMap((item) => item.floorsData)
-          .find((floor) => floor.id === currentFloor.value!.id);
+          .find((floor) => floor.id === currentFloor.value.id);
         if (newCurrentFloor) {
           currentFloor.value = newCurrentFloor;
         }
 
-        handleSelect(currentFloor.value);
+        await handleSelect(currentFloor.value);
       } else {
         const [activeKey, activeValue] = Object.entries(
-          overgroundFloorsObject.value
+          overgroundFloorsObject.value,
         )[0];
 
         if (activeKey) {
           floorTab.value = activeKey;
           finalFloorsData.value = activeValue;
           const firstFloor = finalFloorsData.value.find(
-            (item) => item.floorsData[0].sort === 1
+            (item) => item.floorsData[0].sort === 1,
           )?.floorsData[0];
-          if (firstFloor) handleSelect(firstFloor);
+          if (firstFloor) await handleSelect(firstFloor);
         }
       }
     }
-  }
+  },
 );
 const finalFloorsData = ref<formattedFloorOption[]>([]);
 
@@ -178,7 +178,7 @@ async function getAllFloors() {
   if (Bid.value) {
     const result = await getFloorsData(Bid.value);
     floorsData.length = 0;
-    floorsData.push(...result);
+    floorsData.push(...(result as FloorViewModel[]));
   }
 }
 function setFloorZIndex(array: FloorViewModel[]) {
@@ -191,25 +191,25 @@ async function handleSelect(floorData: FloorViewModel) {
   await getFloorImage(floorData);
 }
 async function getFloorImage(floorData: FloorViewModel) {
-  console.log("now getFloorImage", floorData);
+  console.log('now getFloorImage', floorData);
   if (!floorData) return;
   currentFloor.value = floorData;
 
   if (!floorData.floorPlanFileId) {
-    emit("handleSelect", currentFloor.value);
+    emit('handleSelect', currentFloor.value);
     return;
   }
 
   if (floorData.floorPlanFileId) {
-    console.log("now floorPlanFileId", floorData.floorPlanFileId);
+    console.log('now floorPlanFileId', floorData.floorPlanFileId);
     const imageUrl = await getFile(null, floorData.floorPlanFileId);
-    emit("handleSelect", currentFloor.value, imageUrl);
+    emit('handleSelect', currentFloor.value, imageUrl);
   } else {
-    emit("handleSelect", currentFloor.value);
+    emit('handleSelect', currentFloor.value);
     $q.notify({
-      type: "negative",
-      message: "該樓層尚無平面圖",
-      position: "top",
+      type: 'negative',
+      message: '該樓層尚無平面圖',
+      position: 'top',
     });
   }
 }
@@ -220,7 +220,7 @@ watch(
   async (val) => {
     if (val) await getAllFloors();
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 function handleClickFloorGroup(group: { key: string }) {

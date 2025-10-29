@@ -1,4 +1,4 @@
-import { AxiosResponse, AxiosError } from "axios";
+import type { AxiosResponse, AxiosError } from "axios";
 import { req } from "boot/axios";
 
 interface InfluxDBPayload {
@@ -81,13 +81,7 @@ const Test = {
   },
   // 取得 LINE 設定
   apiGetLineSetting() {
-    return req("get", "/Test/line") as Promise<
-      | AxiosResponse<{
-          channelAccessToken: string;
-          channelSecret: string;
-        } | null>
-      | Promise<AxiosError<unknown, unknown>>
-    >;
+    return req("get", "/Test/line");
   },
   // 測試 Line
   apiTestLine(payload: LinePayload) {
@@ -99,9 +93,7 @@ const Test = {
   },
   // 下載推播設定檔案
   apiGetNotificationSettingFile() {
-    return req("get", "/Test/notification") as Promise<
-      AxiosResponse<string | null> | Promise<AxiosError<unknown, unknown>>
-    >;
+    return req("get", "/Test/notification");
   },
   // 測試推播
   apiTestNotification(payload: NotificationPayload, fileFormData?: FormData) {

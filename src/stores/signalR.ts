@@ -1,25 +1,25 @@
-import { FloorViewModel } from 'src/api/floors';
-import { BuildingViewModel } from 'src/api/building';
+import type { FloorViewModel } from 'src/api/floors';
+import type { BuildingViewModel } from 'src/api/building';
 import Book, { formalOrEmergency } from 'src/api/book';
 // quasar
 import { Cookies, Dialog, Notify, date } from 'quasar';
 // utils
-import { GroupTaskViewModel } from 'src/api/emergencyMission';
+import type { GroupTaskViewModel } from 'src/api/emergencyMission';
 
 // type
 import { FireStatus } from 'src/pages/emergency/pplStatus/index.type';
-import { NotifyReadViewModel } from 'src/api/notify';
+import type { NotifyReadViewModel } from 'src/api/notify';
 import { iconLabels } from 'src/pages/emergency/flow/processIconOptions';
-import { UserViewModel } from 'src/api/accountSetting';
-import { Providers } from 'src/api/fireMarshalling';
-import { DeviceViewModel } from 'src/api/device';
+import type { UserViewModel } from 'src/api/accountSetting';
+import type { Providers } from 'src/api/fireMarshalling';
+import type { DeviceViewModel } from 'src/api/device';
 // pinia
 import { defineStore, storeToRefs } from 'pinia';
 import { useUserStore } from 'src/stores/user';
 import { useDeviceAddressStore } from 'src/stores/deviceAddress';
 import type { ReceiveViewModel } from 'src/stores/deviceAddress';
 import { fomateSendLogViewModelToSendViewModel } from 'src/utils/defaultUtils';
-import { RoleViewModel } from 'src/api/role';
+import type { RoleViewModel } from 'src/api/role';
 import { setStatus } from 'src/utils/missionListFormater';
 import { beep } from 'src/utils/beep';
 
@@ -176,10 +176,14 @@ interface Hub {
   connection?: any;
 }
 interface emergencyHub extends Hub {
-  sendEmergencyMessage?: (submitData: sendEmergencyMessagePayload) => void;
-  sendLocationRequest?: (submitData: emergencyHubPayload) => void;
-  sendRetreatRequest?: (submitData: emergencyHubPayload) => void;
-  sendContactFireBrigadeRequest?: (submitData: emergencyHubPayload) => void;
+  sendEmergencyMessage?: (
+    submitData: sendEmergencyMessagePayload,
+  ) => Promise<void>;
+  sendLocationRequest?: (submitData: emergencyHubPayload) => Promise<void>;
+  sendRetreatRequest?: (submitData: emergencyHubPayload) => Promise<void>;
+  sendContactFireBrigadeRequest?: (
+    submitData: emergencyHubPayload,
+  ) => Promise<void>;
 }
 
 export interface TriggeredDeviceData {
@@ -253,38 +257,29 @@ export const useSignalRStore = defineStore('signalR', () => {
   const notifyHub = reactive<Hub>({ connection: undefined });
 
   // 初始化所有 Hubs
-  async function initWebSocket(accessToken: string) {
+  function initWebSocket(accessToken: string) {
     // 初始化緊急應變 Hub
     initConnection(emergencyHub as Hub, 'emergency', accessToken);
     // 連接緊急應變 Hub
     startConnectionWithReconnect(
-      emergencyHub.connection as any,
-      initEmergencyHubFunction
+      emergencyHub.connection,
+      initEmergencyHubFunction,
     );
 
     // 初始化 mqtt Hub
     initConnection(mqttHub as Hub, 'mqtt', accessToken);
     // 連接 mqtt Hub
-    startConnectionWithReconnect(
-      mqttHub.connection as any,
-      initMqttHubFunction
-    );
+    startConnectionWithReconnect(mqttHub.connection, initMqttHubFunction);
 
     // 初始化 fireHub
     initConnection(fireHub as Hub, 'fire', accessToken);
     // 連接 fire Hub
-    startConnectionWithReconnect(
-      fireHub.connection as any,
-      initFireHubFunction
-    );
+    startConnectionWithReconnect(fireHub.connection, initFireHubFunction);
 
     // 初始化 notifyHub
     initConnection(notifyHub as Hub, 'notify', accessToken);
     // 連接 notify Hub
-    startConnectionWithReconnect(
-      notifyHub.connection as any,
-      initNotifyHubFunction
-    );
+    startConnectionWithReconnect(notifyHub.connection, initNotifyHubFunction);
   }
   // 初始化 Hub
   function initConnection(Hub: Hub, hubName: string, accessToken: string) {
@@ -292,10 +287,10 @@ export const useSignalRStore = defineStore('signalR', () => {
   }
 
   // 連接 Hub 方法
-  async function startConnectionWithReconnect(connection: any, cb: () => void) {
+  function startConnectionWithReconnect(connection: any, cb: () => void) {
     console.log('startConnectionWithReconnect');
   }
-  async function startConnection(connection: any, cb: () => void) {
+  function startConnection(connection: any, cb: () => void) {
     console.log('startConnection');
   }
   // 初始化緊急應變 Hub 相關 method
@@ -342,12 +337,12 @@ export const useSignalRStore = defineStore('signalR', () => {
           triggerDevices.length > (triggeredDevices.value.length || 0)
         ) {
           onFireBuildings.value = Array.from(
-            new Set(triggerDevices.map((device) => device.building))
+            new Set(triggerDevices.map((device) => device.building)),
           );
           triggeredDevices.value = triggerDevices.map((item) => ({
             building: item.building,
-            floor: item.floor as FloorViewModel,
-            floors: item.floors as FloorViewModel[],
+            floor: item.floor,
+            floors: item.floors,
             location: item.location || '',
             id: item.id,
           }));
@@ -360,7 +355,7 @@ export const useSignalRStore = defineStore('signalR', () => {
         data.nodeTypeName = iconLabels[data.nodeType];
         data.dateTime = date.formatDate(
           new Date(data.dateTime),
-          'YYYY-MM-DD HH:mm:ss'
+          'YYYY-MM-DD HH:mm:ss',
         );
         nodeResult.value.push(data);
 
@@ -381,7 +376,7 @@ export const useSignalRStore = defineStore('signalR', () => {
             '',
         };
         nodeResultFormatAsNodeRecord.value.push(
-          nodeRecordData as SendViewModel
+          nodeRecordData as SendViewModel,
         );
 
         const nodeRoleName = data.roleName;
@@ -402,7 +397,7 @@ export const useSignalRStore = defineStore('signalR', () => {
                   eventName,
                   eventKey,
                 });
-              }
+              },
             );
             console.log('now waitingBtnObject', waitingBtnObject.value);
           }
@@ -418,7 +413,7 @@ export const useSignalRStore = defineStore('signalR', () => {
           // 起始點 - 探測器動作節點
           triggerTime.value = date.formatDate(
             new Date(data.dateTime),
-            'YYYY-MM-DD HH:mm:ss'
+            'YYYY-MM-DD HH:mm:ss',
           );
         } else if (data.nodeType === iconLabels.Stop && nodeEnd.value) {
           // 是`結束點`且`狀況解除`已被按過且已跑到`統計結束` => 緊急應變結束
@@ -433,8 +428,8 @@ export const useSignalRStore = defineStore('signalR', () => {
           localStorage.removeItem('hasOpenedMonitors'); // 清除標記是否已開啟監控器
 
           // 結束後要求使用者重新刷
-          const roles = Cookies.get('roles') as RoleViewModel[];
-          const roleNames = roles.map((item) => item.name);
+          const roles = Cookies.get('roles');
+          const roleNames = JSON.parse(roles).map((item) => item.name);
           if (!roleNames.includes('Center')) {
             setTimeout(() => {
               Dialog.create({
@@ -454,12 +449,12 @@ export const useSignalRStore = defineStore('signalR', () => {
           nodeRecord.value[workflowGroupId].length = 0;
         }
         const workflowId = data.workflowId; // TODO: 之後publishs有workflowId的話要刪掉這個
-        data.publishs.forEach(async (node) => {
+        data.publishs.forEach((node) => {
           node.workflowId = workflowId; // TODO: 之後publishs有workflowId的話要刪掉這個
           const { dateTime, externalNode } = node;
           node.dateTime = date.formatDate(
             new Date(dateTime),
-            'YYYY-MM-DD HH:mm:ss'
+            'YYYY-MM-DD HH:mm:ss',
           );
           node.group = data.group;
           if (externalNode && externalNode.roleName) {
@@ -489,8 +484,8 @@ export const useSignalRStore = defineStore('signalR', () => {
             const userRole = user.groupRole
               ? user.groupRole.name
               : user.roles.filter((role) => role.name === 'Center').length
-              ? 'Center'
-              : null;
+                ? 'Center'
+                : null;
             const groupId = node.group.id; // TODO: 之後考慮刪掉這個
             // 加入到未點選的按鈕物件
             // 已定位、已撤退的使用者紀錄
@@ -522,7 +517,7 @@ export const useSignalRStore = defineStore('signalR', () => {
               // 檢查 btnName 物件中是否有該 userId
               if (
                 !locationRecordByGroupId.value[groupId][btnName].includes(
-                  userId
+                  userId,
                 )
               ) {
                 locationRecordByGroupId.value[groupId][btnName].push(userId);
@@ -533,7 +528,7 @@ export const useSignalRStore = defineStore('signalR', () => {
             if (
               !userWhoConfirmedFire.value.length ||
               !userWhoConfirmedFire.value.find(
-                (item) => item.id === node.user?.id
+                (item) => item.id === node.user?.id,
               )
             ) {
               userWhoConfirmedFire.value.push(node.user);
@@ -544,7 +539,7 @@ export const useSignalRStore = defineStore('signalR', () => {
             if (
               !userWhoConfirmedNotFire.value.length ||
               !userWhoConfirmedNotFire.value.find(
-                (item) => item.id === node.user?.id
+                (item) => item.id === node.user?.id,
               )
             ) {
               userWhoConfirmedNotFire.value.push(node.user);
@@ -568,7 +563,7 @@ export const useSignalRStore = defineStore('signalR', () => {
           waitingBtnObject.value[nodeRoleName].length = 0;
           // unClickedBtnObject.value = {};
         }
-      }
+      },
     );
     // 接收流程圖節點事件的 WS 方法
     emergencyHub.connection?.on(
@@ -601,12 +596,12 @@ export const useSignalRStore = defineStore('signalR', () => {
         }
 
         nodeResultFormatAsNodeRecord.value.push(
-          nodeRecordData as SendViewModel
+          nodeRecordData as SendViewModel,
         );
         // 刪掉已被點選過的按鈕
         let found = false;
         for (const [roleName, btnArray] of Object.entries(
-          waitingBtnObject.value
+          waitingBtnObject.value,
         )) {
           for (const btn of btnArray) {
             const { btnName, eventKey } = btn;
@@ -624,7 +619,7 @@ export const useSignalRStore = defineStore('signalR', () => {
           }
           if (found) break;
         }
-      }
+      },
     );
     // 接收發布的任務的 WS 方法
     emergencyHub.connection?.on(
@@ -687,7 +682,7 @@ export const useSignalRStore = defineStore('signalR', () => {
             beep();
           }
         }
-      }
+      },
     );
     // 接收緊急通知訊息的 WS 方法
     emergencyHub.connection?.on(
@@ -695,7 +690,7 @@ export const useSignalRStore = defineStore('signalR', () => {
       (
         sendLogId: number,
         dateTime: string,
-        notice: { message: string; buildingId: number; roleNames: string[] }
+        notice: { message: string; buildingId: number; roleNames: string[] },
       ) => {
         console.log('ReceiveEmergencyNotice', { sendLogId, dateTime, notice });
 
@@ -703,12 +698,12 @@ export const useSignalRStore = defineStore('signalR', () => {
         emergencyMsg.value = { sendLogId, dateTime, notice };
 
         // 顯示即時通知在右上角
-        const userRoles = Cookies.get('roles') as RoleViewModel[];
+        const userRoles = Cookies.get('roles');
         if (!userRoles) return;
-        const userRoleNames = userRoles.map((role) => role.name);
+        const userRoleNames = JSON.parse(userRoles).map((role) => role.name);
         if (!userRoleNames) return;
         const rolesInNotice = notice.roleNames.filter((roleName) =>
-          userRoleNames.includes(roleName)
+          userRoleNames.includes(roleName),
         );
         if (!rolesInNotice?.length) return;
         Notify.create({
@@ -726,7 +721,7 @@ export const useSignalRStore = defineStore('signalR', () => {
           ],
         });
         beep();
-      }
+      },
     );
     // 接收已聯絡消防隊
     emergencyHub.connection?.on(
@@ -734,7 +729,7 @@ export const useSignalRStore = defineStore('signalR', () => {
       (
         sendLogId: number,
         dateTime: string,
-        message: ContactFireBrigade['message']
+        message: ContactFireBrigade['message'],
       ) => {
         console.log('ReceiveGuideMessage', { sendLogId, dateTime, message });
         dateTime = date.formatDate(new Date(dateTime), 'YYYY-MM-DD HH:mm:ss');
@@ -748,7 +743,7 @@ export const useSignalRStore = defineStore('signalR', () => {
         const formattedContactFireBrigade =
           fomateSendLogViewModelToSendViewModel(sendLogId, dateTime, message);
         nodeResultFormatAsNodeRecord.value.push(formattedContactFireBrigade);
-      }
+      },
     );
     // 發送緊急通知訊息
     emergencyHub.sendEmergencyMessage = async function ({
@@ -796,7 +791,7 @@ export const useSignalRStore = defineStore('signalR', () => {
       } catch (err) {
         console.error(
           'Invoke SendEmergencyInPosition method with error: ',
-          err
+          err,
         );
         Notify.create({
           type: 'negative',
@@ -863,7 +858,7 @@ export const useSignalRStore = defineStore('signalR', () => {
         console.log('now ReceiveApplicationMessage', { model });
 
         deviceAddressStore.deviceAddressFormat(model);
-      }
+      },
     );
   }
   // 初始化 fireHub 相關 method
@@ -913,7 +908,7 @@ export const useSignalRStore = defineStore('signalR', () => {
       } else {
         Notify.create({
           type: 'negative',
-          message: '存取歷史紀錄簿失敗: ' + result.errors,
+          message: '存取歷史紀錄簿失敗: ' + JSON.stringify(result.errors),
           position: 'top',
         });
       }

@@ -1,8 +1,9 @@
 import { req } from "src/boot/axios";
 import type { ApiRowsResponse, pagination } from "./api.type";
-import { RoutineViewModel } from "./routine";
-import { DeviceMaintainViewModel } from "./maintainDevice";
-import { MaintainViewModel, maintainListTableConfig } from "./maintain";
+import type { RoutineViewModel } from "./routine";
+import type { DeviceMaintainViewModel } from "./maintainDevice";
+import type { MaintainViewModel} from "./maintain";
+import { maintainListTableConfig } from "./maintain";
 import { maintainStatus } from "src/utils/deviceStatus";
 
 export enum RoutineTypes {

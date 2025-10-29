@@ -8,5 +8,5 @@
 </template>
 
 <script setup lang="ts">
-const $q = inject('$q') as any;
+const $q = useQuasar();
 </script>

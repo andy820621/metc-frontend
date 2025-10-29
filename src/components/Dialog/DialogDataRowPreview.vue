@@ -25,7 +25,10 @@
                 style="height: 120px; width: 120px"
               ></q-img>
             </div>
-            <template v-for="item in dialogConfig" :key="item.id">
+            <template
+              v-for="item in dialogConfig"
+              :key="'id' in item ? item.id : item.name"
+            >
               <q-item
                 style="align-items: flex-start"
                 v-if="item.isDialogConfig !== false"
@@ -78,11 +81,11 @@
 </template>
 
 <script setup lang="ts">
-import { tempDataType, tableConfigItem } from "src/utils/tableMixin";
-import { useVModel } from "@vueuse/core";
-import FileReadMixin from "src/utils/fileRead";
+import type { tempDataType, tableConfigItem } from 'src/utils/tableMixin';
+import { useVModel } from '@vueuse/core';
+import FileReadMixin from 'src/utils/fileRead';
 
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = useQuasar();
 
 const props = defineProps<{
   visible: boolean;
@@ -90,8 +93,8 @@ const props = defineProps<{
   dialogConfig?: tableConfigItem[];
   dialogData: tempDataType;
 }>();
-const emit = defineEmits(["update:visible"]);
-const visible = useVModel(props, "visible", emit);
+const emit = defineEmits(['update:visible']);
+const visible = useVModel(props, 'visible', emit);
 
 const { getFile } = FileReadMixin();
 
@@ -103,7 +106,7 @@ watch(
       val.mugShotUrl = url;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 

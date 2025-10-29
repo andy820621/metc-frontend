@@ -118,13 +118,13 @@
 import tableMixin, { setBlockLoading } from 'src/utils/tableMixin';
 // type
 import type { blockRefType } from 'src/utils/tableMixin';
-import { TouchPanValue } from 'quasar';
+import type { TouchPanValue } from 'quasar';
 // websocket signalR
 import { storeToRefs } from 'pinia';
 import { useDeviceAddressStore } from 'src/stores/deviceAddress';
 
 // 變數
-const $q = inject('$q') as typeof QVueGlobals;
+const $q = useQuasar();
 const isHover = ref(false);
 const route = useRoute();
 const isInHomePage = computed(() => route.path === '/');
@@ -320,9 +320,7 @@ function dialogClose() {
 }
 // 設備訊息 dialogTable
 const blockRef = ref<blockRefType>();
-const { tableAttrs, handleSelectArray } = tableMixin(
-  blockRef as Ref<blockRefType>
-);
+const { tableAttrs, handleSelectArray } = tableMixin(blockRef);
 const tableEvent = computed(() => {
   return {
     handleSelectArray,
@@ -335,7 +333,7 @@ async function getTableData(
     filters: '',
     page: 1,
     rowsPerPage: 12,
-  }
+  },
 ) {
   if (pagination) {
     // const result = (await DeviceHistory.apiGetData(

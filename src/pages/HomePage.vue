@@ -495,7 +495,7 @@ const userStore = useUserStore();
 
 const { buildingData } = storeToRefs(buildingStore);
 const { userData, userMugShotUrl, roleName } = storeToRefs(userStore);
-const $q = inject('$q') as typeof QVueGlobals;
+const $q = useQuasar();
 //  大樓基本資料 dialog
 const { dialogAttrs } = tableMixin();
 const dialogConfig = ref<tableConfigItem[]>([]);
@@ -504,7 +504,7 @@ async function openDialog() {
   dialogAttrs.value.dialogTitle = '大樓基本資料';
   if (buildingData.value) dialogAttrs.value.tempData = buildingData.value;
   dialogConfig.value = buildingStore.buildingTableConfig.filter(
-    (item) => item.isTable
+    (item) => item.isTable,
   );
 }
 
@@ -526,12 +526,12 @@ const stop = watch(
   userDropdownOptionsRoutes,
   (val) => {
     dropdownLists.value = val.map((item) => ({
-      label: item.meta?.title as string,
+      label: item.meta?.title,
       path: item.path,
       name: item.name as string,
     }));
   },
-  { immediate: true }
+  { immediate: true },
 );
 onMounted(() => setTimeout(stop, 10000));
 
@@ -561,7 +561,7 @@ const nameOrderArray = computed(() => {
 const filteredRoutes = computed(() => {
   if (roleName.value.includes('Mercury')) {
     return usePermission.sideBarMenuRoutes.filter(
-      (item) => item.name !== 'systemTest'
+      (item) => item.name !== 'systemTest',
     );
   }
   return usePermission.sideBarMenuRoutes;
@@ -569,7 +569,7 @@ const filteredRoutes = computed(() => {
 
 const pageRouteData = computed(() => {
   const orderMap = new Map(
-    nameOrderArray.value.map((name, index) => [name, index])
+    nameOrderArray.value.map((name, index) => [name, index]),
   );
 
   // 使用 filteredRoutes 代替直接修改 sideBarMenuRoutes

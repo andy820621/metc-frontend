@@ -26,16 +26,16 @@
   </div>
 </template>
 <script setup lang="ts">
-import daily from "@daily-co/daily-js";
-import type { DailyParticipant } from "@daily-co/daily-js";
+import daily from '@daily-co/daily-js';
+import type { DailyParticipant } from '@daily-co/daily-js';
 
 import {
   matTimeToLeave,
   matMicOff,
   matMic,
-} from "@quasar/extras/material-icons";
-import { symRoundedScreenShare } from "@quasar/extras/material-symbols-rounded";
-import { evaVideoOutline, evaVideoOffOutline } from "@quasar/extras/eva-icons";
+} from '@quasar/extras/material-icons';
+import { symRoundedScreenShare } from '@quasar/extras/material-symbols-rounded';
+import { evaVideoOutline, evaVideoOffOutline } from '@quasar/extras/eva-icons';
 
 defineProps<{
   participant: DailyParticipant;

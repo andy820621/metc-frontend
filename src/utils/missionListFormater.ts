@@ -1,4 +1,4 @@
-import { GroupTaskViewModel } from "src/api/emergencyMission";
+import type { GroupTaskViewModel } from "src/api/emergencyMission";
 
 export function setStatus(row: GroupTaskViewModel) {
   let status = "待接收";

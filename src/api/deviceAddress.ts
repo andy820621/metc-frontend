@@ -4,7 +4,7 @@ import type {
   ApiRowsResponse,
   pagination,
 } from "./api.type";
-import {
+import type {
   DeviceStatusTypes,
   DeviceStatusValues,
   DeviceViewModel,
@@ -101,7 +101,7 @@ const DeviceAddress = {
   },
   // 取得點位
   apiGetData(payload: pagination) {
-    payload.buildingId = +(localStorage.getItem("Bid") as string);
+    payload.buildingId = +(localStorage.getItem("Bid"));
     return req<ApiRowsResponse<DeviceAddressViewModel[]>>(
       "get",
       "/DeviceAddress",

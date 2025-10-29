@@ -1,6 +1,6 @@
 import { req } from "boot/axios";
 import type { pagination } from "./api.type";
-import { DeviceAddressViewModel, DeviceViewModel } from "./device";
+import type { DeviceAddressViewModel, DeviceViewModel } from "./device";
 import { DeviceUses } from "./deviceType";
 import { date } from "quasar";
 // utils
@@ -74,7 +74,7 @@ export function formatedDeviceBlockData(data: ReceiveDeviceAddressViewModel[]) {
     newRecord.areaName = device.location ?? "";
     newRecord.deviceType = device.deviceType.name;
     // 根據 topic format content
-    const { driver } = (master as DeviceViewModel).deviceType;
+    const { driver } = (master).deviceType;
     const driverName = `${driver}0${functionCode}`;
 
     // console.log("driverName", driverName, record);
@@ -86,9 +86,9 @@ export function formatedDeviceBlockData(data: ReceiveDeviceAddressViewModel[]) {
         newRecord.status = record.content + ` : ${record.state}`;
       }
     } else if (driverName === "nohmi03") {
-      newRecord.status = JSON.parse(record.content as string)[0].Value["動作"];
+      newRecord.status = JSON.parse(record.content)[0].Value["動作"];
     } else if (driverName === "amsamotion02") {
-      newRecord.status = record.state as string;
+      newRecord.status = record.state;
     } else if (driverName.includes("mitsubishi")) {
       if (driverName === "mitsubishi03") {
         // 客製化水位計 % 數
@@ -97,7 +97,7 @@ export function formatedDeviceBlockData(data: ReceiveDeviceAddressViewModel[]) {
           const { area, high, legal, invalid, total, zero } =
             deviceAddress.device.pool;
           const poolViewModel = { area, high, legal, invalid, total, zero };
-          newRecord.status = `${toPercentage(+value!, poolViewModel)}%`;
+          newRecord.status = `${toPercentage(+value, poolViewModel)}%`;
         }
       } else {
         newRecord.status = record.value === "False" ? "正常" : "動作";

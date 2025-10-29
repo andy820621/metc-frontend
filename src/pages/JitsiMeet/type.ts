@@ -2,7 +2,7 @@
  * https://github.com/jitsi/jitsi-meet-vue-sdk/tree/master/src/types
  */
 
-import EventEmitter from "events";
+import type EventEmitter from "events";
 
 export type executeCommandArgs = any[] | undefined[];
 

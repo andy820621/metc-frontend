@@ -72,7 +72,7 @@
                               id: prop.key,
                               label: prop.node.label,
                             },
-                            actionNames.addProcess
+                            actionNames.addProcess,
                           )
                         "
                       >
@@ -110,7 +110,7 @@
                               label: prop.node.label,
                               version: prop.node.version,
                             },
-                            actionNames.editProcess as keyof flowProcessTableConfigsType
+                            actionNames.editProcess as keyof flowProcessTableConfigsType,
                           )
                         "
                       >
@@ -205,8 +205,8 @@
                           prop.node.isStart === null
                             ? '#0075A9' // blue
                             : prop.node.isStart
-                            ? 'red'
-                            : 'black',
+                              ? 'red'
+                              : 'black',
                       }"
                     ></div>
                     <q-icon :name="prop.node.iconString" class="q-mr-sm" />
@@ -509,26 +509,28 @@ import {
 } from 'src/pages/emergency/flow/processIconOptions';
 // 類型、Config、Options
 import type { QTreeNode } from 'quasar';
-import { wfNode, convertedNode, serverDataType } from './flowTypes';
+import type { wfNode, convertedNode, serverDataType } from './flowTypes';
+import type { flowProcessTableConfigsType } from 'src/pages/emergency/flow/flowProcessTableConfigs';
 import {
   flowProcessTableConfigs,
   actionNames,
-  flowProcessTableConfigsType,
 } from 'src/pages/emergency/flow/flowProcessTableConfigs';
 
 // VueFlow 套件
-import {
-  VueFlow,
-  MarkerType,
-  Panel,
-  PanelPosition,
-  useVueFlow,
+import type {
   Node,
   GraphEdge,
   GraphNode,
   FlowExportObject,
   NodeDragEvent,
   Elements,
+} from '@vue-flow/core';
+import {
+  VueFlow,
+  MarkerType,
+  Panel,
+  PanelPosition,
+  useVueFlow,
   // Position,
 } from '@vue-flow/core';
 import { Background } from '@vue-flow/background';
@@ -544,7 +546,7 @@ import {
 
 const buildingStore = useBuildingStore();
 
-async function testStartProgress() {
+function testStartProgress() {
   $q.dialog({
     title: '提示',
     message: '確定要啟動這張流程圖嗎?',
@@ -554,7 +556,7 @@ async function testStartProgress() {
       label: '確定',
     },
     cancel: '取消',
-  }).onOk(async () => {
+  }).onOk(() => {
     const { id, version } = nowProcess.value.node as {
       id: string;
       version: number;
@@ -588,7 +590,7 @@ interface stepDefinition {
 //   console.log('iconObjectOptions', iconObjectOptions);
 // });
 
-const $q = inject('$q') as typeof QVueGlobals;
+const $q = useQuasar();
 
 // 左側workflow 流程圖 的node
 const wfFilter = ref('');
@@ -612,7 +614,7 @@ function filterFn(val: string, update: (func: () => void) => void) {
   update(() => {
     const needle = val.toLocaleLowerCase();
     wfFilterOptions.value = stringOptions.filter(
-      (v) => v.toLocaleLowerCase().indexOf(needle) > -1
+      (v) => v.toLocaleLowerCase().indexOf(needle) > -1,
     );
   });
 }
@@ -627,7 +629,7 @@ function setModel(val: string) {
     let result;
     if (children) {
       const value = children.find((child) =>
-        child.label?.includes(wfFilter.value)
+        child.label?.includes(wfFilter.value),
       ) as QTreeNode;
       result = children?.includes(value);
     }
@@ -638,7 +640,7 @@ function setModel(val: string) {
   });
   filterResult.forEach((classes: QTreeNode) => {
     classes.children = classes.children?.filter((workflow) =>
-      workflow.label?.includes(wfFilter.value)
+      workflow.label?.includes(wfFilter.value),
     );
   });
 
@@ -683,7 +685,7 @@ interface myGraphEdge extends GraphNode {
 const selectedNode = ref<myGraphNode>();
 const selectedEdge = ref<GraphEdge>();
 const openRightDrawer = computed(
-  () => !!selectedNode.value || !!selectedEdge.value
+  () => !!selectedNode.value || !!selectedEdge.value,
 );
 const secondsNumber = ref(0);
 watch(secondsNumber, (newValue) => {
@@ -786,7 +788,7 @@ onConnect((params) => {
 });
 // Flow上的事件監聽
 onPaneReady((instance) => {
-  instance.fitView({ padding: 0.25, includeHiddenNodes: true }); // 設定初始畫面符合容器
+  void instance.fitView({ padding: 0.25, includeHiddenNodes: true }); // 設定初始畫面符合容器
   const stop = instance.onViewportChange(() => {
     nowState.value = toObject(); // 設定初始State
   });
@@ -880,7 +882,9 @@ function onDrop(event: DragEvent) {
   }
 
   // const type = event.dataTransfer?.getData("application/vueflow");
-  const { left, top } = vueFlowRef.value?.getBoundingClientRect() as DOMRect;
+  const boundingRect = vueFlowRef.value?.getBoundingClientRect();
+  if (!boundingRect) return;
+  const { left, top } = boundingRect;
 
   const position = project({
     x: event.clientX - left,
@@ -901,7 +905,7 @@ function onDrop(event: DragEvent) {
   addNodes([newNode]);
 
   // align node position after drop, so it's centered to the mouse
-  nextTick(() => {
+  void nextTick(() => {
     const node = findNode(newNode.id);
     const selectedNodes = getSelectedNodes.value;
     if (node) {
@@ -921,7 +925,7 @@ function onDrop(event: DragEvent) {
             addDataToHistoryArray();
           }
         },
-        { deep: true, flush: 'post' }
+        { deep: true, flush: 'post' },
       );
 
       selectedNode.value = node;
@@ -992,7 +996,7 @@ function doUndo() {
     setFlowDataToPage(lastFlow);
     nowState.value = lastFlow;
 
-    nextTick(() => {
+    void nextTick(() => {
       if (selectedNode.value) checkIfResetSelectedNode(selectedNode);
       else checkIfResetSelectedNode(selectedEdge);
     });
@@ -1014,7 +1018,7 @@ function doRedo() {
     setFlowDataToPage(nextFlow);
     nowState.value = nextFlow;
 
-    nextTick(() => {
+    void nextTick(() => {
       if (selectedNode.value) checkIfResetSelectedNode(selectedNode);
       else checkIfResetSelectedNode(selectedEdge);
     });
@@ -1024,7 +1028,7 @@ function setFlowDataToPage(flow: FlowExportObject) {
   const [x = 0, y = 0] = flow.position;
   setNodes(flow.nodes);
   setEdges(flow.edges);
-  setTransform({ x, y, zoom: flow.zoom || 0 });
+  void setTransform({ x, y, zoom: flow.zoom || 0 });
 }
 function saveStateToArray(stateArray: object[]) {
   stateArray.push(nowState.value as object);
@@ -1035,7 +1039,7 @@ function addDataToHistoryArray() {
   if (lastState && JSON.stringify(lastState) === JSON.stringify(toObject())) {
     return;
   }
-  nextTick(() => {
+  void nextTick(() => {
     if (history.value.length && history.value.length === 30) {
       history.value.shift(); // 最多只儲存三十筆動作
     }
@@ -1046,7 +1050,7 @@ function addDataToHistoryArray() {
 }
 function checkIfResetSelectedNode(
   selected: typeof selectedNode | typeof selectedEdge,
-  state = toObject()
+  state = toObject(),
 ) {
   const nodeExists = state.nodes.find((node) => node.id === selected.value?.id);
   if (nodeExists) {
@@ -1062,7 +1066,7 @@ function doCopy() {
 interface withErrors {
   errors: string;
 }
-async function doSaveFile() {
+function doSaveFile() {
   const payload = clientToServer();
   if (!payload) return;
   console.log('doSaveFile payload', payload);
@@ -1086,7 +1090,7 @@ function doDelete() {
   $q.dialog({
     title: '提示',
     message: selectedNode.value
-      ? `確定要刪除名稱為【${selectedNode.value?.label}】的節點嗎?`
+      ? `確定要刪除名稱為【${typeof selectedNode.value?.label === 'string' ? selectedNode.value.label : ''}】的節點嗎?`
       : '確定要刪除所點擊的線嗎?',
     persistent: true,
     ok: {
@@ -1111,7 +1115,7 @@ function doDelete() {
 function clearNodes() {
   setNodes([]);
   setEdges([]);
-  setTransform({ x: 0, y: 0, zoom: 1 });
+  void setTransform({ x: 0, y: 0, zoom: 1 });
   initialNodes.value = [];
   if (selectedNode.value) {
     selectedNode.value.selected = false;
@@ -1149,7 +1153,7 @@ function clientToServer() {
   const params: serverDataType = {
     id: nowProcess.value.key,
     version: nowProcess.value.node.version,
-    buildingId: buildingStore.Bid as number,
+    buildingId: buildingStore.Bid,
     groupId: Number(processParentNode.id),
     description: nowProcess.value.node.label,
     type: nowProcess.value.node.type,
@@ -1157,8 +1161,8 @@ function clientToServer() {
   params.nodes = cloned.value.nodes.map((node) =>
     convertNodeForServerStructure(
       node as myGraphNode,
-      cloned.value.edges as myGraphEdge[]
-    )
+      cloned.value.edges as unknown as myGraphEdge[],
+    ),
   );
   for (const node of params.nodes) {
     if (checkIfWithMessageInput(node.stepDefinition?.nodeType.key)) {
@@ -1173,7 +1177,7 @@ function clientToServer() {
     }
   }
   params.edges = cloned.value.edges.map((edge) =>
-    convertEdgeForServerStructure(edge as myGraphEdge)
+    convertEdgeForServerStructure(edge as unknown as myGraphEdge),
   );
   params.position = cloned.value.position;
   params.zoom = cloned.value.zoom || 1;
@@ -1182,7 +1186,7 @@ function clientToServer() {
 }
 function convertNodeForServerStructure(
   node: myGraphNode,
-  edges: myGraphEdge[]
+  edges: myGraphEdge[],
 ) {
   const convertedData: convertedNode = {
     type: node.type,
@@ -1252,7 +1256,7 @@ function serverToClient(serverData: any) {
 }
 function getRoleName(roleName: string) {
   return roleNameObjectOptions.value.find(
-    (item: { name: string }) => item.name === roleName
+    (item: { name: string }) => item.name === roleName,
   );
 }
 // 找到 q-tree 中目前流程圖的父節點
@@ -1261,7 +1265,7 @@ function findParentNode(nowId?: string) {
     wfTree.value.getExpandedNodes() as QTreeNode[]
   ).find((node: QTreeNode) => {
     const nowProcessNode = node.children?.find(
-      (childrenNode) => childrenNode.id === (nowId ?? selectedWfNodesId.value)
+      (childrenNode) => childrenNode.id === (nowId ?? selectedWfNodesId.value),
     );
     if (nowProcessNode) return true;
     return false;
@@ -1288,7 +1292,7 @@ onKeyStroke((e) => {
 
     if (text) {
       source.value = text;
-      copy(source.value);
+      void copy(source.value);
     }
   });
   // 預設的複製貼上文字功能
@@ -1296,7 +1300,7 @@ onKeyStroke((e) => {
     const selection = window.getSelection()?.toString();
     if (selection) {
       source.value = selection;
-      copy(source.value);
+      void copy(source.value);
     } else {
       source.value = '';
     }
@@ -1339,9 +1343,7 @@ onKeyStroke((e) => {
 /*
 左邊流程圖下拉資料 & 方法
 */
-onMounted(async () => {
-  await getRoleTreeForProcess();
-});
+onMounted(getRoleTreeForProcess);
 // 獲取消防編組角色清單
 interface classData {
   label: string;
@@ -1350,12 +1352,12 @@ interface classData {
   icon?: string;
   children?: classData[] | { id: string; label: string }[];
 }
-async function getRoleTreeForProcess() {
+function getRoleTreeForProcess() {
   wfNodes.value = wfNodesString = mockWfNodes;
 }
 function formatRoleTreeData(
   data: typeof AxiosResponse,
-  depth = 0
+  depth = 0,
 ): classData[] {
   return Object.entries(data).map(([key, value]) => {
     const [id, label] = key.split('_');
@@ -1374,7 +1376,7 @@ function formatRoleTreeData(
             isOldProcess: true,
             version: Number(version),
           };
-        }
+        },
       );
     } else {
       children = value ? formatRoleTreeData(value, depth + 1) : [];
@@ -1433,23 +1435,23 @@ function resetDialog(actionNames: keyof flowProcessTableConfigsType) {
 }
 function handleAddProcess(
   marshallingProps: { id: string; label: string },
-  actionNames: keyof flowProcessTableConfigsType
+  actionNames: keyof flowProcessTableConfigsType,
 ) {
   resetDialog(actionNames);
   dialogAttrs.value.tempData.marshalling = marshallingProps;
 }
-async function handleEditProcess(
+function handleEditProcess(
   processProps: { id: string; label: string; version: number },
-  actionNames: keyof flowProcessTableConfigsType
+  actionNames: keyof flowProcessTableConfigsType,
 ) {
   const { id, version, label } = processProps;
 
   console.log('now handleEditProcess', { id, version, label });
 }
 const nowProcess = ref();
-async function handleClickProcess(
+function handleClickProcess(
   prop: { key: string; node: wfNode },
-  force = false
+  force = false,
 ) {
   if (!force && nowProcess.value && nowProcess.value.key === prop.key) return;
   // 清除畫布
@@ -1459,22 +1461,19 @@ async function handleClickProcess(
   nowState.value = toObject();
   saveStateToArray(history.value);
 
-  nextTick(() => {
+  void nextTick(() => {
     console.log('handleClickProcess prop', prop);
     const copyProcessData = JSON.parse(
       JSON.stringify(
         prop.node.id === '111'
           ? fireMarshallingProcessNodesData
-          : basicProcessNodesData
-      )
+          : basicProcessNodesData,
+      ),
     );
     serverToClient(copyProcessData);
   });
 }
-async function handleDeleteProcess(processProps: {
-  id: string;
-  label: string;
-}) {
+function handleDeleteProcess(processProps: { id: string; label: string }) {
   // 提示是否刪除
   $q.dialog({
     title: '提示',
@@ -1485,7 +1484,7 @@ async function handleDeleteProcess(processProps: {
       label: '確定',
     },
     cancel: '取消',
-  }).onOk(async () => {
+  }).onOk(() => {
     console.log(' handleDeleteProcess OK');
   });
 }
@@ -1505,21 +1504,24 @@ interface NodeData {
 }
 const nodesData = ref<NodeData[]>([]);
 const formattedNodesData = computed(() => {
-  return nodesData.value.reduce((a, b) => {
-    const newNode = JSON.parse(JSON.stringify(b));
-    const nodeTypeNumber = b.nodeType.key;
-    const { group, iconImg } = iconObjectOptions[nodeTypeNumber];
-    const groupChName = NodeGroup[group];
-    newNode.iconString = iconImg;
-    newNode.header = 'groupItem';
-    let groupData = a.find((item) => item.label === groupChName);
-    if (!groupData) {
-      groupData = { name: group, label: groupChName, children: [] };
-      a.push(groupData);
-    }
-    groupData.children.push(newNode);
-    return a;
-  }, [] as { name?: string; label: string; children: NodeData[] }[]);
+  return nodesData.value.reduce(
+    (a, b) => {
+      const newNode = JSON.parse(JSON.stringify(b));
+      const nodeTypeNumber = b.nodeType.key;
+      const { group, iconImg } = iconObjectOptions[nodeTypeNumber];
+      const groupChName = NodeGroup[group];
+      newNode.iconString = iconImg;
+      newNode.header = 'groupItem';
+      let groupData = a.find((item) => item.label === groupChName);
+      if (!groupData) {
+        groupData = { name: group, label: groupChName, children: [] };
+        a.push(groupData);
+      }
+      groupData.children.push(newNode);
+      return a;
+    },
+    [] as { name?: string; label: string; children: NodeData[] }[],
+  );
 });
 // watch(
 //   formattedNodesData,
@@ -1538,7 +1540,7 @@ function onSearch() {
     flowNodesTree.value.collapseAll();
   } else {
     nodesData.value = nodeTypeOptions.value.filter((item: { name: string }) =>
-      item.name.includes(searchContent.value)
+      item.name.includes(searchContent.value),
     );
     flowNodesTree.value.expandAll();
   }
@@ -1560,7 +1562,7 @@ const hasRoleInput = computed(() => {
 // 檢查是否要加訊息 input 欄位
 const hasMessageInput = computed(() => {
   return checkIfWithMessageInput(
-    selectedNode.value?.stepDefinition?.nodeType.key
+    selectedNode.value?.stepDefinition?.nodeType.key,
   );
 });
 function checkIfWithMessageInput(key: number | null | undefined) {
@@ -1612,7 +1614,7 @@ watch(
       }
     }
   },
-  { deep: true }
+  { deep: true },
 );
 function returnToOldNode(oldNode: myGraphNode) {
   console.log('oldNode', oldNode);
@@ -1626,7 +1628,7 @@ function returnToOldNode(oldNode: myGraphNode) {
       message: '請輸入必填欄位',
       position: 'top',
     });
-    nextTick(() => {
+    void nextTick(() => {
       isNodeChanging.value = false;
     });
   }, 100);
@@ -1649,9 +1651,9 @@ function handleInput(e: Event) {
 }
 function formatAsMessage(text: string) {
   let clonedText = useCloned(text).cloned.value;
-  // clonedText = clonedText.replaceAll("大樓名稱", "{buildingName}");
-  // clonedText = clonedText.replaceAll("地址名稱", "{addressName}");
-  clonedText = clonedText.replaceAll('起火位置', '@NodeMessageFormat');
+  // clonedText = clonedText.replace(/大樓名稱/g, "{buildingName}");
+  // clonedText = clonedText.replace(/地址名稱/g, "{addressName}");
+  clonedText = clonedText.replace(/起火位置/g, '@NodeMessageFormat');
   return clonedText || '';
 }
 const blankSpaceBtnList = [

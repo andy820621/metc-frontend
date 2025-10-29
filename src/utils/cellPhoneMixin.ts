@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import type { dialogAttrsType } from "src/utils/tableMixin";
-import { tempDataType } from "src/api/api.type";
+import type { tempDataType } from "src/api/api.type";
 
 export default function cellPhoneMixin(dialogAttrs: dialogAttrsType) {
   const cellPhoneArr = ref([""]);

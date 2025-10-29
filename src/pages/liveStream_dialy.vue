@@ -15,16 +15,16 @@ let callObject: any;
 
 const startCall = async () => {
   callObject = DailyIframe.createFrame(videoContainer.value, {
-    url: "https://barz.daily.co/barz",
+    url: 'https://barz.daily.co/barz',
     showLeaveButton: true,
     // 其他 Daily.co 設置選項
   });
-  await callObject.join({ userName: "Quasar User" });
+  await callObject.join({ userName: 'Quasar User' });
   inCall.value = true;
 };
 
 const leaveCall = () => {
-  callObject && callObject.leave();
+  if (callObject) callObject.leave();
   inCall.value = false;
 };
 

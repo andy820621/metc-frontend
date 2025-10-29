@@ -1,8 +1,9 @@
 import { req } from "src/boot/axios";
 import type { pagination } from "./api.type";
-import { AddressPlateViewModel } from "./addressPlate";
-import { ProviderViewModel, supplierDataConfig } from "./supplierData";
-import { BuildingViewModel } from "./building";
+import type { AddressPlateViewModel } from "./addressPlate";
+import type { ProviderViewModel} from "./supplierData";
+import { supplierDataConfig } from "./supplierData";
+import type { BuildingViewModel } from "./building";
 
 export enum RoutineTypes {
   ///  檢修申報

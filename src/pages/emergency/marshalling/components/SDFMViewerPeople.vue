@@ -163,13 +163,14 @@
 </template>
 
 <script setup lang="ts">
-import { UserViewModel } from "src/api/accountSetting";
+import type { UserViewModel } from 'src/api/accountSetting';
 import emergencyMission, {
   missionListTableConfig,
-} from "src/api/emergencyMission";
+} from 'src/api/emergencyMission';
 // utils
-import tableMixin, { blockRefType } from "src/utils/tableMixin";
-import { setStatus } from "src/utils/missionListFormater";
+import type { blockRefType } from 'src/utils/tableMixin';
+import tableMixin from 'src/utils/tableMixin';
+import { setStatus } from 'src/utils/missionListFormater';
 // icon
 import {
   mdiCheckCircle,
@@ -177,11 +178,11 @@ import {
   mdiCircleSlice8,
   mdiCloseCircle,
   mdiMinusCircle,
-} from "@quasar/extras/mdi-v6";
+} from '@quasar/extras/mdi-v6';
 
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = useQuasar();
 
-const emit = defineEmits(["handleOpenUser", "openMissionList"]);
+const emit = defineEmits(['handleOpenUser', 'openMissionList']);
 
 const props = defineProps({
   processRunning: {
@@ -203,23 +204,23 @@ watch(
     if (newValue && oldValue === false) {
       accountLists.value.forEach(
         (item: UserViewModel & { state: string }) =>
-          (item.state = "尚未接收訊息")
+          (item.state = '尚未接收訊息'),
       );
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const accountLists = computed(() => props.marshallingClass.members);
 
 async function openUser(content: UserViewModel) {
-  console.log("openUser content", content);
-  emit("handleOpenUser", content);
+  console.log('openUser content', content);
+  emit('handleOpenUser', content);
 }
 
 // 任務清單
 const blockRef = ref<blockRefType>();
-const { tableAttrs } = tableMixin(blockRef as Ref<blockRefType>);
+const { tableAttrs } = tableMixin(blockRef);
 
 const tableEvent = computed(() => {
   return {
@@ -230,17 +231,17 @@ const tableEvent = computed(() => {
 const dialogTableVisible = ref(false);
 async function getTableData(
   params = {
-    filter: "",
+    filter: '',
     page: 1,
     rowsPerPage: 25,
-    roleName: "",
-  }
+    roleName: '',
+  },
 ) {
-  console.log("getTableData", props.marshallingClass.role.name);
+  console.log('getTableData', props.marshallingClass.role.name);
   params.roleName = props.marshallingClass.role.name;
 
   const result = (await emergencyMission.apiGetMissionLists(
-    params
+    params,
   )) as typeof AxiosResponse;
   tableAttrs.value.blockData = result.data.rows;
   tableAttrs.value.totalNum = result.data.rowsNumber;
@@ -253,30 +254,30 @@ function openMissionList() {
     tableAttrs.value.tableButtons = [];
     tableAttrs.value.tableConfig = missionListTableConfig;
   });
-  emit("openMissionList", props.marshallingClass);
+  emit('openMissionList', props.marshallingClass);
 }
 
 // 任務清單未讀數量
 const missionTextStyle = computed(() => (status: string) => {
   const StyleObj = {
-    colorStyle: "",
-    icon: "",
+    colorStyle: '',
+    icon: '',
   };
 
-  if (status === "已完成") {
-    StyleObj.colorStyle = "text-positive";
+  if (status === '已完成') {
+    StyleObj.colorStyle = 'text-positive';
     StyleObj.icon = mdiCheckCircle;
-  } else if (status === "請求支援") {
-    StyleObj.colorStyle = "text-negative";
+  } else if (status === '請求支援') {
+    StyleObj.colorStyle = 'text-negative';
     StyleObj.icon = mdiAlertCircle;
-  } else if (status === "已接收") {
-    StyleObj.colorStyle = "text-primary";
+  } else if (status === '已接收') {
+    StyleObj.colorStyle = 'text-primary';
     StyleObj.icon = mdiCircleSlice8;
-  } else if (status === "已取消") {
-    StyleObj.colorStyle = "text-dark";
+  } else if (status === '已取消') {
+    StyleObj.colorStyle = 'text-dark';
     StyleObj.icon = mdiCloseCircle;
-  } else if (status === "待接收") {
-    StyleObj.colorStyle = "text-grey";
+  } else if (status === '待接收') {
+    StyleObj.colorStyle = 'text-grey';
     StyleObj.icon = mdiMinusCircle;
   }
   return StyleObj;

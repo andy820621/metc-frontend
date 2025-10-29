@@ -1,8 +1,8 @@
 import { req } from "boot/axios";
 import type { ApiResponse, pagination } from "./api.type";
-import { SystemViewModel } from "./system";
-import { UserViewModel } from "./accountSetting";
-import { Reminds } from "./addressPlate";
+import type { SystemViewModel } from "./system";
+import type { UserViewModel } from "./accountSetting";
+import type { Reminds } from "./addressPlate";
 
 // 排程
 export interface JobViewModel {

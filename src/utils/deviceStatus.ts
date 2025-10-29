@@ -1,4 +1,4 @@
-import { MaintainViewModel } from "src/api/maintain";
+import type { MaintainViewModel } from "src/api/maintain";
 
 export enum DeviceConditions {
   Fault, /// 故障

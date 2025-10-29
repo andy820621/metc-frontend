@@ -1,7 +1,7 @@
-import { FloorViewModel } from "./floors";
+import type { FloorViewModel } from "./floors";
 import { req } from "boot/axios";
 import type { pagination } from "./api.type";
-import { BuildingViewModel } from "./building";
+import type { BuildingViewModel } from "./building";
 
 export interface SpaceViewModel {
   id?: string;

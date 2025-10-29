@@ -59,7 +59,16 @@
                         v-model="dialogAttrs.tempData[config.name]"
                         :label="config.label + (config.required ? ' *' : '')"
                         lazy-rules
-                        :rules="[(val: any) => config.required ? !!val : (typeof val === 'string' || !val )  ? true :false || config.message ? config.message :`請輸入 ${config.label}`]"
+                        :rules="[
+                          (val: any) =>
+                            config.required
+                              ? !!val
+                              : typeof val === 'string' || !val
+                                ? true
+                                : false || config.message
+                                  ? config.message
+                                  : `請輸入 ${config.label}`,
+                        ]"
                       >
                         <template v-slot:error>
                           {{ config.message }}
@@ -74,7 +83,16 @@
                         type="number"
                         min="0"
                         lazy-rules
-                        :rules="[(val: any) => config.required ? !!val && val > 0 : (typeof val === 'number' || !val )  ? true :false || config.message ? config.message :`請輸入 ${config.label}`]"
+                        :rules="[
+                          (val: any) =>
+                            config.required
+                              ? !!val && val > 0
+                              : typeof val === 'number' || !val
+                                ? true
+                                : false || config.message
+                                  ? config.message
+                                  : `請輸入 ${config.label}`,
+                        ]"
                       >
                         <template v-slot:error>
                           {{ config.message }}
@@ -94,7 +112,16 @@
                           selectListChange(config.name, dialogAttrs.tempData)
                         "
                         @update:model-value="handleSelectString"
-                        :rules="[(val: any) => config.required ? !!val : typeof val === 'object'|| !val ? true :false || config.message ? config.message :`請輸入 ${config.label}`]"
+                        :rules="[
+                          (val: any) =>
+                            config.required
+                              ? !!val
+                              : typeof val === 'object' || !val
+                                ? true
+                                : false || config.message
+                                  ? config.message
+                                  : `請輸入 ${config.label}`,
+                        ]"
                       >
                         <template v-slot:hint v-if="config.showHint">
                           <template
@@ -116,7 +143,7 @@
                               linkUrlAction(
                                 dialogAttrs.tempData,
                                 config.linkUrl,
-                                config.name
+                                config.name,
                               )
                             "
                             size="sm"
@@ -167,7 +194,12 @@
                           selectListChange(config.name, dialogAttrs.tempData)
                         "
                         class="q-mb-md"
-                        :rules="[(val: any) => config.required ? val?.length > 0 : true || config.message]"
+                        :rules="[
+                          (val: any) =>
+                            config.required
+                              ? val?.length > 0
+                              : true || config.message,
+                        ]"
                       >
                         <template v-slot:selected-item="scope">
                           <q-chip
@@ -221,7 +253,16 @@
                           selectListChange(config.name, dialogAttrs.tempData)
                         "
                         @update:model-value="handleSelectString"
-                        :rules="[(val: any) => config.required ? !!val : typeof val === 'object'|| !val ? true :false || config.message ? config.message :`請輸入 ${config.label}`]"
+                        :rules="[
+                          (val: any) =>
+                            config.required
+                              ? !!val
+                              : typeof val === 'object' || !val
+                                ? true
+                                : false || config.message
+                                  ? config.message
+                                  : `請輸入 ${config.label}`,
+                        ]"
                         use-input
                         input-debounce="0"
                         @filter="selectStringFilterFn"
@@ -246,7 +287,7 @@
                               linkUrlAction(
                                 dialogAttrs.tempData,
                                 config.linkUrl,
-                                config.name
+                                config.name,
                               )
                             "
                             size="sm"
@@ -291,7 +332,7 @@
                           dialogAttrs.tempData[config.name]
                             ? date.formatDate(
                                 new Date(dialogAttrs.tempData[config.name]),
-                                'YYYY-MM-DD'
+                                'YYYY-MM-DD',
                               )
                             : null
                         "
@@ -300,8 +341,19 @@
                         :clearable="config.name !== 'completionDate'"
                         type="date"
                         @click="handleDate(config.name)"
-                        @update:model-value="(val:any) => updateDate(val,config.name)"
-                        :rules="[(val: any) => config.required ? !!val : (typeof val === 'string' || !val )  ? true :false || config.message?config.message:`請輸入 ${config.label}`]"
+                        @update:model-value="
+                          (val: any) => updateDate(val, config.name)
+                        "
+                        :rules="[
+                          (val: any) =>
+                            config.required
+                              ? !!val
+                              : typeof val === 'string' || !val
+                                ? true
+                                : false || config.message
+                                  ? config.message
+                                  : `請輸入 ${config.label}`,
+                        ]"
                       >
                         <template v-slot:hint v-if="config.showHint">
                           {{ config.showHint }}
@@ -402,7 +454,7 @@ import { linkUrlAction } from 'src/utils/urlActions';
 import { matKeyboardTab } from '@quasar/extras/material-icons';
 import tableMixin from 'src/utils/tableMixin';
 
-const $q = inject('$q') as typeof QVueGlobals;
+const $q = useQuasar();
 
 const emit = defineEmits([
   'handleDialog',
@@ -420,7 +472,7 @@ const props = withDefaults(
   }>(),
   {
     selectManyDisable: false,
-  }
+  },
 );
 
 const { dialogAttrs, blockAttrs, hideDialog } = tableMixin();
@@ -448,7 +500,7 @@ watch(
   },
   {
     deep: true,
-  }
+  },
 );
 const isSave = ref(false);
 watch(
@@ -472,7 +524,7 @@ watch(
   },
   {
     deep: true,
-  }
+  },
 );
 watch(
   () => dialogAttrs.value.tempData,
@@ -485,14 +537,14 @@ watch(
   },
   {
     deep: true,
-  }
+  },
 );
 watch(
   () => props.dialogAttrs.selectOption,
   () => {
     const { cloned } = useCloned(props.dialogAttrs.selectOption);
     dialogAttrs.value.selectOption = cloned.value;
-  }
+  },
 );
 
 const dialogStatusTitle = computed(() => {
@@ -500,10 +552,10 @@ const dialogStatusTitle = computed(() => {
     dialogAttrs.value.status === 'add'
       ? '- 新增'
       : dialogAttrs.value.status === 'edit'
-      ? '- 編輯'
-      : dialogAttrs.value.status === 'updateMany'
-      ? '- 多筆編輯'
-      : '';
+        ? '- 編輯'
+        : dialogAttrs.value.status === 'updateMany'
+          ? '- 多筆編輯'
+          : '';
 
   return `${dialogAttrs.value.dialogTitle} ${result}`;
 });
@@ -517,13 +569,13 @@ function handleDialog() {
       emit(
         'handleDialog',
         dialogAttrs.value.status,
-        dialogAttrs.value.selectArray
+        dialogAttrs.value.selectArray,
       );
     } else {
       emit(
         'handleDialog',
         dialogAttrs.value.status,
-        dialogAttrs.value.tempData
+        dialogAttrs.value.tempData,
       );
     }
   }
@@ -534,7 +586,7 @@ function DialogTabChange(tempData: tempDataType) {
     dialogAttrs.value.selectArray?.length > 0
   ) {
     const dialogDataIndex = dialogAttrs.value.selectArray?.findIndex(
-      (item: tempDataType) => item.id === tempData.id
+      (item: tempDataType) => item.id === tempData.id,
     );
 
     if (dialogDataIndex) {
@@ -561,7 +613,7 @@ function selectListChange(configName: string, tempData: tempDataType) {
 function selectStringFilterFn(
   inputValue: string,
   doneFn: (func: () => void) => void,
-  abortFn: () => void
+  abortFn: () => void,
 ): void {
   emit('selectStringFilterFn', inputValue, doneFn, abortFn);
 }
@@ -571,7 +623,7 @@ function handleSelectString() {
     emit(
       'updateLatestData',
       dialogAttrs.value.tempData,
-      dialogAttrs.value.selectArray
+      dialogAttrs.value.selectArray,
     );
   } else {
     emit('updateLatestData', dialogAttrs.value.tempData);
@@ -610,9 +662,9 @@ function closeDialog() {
 
 <style scoped lang="scss">
 :deep(
-    .q-field--auto-height .q-field__control,
-    .q-field--auto-height .q-field__native
-  ) {
+  .q-field--auto-height .q-field__control,
+  .q-field--auto-height .q-field__native
+) {
   min-height: 0;
 }
 :deep(.q-field__marginal) {
@@ -637,9 +689,9 @@ function closeDialog() {
   align-items: center;
 }
 :deep(
-    .q-field--auto-height .q-field__control,
-    .q-field--auto-height .q-field__native
-  ) {
+  .q-field--auto-height .q-field__control,
+  .q-field--auto-height .q-field__native
+) {
   align-items: center;
 }
 

@@ -40,7 +40,7 @@
                   :handle-audio-click="handleAudioClick"
                   :handle-screenshare-click="handleScreenshareClick"
                   :leave-call="leaveAndCleanUp"
-                  :disable-screen-share="((screen && !screen?.local) as boolean)"
+                  :disable-screen-share="(screen && !screen?.local) as boolean"
                 />
               </template>
 
@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import daily from "@daily-co/daily-js";
+import daily from '@daily-co/daily-js';
 import type {
   DailyCall,
   DailyParticipant,
@@ -67,15 +67,15 @@ import type {
   DailyEventObjectParticipantLeft,
   DailyEventObjectAppMessage,
   DailyEventObjectFatalError,
-} from "@daily-co/daily-js";
+} from '@daily-co/daily-js';
 
-import WaitingCard from "./WaitingCard.vue";
-import ChatTile from "./ChatTile.vue";
-import VideoTile from "./VideoTile.vue";
-import ScreenshareTile from "./ScreenshareTile.vue";
-import PermissionsErrorMsg from "./PermissionsErrorMsg.vue";
+import WaitingCard from './WaitingCard.vue';
+import ChatTile from './ChatTile.vue';
+import VideoTile from './VideoTile.vue';
+import ScreenshareTile from './ScreenshareTile.vue';
+import PermissionsErrorMsg from './PermissionsErrorMsg.vue';
 
-import { matRefresh } from "@quasar/extras/material-icons";
+import { matRefresh } from '@quasar/extras/material-icons';
 
 // 使用 props 定義組件的屬性
 // const props = defineProps(["leaveCall", "name", "roomUrl"]);
@@ -86,11 +86,11 @@ const props = defineProps<{
 }>();
 
 // 定義響應式變量
-const callObject = ref<DailyCall>() as Ref<DailyCall>; // 如果 daily-js 提供了類型，可以替換 any
+const callObject = ref<DailyCall>(); // 如果 daily-js 提供了類型，可以替換 any
 const participants: Ref<DailyParticipant[]> = ref([]);
 const count = ref<number>(0);
 const messages = ref<{ name: string; message: string }[]>([]); // 如果消息有特定的結構，可以替換 any
-const error = ref<string>("");
+const error = ref<string>('');
 const loading = ref(false);
 const showPermissionsError = ref(false);
 const screen = ref<DailyParticipant | null>();
@@ -106,47 +106,47 @@ onMounted(() => {
   callObject.value = co;
 
   // 加入通話並設定名字
-  co.join({ userName: props.name });
+  void co.join({ userName: props.name });
 
   // 添加調用和參與者事件處理程序
-  co.on("joining-meeting", handleJoiningMeeting)
+  co.on('joining-meeting', handleJoiningMeeting)
     .on(
-      "joined-meeting",
-      updateParticpants<DailyEventObjectParticipants | undefined>
+      'joined-meeting',
+      updateParticpants<DailyEventObjectParticipants | undefined>,
     )
     .on(
-      "participant-joined",
-      updateParticpants<DailyEventObjectParticipant | undefined>
+      'participant-joined',
+      updateParticpants<DailyEventObjectParticipant | undefined>,
     )
     .on(
-      "participant-updated",
-      updateParticpants<DailyEventObjectParticipant | undefined>
+      'participant-updated',
+      updateParticpants<DailyEventObjectParticipant | undefined>,
     )
     .on(
-      "participant-left",
-      updateParticpants<DailyEventObjectParticipantLeft | undefined>
+      'participant-left',
+      updateParticpants<DailyEventObjectParticipantLeft | undefined>,
     )
-    .on("error", handleError)
-    .on("camera-error", handleDeviceError)
-    .on("app-message", updateMessages);
+    .on('error', handleError)
+    .on('camera-error', handleDeviceError)
+    .on('app-message', updateMessages);
 });
 
 onUnmounted(() => {
   if (!callObject.value) return;
   callObject.value
-    .off("joining-meeting", handleJoiningMeeting)
-    .off("joined-meeting", updateParticpants)
-    .off("participant-joined", updateParticpants)
-    .off("participant-updated", updateParticpants)
-    .off("participant-left", updateParticpants)
-    .off("error", handleError)
-    .off("camera-error", handleDeviceError)
-    .off("app-message", updateMessages);
+    .off('joining-meeting', handleJoiningMeeting)
+    .off('joined-meeting', updateParticpants)
+    .off('participant-joined', updateParticpants)
+    .off('participant-updated', updateParticpants)
+    .off('participant-left', updateParticpants)
+    .off('error', handleError)
+    .off('camera-error', handleDeviceError)
+    .off('app-message', updateMessages);
 });
 
 // 定義方法
 function updateParticpants<T>(e: T) {
-  console.log("[EVENT] ", e);
+  console.log('[EVENT] ', e);
   if (!callObject.value) return;
 
   const p = callObject.value.participants();
@@ -154,10 +154,10 @@ function updateParticpants<T>(e: T) {
   participants.value = Object.values(p);
 
   const screenParticipant = participants.value.filter(
-    (p: DailyParticipant) => p.tracks.screenVideo.persistentTrack
+    (p: DailyParticipant) => p.tracks.screenVideo.persistentTrack,
   );
   if (screenParticipant?.length && !screen.value) {
-    console.log("[SCREEN]", screenParticipant);
+    console.log('[SCREEN]', screenParticipant);
     screen.value = screenParticipant[0];
   } else if (!screenParticipant?.length && screen.value) {
     screen.value = null;
@@ -165,12 +165,12 @@ function updateParticpants<T>(e: T) {
   loading.value = false;
 }
 const updateMessages = (e: DailyEventObjectAppMessage | undefined) => {
-  console.log("[MESSAGE] ", e?.data);
+  console.log('[MESSAGE] ', e?.data);
   messages.value.push(e?.data);
 };
 
 const handleError = (e: DailyEventObjectFatalError | undefined) => {
-  console.log("[ERROR] ", e);
+  console.log('[ERROR] ', e);
   if (e) error.value = e?.errorMsg;
   loading.value = false;
 };
@@ -205,17 +205,17 @@ const handleScreenshareClick = () => {
 const sendMessage = (text: string) => {
   // Attach the local participant's username to the message to be displayed in ChatTile.vue
   const local = callObject.value.participants().local;
-  const message = { message: text, name: local?.user_name || "Guest" };
+  const message = { message: text, name: local?.user_name || 'Guest' };
   messages.value.push(message);
-  callObject.value.sendAppMessage(message, "*");
+  callObject.value.sendAppMessage(message, '*');
 };
 
 const leaveAndCleanUp = () => {
   if (screen.value?.local) {
     callObject.value.stopScreenShare();
   }
-  callObject.value.leave().then(() => {
-    callObject.value.destroy();
+  void callObject.value.leave().then(() => {
+    void callObject.value.destroy();
 
     screen.value = null;
     props.leaveCall();
@@ -224,9 +224,9 @@ const leaveAndCleanUp = () => {
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Ropa+Sans&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Ropa+Sans&display=swap');
 main {
-  font-family: "Ropa Sans", sans-serif;
+  font-family: 'Ropa Sans', sans-serif;
   background-color: #121a24;
   height: 100%;
   position: relative;

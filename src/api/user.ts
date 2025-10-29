@@ -1,6 +1,6 @@
 import { req } from "boot/axios";
 import type { ApiResponse, tempDataType } from "./api.type";
-import { UserViewModel } from "./accountSetting";
+import type { UserViewModel } from "./accountSetting";
 
 export enum loginDevice {
   Android,

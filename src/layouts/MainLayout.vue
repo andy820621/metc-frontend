@@ -196,7 +196,7 @@ import {
   mdiTextBoxEdit,
 } from '@quasar/extras/mdi-v6';
 
-const $q = inject('$q') as typeof QVueGlobals;
+const $q = useQuasar();
 const router = useRouter();
 
 // 控制選單開合
@@ -238,7 +238,7 @@ watch(
   (newPath) => {
     console.log('newPath', newPath);
     handleRoutePathChange(newPath);
-  }
+  },
 );
 
 const expansionItems = ref<QExpansionItem[]>([]);
@@ -273,7 +273,7 @@ onMounted(() => {
 
 const header = ref();
 const headerHeight = computed(() =>
-  header.value ? header.value.$el.getBoundingClientRect().height : 0
+  header.value ? header.value.$el.getBoundingClientRect().height : 0,
 );
 provide('headerHeight', headerHeight);
 

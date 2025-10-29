@@ -1,4 +1,4 @@
-import { WorkflowTypeViewModel } from './../../../api/workflowType';
+import type { WorkflowTypeViewModel } from './../../../api/workflowType';
 import { NodeProps } from '@vue-flow/core';
 
 export interface wfNode {

@@ -1,4 +1,4 @@
-import { RouteRecordRaw } from 'vue-router';
+import type { RouteRecordRaw } from 'vue-router';
 import MainLayout from 'layouts/MainLayout.vue';
 
 declare module 'vue-router' {

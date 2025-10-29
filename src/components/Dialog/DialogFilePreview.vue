@@ -5,8 +5,8 @@
         isFullscreen
           ? 'width:100%'
           : $q.platform.is.mobile
-          ? 'width:100%'
-          : 'width: max(60%, 1000px)'
+            ? 'width:100%'
+            : 'width: max(60%, 1000px)'
       "
       class="q-pa-md"
     >
@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = useQuasar();
 
 withDefaults(
   defineProps<{
@@ -60,7 +60,7 @@ withDefaults(
     iframeUrl?: string;
     downloadUrl?: string;
   }>(),
-  {}
+  {},
 );
 
 const isFullscreen = ref(false);

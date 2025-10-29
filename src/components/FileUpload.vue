@@ -326,7 +326,7 @@
       <q-card-section class="row items-center q-pb-lg" style="gap: 1rem">
         <q-uploader
           ref="uploaderRef"
-          :factory="(uploaderFactoryFn as QUploaderProps['factory'])"
+          :factory="uploaderFactoryFn as QUploaderProps['factory']"
           label="檔案上傳"
           color="primary"
           text-color="white"
@@ -420,7 +420,7 @@ import {
   matSettings,
 } from '@quasar/extras/material-icons';
 // quasar
-import { QUploaderProps } from 'quasar';
+import type { QUploaderProps } from 'quasar';
 // utils
 import fileRead, {
   extractFilenameAndExtension,
@@ -432,7 +432,7 @@ import fileRead, {
 import { onKeyUp } from '@vueuse/core';
 
 const slots = useSlots();
-const $q = inject('$q') as typeof QVueGlobals;
+const $q = useQuasar();
 const { getFile, file, useObjectUrl } = fileRead();
 
 const props = withDefaults(
@@ -443,7 +443,7 @@ const props = withDefaults(
   }>(),
   {
     containerHeight: 0,
-  }
+  },
 );
 
 const highlightObj = computed(() => props.highlightObj);
@@ -469,16 +469,16 @@ async function getFileData(path: string | null = null) {
   const encodedPath = path
     ? encodeURI(path)
     : pathArray.length
-    ? encodeURI(fullPath.value)
-    : encodeURI(rootPath.value);
+      ? encodeURI(fullPath.value)
+      : encodeURI(rootPath.value);
   console.log('getFileData');
 }
 async function getFolderData(path: string | null = null) {
   const encodedPath = path
     ? encodeURI(path)
     : pathArray.length
-    ? encodeURI(fullPath.value)
-    : encodeURI(rootPath.value);
+      ? encodeURI(fullPath.value)
+      : encodeURI(rootPath.value);
 
   console.log('getFolderList');
 }
@@ -513,7 +513,7 @@ async function deleteFolder(name: string) {
       label: '確定',
     },
     cancel: '取消',
-  }).onOk(async () => {
+  }).onOk(() => {
     // 刪除資料夾
     const encodedPath = encodeURI(fullPath.value + name + '\\');
     console.log('deleteFolder', encodedPath);
@@ -561,7 +561,7 @@ async function deleteFile(names: string[]) {
     },
     cancel: '取消',
   })
-    .onOk(async () => {
+    .onOk(() => {
       // 刪除檔案
       for (const name of names) {
         const encodedPath = encodeURI(fullPath.value + name);
@@ -587,7 +587,7 @@ async function handlePreviewFile(name: string) {
     fullPath.value + name,
     null,
     extension,
-    filename
+    filename,
   );
 
   console.log('handlePreviewFile fileUrl', fileUrl);
@@ -737,7 +737,7 @@ watch(
       initData();
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 function initData() {
   fileModelArray.value.length = 0;

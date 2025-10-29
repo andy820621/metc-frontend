@@ -20,6 +20,7 @@ import { useBuildingStore } from 'src/stores/building.js';
 import { getFloorsData } from 'src/utils/getFloorsData';
 
 import fileRead from 'src/utils/fileRead';
+import { useQuasar } from 'quasar';
 const { getFile } = fileRead();
 
 const buildingStore = useBuildingStore();
@@ -34,10 +35,10 @@ const props = withDefaults(
   }>(),
   {
     initialStyle: true,
-  }
+  },
 );
 
-const $q = inject('$q') as typeof QVueGlobals;
+const $q = useQuasar();
 
 const emit = defineEmits(['handleSelect', 'resetData']);
 // 樓層 select
@@ -46,12 +47,12 @@ const currentFloor = ref();
 
 watch(
   Bid,
-  async (val) => {
-    if (val) await getAllFloors();
+  (val) => {
+    if (val) getAllFloors();
   },
-  { immediate: true }
+  { immediate: true },
 );
-async function getAllFloors() {
+function getAllFloors() {
   console.log('getAllFloors');
   if (Bid.value) {
     console.log('getAllFloors Bid:', Bid.value);
@@ -68,13 +69,13 @@ async function getAllFloors() {
 //   },
 //   { deep: true }
 // );
-function handleSelect(floorData: any) {
+async function handleSelect(floorData: any) {
   if (props.justFloorId) {
     console.log('justFloorId');
     currentFloor.value = floorData;
     emit('handleSelect', floorData);
   } else {
-    getFloorImage(floorData);
+    await getFloorImage(floorData);
     console.log('floorData', floorData);
   }
 }

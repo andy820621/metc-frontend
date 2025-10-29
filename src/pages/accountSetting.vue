@@ -163,14 +163,16 @@
 </template>
 <script setup lang="ts">
 // api
-import AccountSetting, {
-  UserViewModel,
-  userTableConfig,
-} from 'src/api/accountSetting';
-import Building, { BuildingViewModel } from 'src/api/building';
-import Floors, { FloorViewModel } from 'src/api/floors';
-import Role, { RoleViewModel, roleType } from 'src/api/role';
-import AddressPlate, { AddressPlateViewModel } from 'src/api/addressPlate';
+import type { UserViewModel } from 'src/api/accountSetting';
+import AccountSetting, { userTableConfig } from 'src/api/accountSetting';
+import type { BuildingViewModel } from 'src/api/building';
+import Building from 'src/api/building';
+import type { FloorViewModel } from 'src/api/floors';
+import Floors from 'src/api/floors';
+import type { RoleViewModel } from 'src/api/role';
+import Role, { roleType } from 'src/api/role';
+import type { AddressPlateViewModel } from 'src/api/addressPlate';
+import AddressPlate from 'src/api/addressPlate';
 import UserAccount, { beControlledDataConfig } from 'src/api/userAccount';
 
 // utils
@@ -178,7 +180,7 @@ import cellPhoneMixin from 'src/utils/cellPhoneMixin';
 import { useCloned } from '@vueuse/core';
 import FileReadMixin from 'src/utils/fileRead';
 import tableMixin, { setBlockLoading } from 'src/utils/tableMixin';
-import { dataItem } from 'src/components/Dialog/DialogImportExcel.vue';
+import type { dataItem } from 'src/components/Dialog/DialogImportExcel.vue';
 
 import type {
   blockRefType,
@@ -199,7 +201,7 @@ import {
 } from '@quasar/extras/mdi-v6';
 import { formatExcelDate } from 'src/utils/formatUtils';
 
-const $q = inject('$q') as typeof QVueGlobals;
+const $q = useQuasar();
 
 // 客製 button
 const customHeaderButtons = ref([
@@ -232,7 +234,7 @@ function handleClickOption(
     icon: string;
     status: string;
   },
-  data?: UserViewModel
+  data?: UserViewModel,
 ) {
   if (data) {
     handleBlock(btn, data);
@@ -252,7 +254,7 @@ const {
   hideDialog,
   getDataMixin,
   getTableMixin,
-} = tableMixin(blockRef as Ref<blockRefType>);
+} = tableMixin(blockRef);
 
 const dialogEvent = computed(() => {
   return {
@@ -294,24 +296,24 @@ const normalAccountData = ref<UserViewModel>();
 const { getFile } = FileReadMixin();
 async function handleBlock<T>(
   btn: { label: string; icon: string; status: string },
-  data: T extends UserViewModel ? T : tempDataType
+  data: T extends UserViewModel ? T : tempDataType,
 ) {
   const userMugShotFileConfigObj = userTableConfig.find(
-    (item) => item.name === 'mugShotFileId'
+    (item) => item.name === 'mugShotFileId',
   );
   const accountsMugShotFileConfigObj = beControlledDataConfig.find(
-    (item) => item.name === 'mugShotFileId'
+    (item) => item.name === 'mugShotFileId',
   );
   const passwordConfigObj = userTableConfig.find(
-    (item) => item.name === 'password'
+    (item) => item.name === 'password',
   );
   if (btn.status === 'edit' || btn.status === 'updateMany') {
     if (btn.status === 'edit') {
       data.userMugShotUrl = await getFile(null, data.mugShotFileId);
     } else {
-      dialogAttrs.value.selectArray.forEach(async (item) => {
+      for (const item of dialogAttrs.value.selectArray) {
         item.userMugShotUrl = await getFile(null, data.mugShotFileId);
-      });
+      }
     }
     if (passwordConfigObj) passwordConfigObj.isDialogForm = false;
     if (userMugShotFileConfigObj) userMugShotFileConfigObj.isDialogForm = true;
@@ -336,9 +338,9 @@ async function handleBlock<T>(
     if (data?.isDisability === null) {
       data.isDisability = false;
     }
-    await handleBlockMixin(btn, data, API, getTableData);
+    handleBlockMixin(btn, data, API, void getTableData);
   } else {
-    handleBlockMixin(btn, data, API, getData);
+    handleBlockMixin(btn, data, API, void getData);
 
     if (btn.status === 'edit') {
       readPhoneNumber(dialogAttrs.value.tempData);
@@ -364,48 +366,12 @@ async function handleBlock<T>(
         label: '確定',
       },
       cancel: '取消',
-    }).onOk(async () => {
-      const accountStatus: { [key: string]: boolean } = {};
-      accountStatus[data.id] = !data.lockout;
-      const result = (await AccountSetting.apiLockoutUser(
-        accountStatus
-      )) as typeof AxiosResponse;
-      if (result.data) {
-        $q.notify({
-          type: 'positive',
-          message: '更改成功',
-          position: 'top',
-        });
-        getData();
-      } else {
-        $q.notify({
-          type: 'negative',
-          message: '更改失敗',
-          position: 'top',
-        });
-      }
-    });
-  } else if (btn.status === 'accountStatusMany') {
-    if (
-      dialogAttrs.value.selectArray &&
-      dialogAttrs.value.selectArray.length > 0
-    ) {
-      $q.dialog({
-        title: '提示',
-        message: '是否啟用目前所選取的帳號?',
-        persistent: true,
-        ok: {
-          push: true,
-          label: '確定',
-        },
-        cancel: '取消',
-      }).onOk(async () => {
+    }).onOk(() => {
+      void (async () => {
         const accountStatus: { [key: string]: boolean } = {};
-        dialogAttrs.value.selectArray.forEach((item) => {
-          accountStatus[item.id] = false;
-        });
+        accountStatus[data.id] = !data.lockout;
         const result = (await AccountSetting.apiLockoutUser(
-          accountStatus
+          accountStatus,
         )) as typeof AxiosResponse;
         if (result.data) {
           $q.notify({
@@ -421,6 +387,46 @@ async function handleBlock<T>(
             position: 'top',
           });
         }
+      })();
+    });
+  } else if (btn.status === 'accountStatusMany') {
+    if (
+      dialogAttrs.value.selectArray &&
+      dialogAttrs.value.selectArray.length > 0
+    ) {
+      $q.dialog({
+        title: '提示',
+        message: '是否啟用目前所選取的帳號?',
+        persistent: true,
+        ok: {
+          push: true,
+          label: '確定',
+        },
+        cancel: '取消',
+      }).onOk(() => {
+        void (async () => {
+          const accountStatus: { [key: string]: boolean } = {};
+          dialogAttrs.value.selectArray.forEach((item) => {
+            accountStatus[item.id] = false;
+          });
+          const result = (await AccountSetting.apiLockoutUser(
+            accountStatus,
+          )) as typeof AxiosResponse;
+          if (result.data) {
+            $q.notify({
+              type: 'positive',
+              message: '更改成功',
+              position: 'top',
+            });
+            getData();
+          } else {
+            $q.notify({
+              type: 'negative',
+              message: '更改失敗',
+              position: 'top',
+            });
+          }
+        })();
       });
     } else {
       $q.notify({
@@ -499,7 +505,7 @@ async function handleDialog(status: string, data: tempDataType) {
     if (status === 'add') {
       data.user = normalAccountData.value;
     }
-    handleDialogMixin(status, API, getTableData, data);
+    await handleDialogMixin(status, API, getTableData, data);
   } else {
     if (status === 'add') {
       data.emailConfirmed = false;
@@ -516,9 +522,9 @@ async function handleDialog(status: string, data: tempDataType) {
           item.roleAddressPlates = roleAddressPlates;
         }
       });
-      handleDialogMixin('edit', API, getData, dialogAttrs.value.selectArray);
+      await handleDialogMixin('edit', API, getData, dialogAttrs.value.selectArray);
     } else {
-      handleDialogMixin(status, API, getData, data);
+      await handleDialogMixin(status, API, getData, data);
     }
   }
   if (Array.isArray(data)) {
@@ -537,7 +543,7 @@ async function getData(
     filters: '',
     page: 1,
     rowsPerPage: 25,
-  }
+  },
 ) {
   API = AccountSetting;
   // 產出 filters 物件 (filtersObject)
@@ -546,14 +552,14 @@ async function getData(
   const filtersObject: FilterColumnCollection[] = generateFiltersObject(
     filters,
     searchText,
-    'User'
+    'User',
   );
   const jsonFilters = JSON.stringify(filtersObject);
   const payload = useCloned(pagination).cloned.value;
   payload.filters = jsonFilters;
   await getDataMixin(API, payload);
 
-  setDataForDataConfig(blockAttrs.value.blockData as tempDataType[]);
+  setDataForDataConfig(blockAttrs.value.blockData);
 
   setBlockLoading(blockRef);
 }
@@ -565,7 +571,7 @@ async function getTableData(
     filters: '',
     page: 1,
     rowsPerPage: 12,
-  }
+  },
 ) {
   API = UserAccount;
   pagination.userId = normalAccountData.value?.id;
@@ -610,7 +616,7 @@ async function selectListChange(props: string) {
       : userFormRef.value?.rolesTempData.buildings?.id;
     if (userFormRef.value?.rolesTempData.buildings) {
       const result = (await Floors.apiGetBuildingFloor(
-        Bid
+        Bid,
       )) as typeof AxiosResponse;
       userFormSelectOption.value = result.data;
     } else {
@@ -624,7 +630,7 @@ async function selectListChange(props: string) {
   } else if (props === 'addressPlates') {
     if (userFormRef.value?.rolesTempData.floor?.id) {
       const result = (await AddressPlate.apiGetAddressPlate(
-        userFormRef.value?.rolesTempData.floor.id
+        userFormRef.value?.rolesTempData.floor.id,
       )) as typeof AxiosResponse;
 
       userFormSelectOption.value = result.data;
@@ -678,11 +684,11 @@ function formatBlockData(blockData: blockAttrsType['blockData']) {
     item.houseNumber = item.roleAddressPlates?.length
       ? item.roleAddressPlates
           .flatMap((p: { addressPlates: AddressPlateViewModel[] }) =>
-            p.addressPlates.map((a) => a.houseNumber)
+            p.addressPlates.map((a) => a.houseNumber),
           )
           .filter(
             (value: any, index: any, self: string | any[]) =>
-              self.indexOf(value) === index
+              self.indexOf(value) === index,
           )
           .join('、')
       : '';

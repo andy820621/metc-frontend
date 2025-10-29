@@ -22,9 +22,9 @@ export default function searchFiltersGenerator(config: tableConfigItem[]) {
       // 檢查是否為字串搜尋類型
       if (item.searchType === "string" && item.searchOption) {
         stringOptions.push({
-          label: item.searchOption!.label!,
-          val: item.searchOption!.val!,
-          type: item.searchOption!.type,
+          label: item.searchOption.label,
+          val: item.searchOption.val,
+          type: item.searchOption.type,
         });
         // TODO: 確認以後是全選後下面程式碼可刪
         // if ("isDefault" in item.searchOption && item.searchOption.isDefault) {
@@ -33,7 +33,7 @@ export default function searchFiltersGenerator(config: tableConfigItem[]) {
       } else if (item.searchType === "date" && item.searchOption) {
         // 檢查是否為日期搜尋類型
         tempResult.push({
-          title: item.searchTitle!,
+          title: item.searchTitle,
           type: item.searchType,
           dateRangeModel: {
             from: "",
@@ -44,7 +44,7 @@ export default function searchFiltersGenerator(config: tableConfigItem[]) {
       } else if (item.searchType === "singleSelect" && item.searchOption) {
         // 檢查是否為日期區間搜尋類型
         tempResult.push({
-          title: item.searchTitle!,
+          title: item.searchTitle,
           type: item.searchType,
           searchOption: item.searchOption,
           model: undefined,
@@ -106,7 +106,7 @@ export function generateFiltersObject(
               logical: FilterColumnLogical.Or,
               columnKey: {
                 fieldName: option.val,
-                typeName: (option.type ?? typeName) as string,
+                typeName: (option.type ?? typeName),
               },
               value: searchText,
             });
@@ -129,7 +129,7 @@ export function generateFiltersObject(
             logical: FilterColumnLogical.And,
             columnKey: {
               fieldName: startVal,
-              typeName: (typeName ?? type) as string,
+              typeName: (typeName ?? type),
             },
             beginValue,
             endValue,
@@ -138,7 +138,7 @@ export function generateFiltersObject(
             logical: FilterColumnLogical.And,
             columnKey: {
               fieldName: endVal,
-              typeName: (typeName ?? type) as string,
+              typeName: (typeName ?? type),
             },
             beginValue,
             endValue,
@@ -149,7 +149,7 @@ export function generateFiltersObject(
             logical: FilterColumnLogical.And,
             columnKey: {
               fieldName: startVal,
-              typeName: (typeName ?? type) as string,
+              typeName: (typeName ?? type),
             },
             beginValue,
             endValue,
@@ -161,7 +161,7 @@ export function generateFiltersObject(
             logical: FilterColumnLogical.And,
             columnKey: {
               fieldName: endVal,
-              typeName: (typeName ?? type) as string,
+              typeName: (typeName ?? type),
             },
             beginValue,
             endValue,
@@ -176,7 +176,7 @@ export function generateFiltersObject(
           logical: FilterColumnLogical.And,
           columnKey: {
             fieldName: searchOption.val,
-            typeName: (searchOption.type ?? typeName) as string,
+            typeName: (searchOption.type ?? typeName),
           },
           value: model.value,
         });

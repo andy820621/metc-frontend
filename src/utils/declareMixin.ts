@@ -1,4 +1,4 @@
-import { tableConfigItem } from "./tableMixin";
+import type { tableConfigItem } from "./tableMixin";
 
 export default function declareMixin() {
   const residentialOrCommercial = [

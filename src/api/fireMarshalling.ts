@@ -1,8 +1,8 @@
 import { req } from "boot/axios";
 import { createPinia, storeToRefs } from "pinia";
 import { useBuildingStore } from "src/stores/building.js";
-import { ApiResponse } from "./api.type";
-import { SendLogViewModel } from "src/stores/signalR";
+import type { ApiResponse } from "./api.type";
+import type { SendLogViewModel } from "src/stores/signalR";
 
 const buildingStore = useBuildingStore(createPinia());
 const { Bid } = storeToRefs(buildingStore);

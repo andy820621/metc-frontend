@@ -478,7 +478,7 @@ import { iconLabels } from '../flow/processIconOptions';
 
 // assets
 import mugShotUrl from 'src/assets/image/mugShotPlaceHolder.png';
-import { date } from 'quasar';
+import { date, useQuasar } from 'quasar';
 import { useUserStore } from 'src/stores/user';
 
 const userStore = useUserStore();
@@ -497,7 +497,7 @@ const isCommonCommunityUser = computed(() => {
 const buildingStore = useBuildingStore();
 const { Bid } = storeToRefs(buildingStore);
 
-const $q = inject('$q') as typeof QVueGlobals;
+const $q = useQuasar();
 
 // DialogContact 部分
 const visible = ref(false);
@@ -528,11 +528,12 @@ watch(currentFloorGroup, () => {
 const tableContent = '';
 
 const { getFile } = FileReadMixin();
-async function getSDFMData() {
+function getSDFMData() {
   console.log('getSDFMData');
 }
 
 const peopleList = ref<{
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   [id: number]: any & { unReadMissionCount: number };
 }>({});
 const classMembersObject = ref<{
@@ -561,7 +562,7 @@ const topPanelHeight = computed(
     splitterModel.value -
     TOP_TABS_HEIGHT -
     TOP_PADDING -
-    SPLITTER_LINE_HEIGHT / 2
+    SPLITTER_LINE_HEIGHT / 2,
 );
 
 // 消防編組全員呼叫指示
@@ -569,7 +570,7 @@ function handleBtnClick(btnType: string | null = null) {
   console.log('handleBtnClick');
   const submitData = {
     RoleNames: marshallingOptions.map((role) => role.name),
-    BuildingId: Bid.value as number,
+    BuildingId: Bid.value,
   };
 
   if (btnType === 'retreat') {
@@ -629,11 +630,11 @@ function handleClickGroupBtn(btn: { value: string; selected: boolean }) {
   } else {
     if (btn.selected) {
       modelMultiple.value = modelMultiple.value.filter(
-        (item) => !marshallingOptions.some((option) => option.id === item.id)
+        (item) => !marshallingOptions.some((option) => option.id === item.id),
       );
     } else {
       const missingOptions = marshallingOptions.filter(
-        (option) => !modelMultiple.value.some((item) => item.id === option.id)
+        (option) => !modelMultiple.value.some((item) => item.id === option.id),
       );
       modelMultiple.value = [...modelMultiple.value, ...missingOptions];
     }
@@ -647,7 +648,7 @@ watch(modelMultiple, (newValue) => {
     return;
   }
   const hasAllMarshalling = marshallingOptions.every((option) =>
-    newValue.some((item) => item.id === option.id)
+    newValue.some((item) => item.id === option.id),
   );
   btnOptions[1].selected = hasAllMarshalling;
 });
@@ -658,7 +659,7 @@ const messageOptions = ref<string[]>([]);
 const emergencyMessage = ref('');
 const isFocused = ref(false);
 
-onMounted(async () => {
+onMounted(() => {
   // messageOptions.value = stringOptions = result.data.map(
   //   (item: SystemViewModel) => item.label
   // );
@@ -666,12 +667,12 @@ onMounted(async () => {
 });
 function handleFilterMessageOptions(
   val: string,
-  update: (fn: () => void) => void
+  update: (fn: () => void) => void,
 ) {
   update(() => {
     const needle = val.toLowerCase();
     messageOptions.value = stringOptions.filter((option) =>
-      option.toLowerCase().includes(needle)
+      option.toLowerCase().includes(needle),
     );
   });
 }
@@ -696,7 +697,7 @@ function submitMessage() {
   const submitData = {
     RoleNames: modelMultiple.value.map((role) => role.name),
     Message: emergencyMessage.value,
-    BuildingId: Bid.value as number,
+    BuildingId: Bid.value,
   };
 
   console.log('submitMessage submitData: ', submitData);
@@ -733,7 +734,7 @@ function getTdContent(data: any[]) {
     tempData.areaName += `<p>${classes.area ? classes.area.name : ''}</p>`;
     tempData.dutyType += `<p>${dutyTypeNumToName(classes).join('<br>')}</p>`;
 
-    [...classes.members].forEach(async (member) => {
+    [...classes.members].forEach((member) => {
       tempData.position += `<p>${
         classes.classLeaderUserId === member.id
           ? "<span style='color:red;'>班長 ✔</span>"
@@ -795,12 +796,12 @@ const emergencyMsgArray = ref<
 >([]);
 watch(
   Bid,
-  async (val) => {
+  (val) => {
     if (val) {
       console.log('new Bid', val);
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>
 

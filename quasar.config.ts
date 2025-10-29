@@ -1,23 +1,18 @@
 /* eslint-env node */
 
-/*
- * This file runs in a Node context (it's NOT transpiled by Babel), so use only
- * the ES6 features that are supported by your Node version. https://node.green/
- */
-
 // Configuration for your app
-// https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
+// https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
 
-// import vue from '@vitejs/plugin-vue'
+import { configure } from 'quasar/wrappers';
+import path from 'node:path';
+import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { QuasarResolver } from 'unplugin-vue-components/resolvers';
+import { visualizer } from 'rollup-plugin-visualizer';
 
-const { QuasarResolver } = require('unplugin-vue-components/resolvers');
-const { visualizer } = require('rollup-plugin-visualizer');
+const rootDir = fileURLToPath(new URL('.', import.meta.url));
 
-const { configure } = require('quasar/wrappers');
-const path = require('path');
-const fs = require('fs');
-
-module.exports = configure(function (ctx) {
+export default configure((ctx: any) => {
   return {
     supportTS: true,
     eslint: {
@@ -37,7 +32,7 @@ module.exports = configure(function (ctx) {
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
     boot: ['global-registration', 'axios'],
 
-    // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
+    // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
     css: ['app.scss'],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
@@ -54,15 +49,20 @@ module.exports = configure(function (ctx) {
       'material-icons', // optional, you are not bound to it
     ],
 
-    // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
+    // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#build
     build: {
       target: {
         browser: ['es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1'],
         node: 'node16',
-        alias: {
-          '@': path.join(__dirname, './src'),
-          '@assets': path.join(__dirname, './src/assets'),
-        },
+      },
+      alias: {
+        '@': path.join(rootDir, './src'),
+        '@assets': path.join(rootDir, './src/assets'),
+        components: path.join(rootDir, './src/components'),
+        layouts: path.join(rootDir, './src/layouts'),
+        pages: path.join(rootDir, './src/pages'),
+        assets: path.join(rootDir, './src/assets'),
+        boot: path.join(rootDir, './src/boot'),
       },
 
       vueRouterMode: 'history', // available values: 'hash', 'history'
@@ -90,18 +90,31 @@ module.exports = configure(function (ctx) {
       // polyfillModulePreload: true,
       distDir: ctx.mode.spa ? 'dist/spa' : `dist/${ctx.modeName}`,
 
-      extendViteConf(viteConf) {
+      extendViteConf(viteConf: any) {
         viteConf.base = '/';
       },
       viteVuePluginOptions: {
         template: {
           compilerOptions: {
-            isCustomElement: (tag) => tag.startsWith('swiper-'),
+            isCustomElement: (tag: string) => tag.startsWith('swiper-'),
           },
         },
       },
 
+      // Casting to any to satisfy strict Quasar TS types for heterogeneous plugin tuples
       vitePlugins: [
+        [
+          'vite-plugin-checker',
+          {
+            vueTsc: true,
+            eslint: {
+              lintCommand:
+                'eslint -c ./eslint.config.js "./src/**/*.{ts,js,mjs,cjs,vue}" "./src-pwa/**/*.{ts,js,mjs,cjs,vue}"',
+              useFlatConfig: true,
+            },
+          },
+          { server: false },
+        ],
         [
           'unplugin-auto-import/vite',
           {
@@ -110,13 +123,9 @@ module.exports = configure(function (ctx) {
             imports: [
               'vue',
               'vue-router',
+              'quasar',
+              'pinia',
               {
-                // "@vueuse/core": [
-                // named imports
-                // "useMouse", // import { useMouse } from '@vueuse/core',
-                // alias
-                // ["useFetch", "useMyFetch"], // import { useFetch as useMyFetch } from '@vueuse/core',
-                // ],
                 axios: [
                   // default imports
                   ['default', 'axios'], // import { default as axios } from 'axios',
@@ -153,9 +162,9 @@ module.exports = configure(function (ctx) {
           emitFile: false, // 在 dist 也生出分析文件
           // sourcemap: true, // 使用 sourcemap 計算大小
         }),
-      ],
+      ] as any,
     },
-    // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
+    // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#devserver
     devServer: {
       https: true,
       // https: {
@@ -171,11 +180,12 @@ module.exports = configure(function (ctx) {
         '/api': {
           target: 'https://localhost:5001/',
           changeOrigin: true,
+          secure: false, // 允許自簽名證書
         },
       },
     },
 
-    // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
+    // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework
     framework: {
       cssAddon: true,
       config: {
@@ -241,7 +251,7 @@ module.exports = configure(function (ctx) {
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa
     pwa: {
-      workboxMode: 'generateSW',
+      workboxMode: 'GenerateSW',
       injectPwaMetaTags: true,
       swFilename: 'sw.js',
       manifestFilename: 'manifest.json',
@@ -253,7 +263,7 @@ module.exports = configure(function (ctx) {
         clientsClaim: true,
       },
     },
-    // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#sourcefiles
+    // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#sourcefiles
     sourceFiles: {
       // rootComponent: 'src/App.vue',
       // router: 'src/router/index',
@@ -305,12 +315,6 @@ module.exports = configure(function (ctx) {
       },
     },
 
-    // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-browser-extensions/configuring-bex
-    bex: {
-      contentScripts: ['my-content-script'],
-
-      // extendBexScriptsConf (esbuildConf) {}
-      // extendBexManifestJson (json) {}
-    },
+    // bex configuration removed (not used in this project)
   };
 });

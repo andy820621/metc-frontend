@@ -24,43 +24,50 @@
   </q-select>
 </template>
 
-<script setup name="QCascader">
-import CascaderItem from "./CascaderItem.vue";
+<script setup name="QCascader" lang="ts">
+import CascaderItem, { type CascaderOption } from './CascaderItem.vue';
 
-const emit = defineEmits(["update:modelValue"]);
-const props = defineProps({
-  modelValue: {
-    type: Array,
-    required: false,
-    default: () => [],
-  },
-  options: {
-    type: Array,
-    required: false,
-    default: () => [],
-  },
-  label: {
-    type: String,
-    required: false,
-    default: "",
-  },
-  fullTypeAllData: {
-    type: Object,
-    required: true,
-  },
+const $q = useQuasar();
+
+interface FullTypeData {
+  value: string;
+  [key: string]: any;
+}
+
+interface Props {
+  modelValue?: (string | number)[];
+  options?: CascaderOption[];
+  label?: string;
+  fullTypeAllData: Record<string, FullTypeData>;
+}
+
+const emit = defineEmits<{
+  'update:modelValue': [
+    value: (string | number)[],
+    modelLabel: CascaderOption[] | string[] | null,
+    drivers?: string | null,
+  ];
+}>();
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: () => [],
+  options: () => [],
+  label: '',
 });
-const currentValue = ref([]);
-const modelLabel = ref([]);
-const selected = ref([]);
-function handleSelect(item, deep) {
+
+const currentValue = ref<(string | number)[]>([]);
+const modelLabel = ref<CascaderOption[]>([]);
+const selected = ref<CascaderOption[]>([]);
+
+function handleSelect(item: CascaderOption, deep: number) {
   if (deep === 0) {
     selected.value = [item];
   } else {
     selected.value[deep] = item;
   }
   modelLabel.value = selected.value;
-  const valueList = [];
-  let drivers = null;
+  const valueList: (string | number)[] = [];
+  let drivers: string | null = null;
   modelLabel.value.forEach((item) => {
     if (item.drivers) {
       drivers = Array.isArray(item.drivers) ? item.drivers[0] : item.drivers;
@@ -68,13 +75,14 @@ function handleSelect(item, deep) {
     valueList.push(item.value);
   });
   currentValue.value = valueList;
-  emit("update:modelValue", valueList, modelLabel.value, drivers);
-}
-function handleClear() {
-  emit("update:modelValue", [], null);
+  emit('update:modelValue', valueList, modelLabel.value, drivers);
 }
 
-const cascaderLabel = ref("");
+function handleClear() {
+  emit('update:modelValue', [], null);
+}
+
+const cascaderLabel = ref('');
 
 watch(
   () => props.modelValue,
@@ -84,17 +92,24 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
+
 watch(
   () => currentValue.value,
   () => {
     readCascaderLabel();
-  }
+  },
 );
+
 function readCascaderLabel() {
-  const ValueString = currentValue.value.join(",");
-  cascaderLabel.value = props.fullTypeAllData[ValueString]?.value;
-  modelLabel.value = cascaderLabel.value?.split(" / ");
+  const ValueString = currentValue.value.join(',');
+  const fullTypeData = props.fullTypeAllData[ValueString];
+  if (fullTypeData?.value) {
+    cascaderLabel.value = fullTypeData.value;
+    // 當從 fullTypeAllData 讀取時，modelLabel 暫時設為空陣列
+    // 因為我們只有字串標籤，沒有完整的 CascaderOption 物件
+    modelLabel.value = [];
+  }
 }
 </script>

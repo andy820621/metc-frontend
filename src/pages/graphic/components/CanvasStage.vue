@@ -94,7 +94,7 @@
                             handleClickDeviceBtn(
                               btn,
                               item.deviceAddress,
-                              deviceData
+                              deviceData,
                             )
                           "
                         />
@@ -130,10 +130,10 @@
                   !val
                     ? '請輸入 班別'
                     : classOptions
-                        ?.map((item) => item.description)
-                        .includes(val)
-                    ? true
-                    : '班別欄位的值非有效值，請重新選取',
+                          ?.map((item) => item.description)
+                          .includes(val)
+                      ? true
+                      : '班別欄位的值非有效值，請重新選取',
               ]"
               ref="dialogClassNameSelect"
               @update:model-value="dialogClassNameSelectUpdateFunc"
@@ -230,7 +230,8 @@ import {
   useDeviceAddressStore,
 } from 'src/stores/deviceAddress';
 // websocket signalR
-import { TriggeredDeviceData, useSignalRStore } from 'src/stores/signalR';
+import type { TriggeredDeviceData } from 'src/stores/signalR';
+import { useSignalRStore } from 'src/stores/signalR';
 import { storeToRefs } from 'pinia';
 import { triggeredDeviceData } from '../fakeData';
 
@@ -241,12 +242,12 @@ const { nohmi03, fatek03, amsamotion02, mitsubishi } =
 const signalRStore = useSignalRStore();
 const { processRunning, initialDetector, triggerTime } =
   storeToRefs(signalRStore);
-const $q = inject('$q') as typeof QVueGlobals;
+const $q = useQuasar();
 
 // 選擇設備
 const deviceFilter = inject<Ref<number | string>>(
   'deviceFilter',
-  ref('not provided')
+  ref('not provided'),
 );
 
 if (deviceFilter && deviceFilter.value !== 'not provided') {
@@ -255,7 +256,7 @@ if (deviceFilter && deviceFilter.value !== 'not provided') {
     () => {
       const layerNode = graphicLayer.value?.getNode();
       iconImageConfigs.forEach((config) => {
-        const ImageNode = layerNode?.findOne(`#${config.id}`) as Konva.Path;
+        const ImageNode = layerNode?.findOne(`#${config.id}`);
         if (deviceFilter.value === 2) {
           config.visible =
             ImageNode.attrs.deviceData.useType === deviceFilter.value;
@@ -265,7 +266,7 @@ if (deviceFilter && deviceFilter.value !== 'not provided') {
           config.visible = true;
         }
       });
-    }
+    },
   );
 }
 // 設備控制
@@ -291,7 +292,7 @@ function deviceDataOpen(data: Konva.NodeConfig) {
             deviceAddress: item.deviceAddress,
           };
         });
-      }
+      },
     ) || [];
 
   dialogMissionContent.value =
@@ -314,7 +315,7 @@ watch(isCctv, (newVal) => {
 async function handleClickDeviceBtn(
   btn: any,
   deviceAddress: any,
-  deviceData: any
+  deviceData: any,
 ) {
   if (deviceData.value === btn.name) return;
   deviceData.value = btn.name;
@@ -375,7 +376,7 @@ function filterFunc<T = object>(
   update: (func: () => void) => void,
   refOptions: Ref<T[]>,
   options: T[],
-  optionLabelKey = 'name'
+  optionLabelKey = 'name',
 ) {
   update(() => {
     console.log('now val', val);
@@ -386,7 +387,7 @@ function filterFunc<T = object>(
     refOptions.value = options.filter((option) =>
       (option[optionLabelKey as keyof typeof option] as string)
         .toLocaleLowerCase()
-        .includes(needle)
+        .includes(needle),
     );
   });
 }
@@ -415,7 +416,7 @@ onMounted(async () => {
 });
 function classSelectFilterFunc(
   val: string,
-  update: (func: () => void) => void
+  update: (func: () => void) => void,
 ) {
   filterFunc<ClassOption>(val, update, classOptions, classData);
 }
@@ -495,14 +496,14 @@ function setEmergencyStartView(startId: string) {
   if (startId) {
     const stageNode = stage.value?.getStage();
     const layerNode = graphicLayer.value?.getNode();
-    const startNode = layerNode?.findOne(`#${startId}`) as Konva.Path;
+    const startNode = layerNode?.findOne(`#${startId}`);
     if (!startNode) return; // 避免在非探測器的樓層有錯誤
     const startPos = {
       // 計算出起始點(點位)的中心座標位置
       x: startNode?.x() + (startNode.attrs.width * startNode.scaleX()) / 2,
       y: startNode?.y() + (startNode.attrs.height * startNode.scaleY()) / 2,
     };
-    const stageContainer = canvasContainer.value as HTMLDivElement;
+    const stageContainer = canvasContainer.value;
     const center = {
       x: stageContainer.getBoundingClientRect().width / 2,
       y: stageContainer.getBoundingClientRect().height / 2,
@@ -571,7 +572,7 @@ function countDown() {
   const graphicLayerNode = graphicLayer.value?.getNode().getChildren();
 
   const resultNode = graphicLayerNode?.find(
-    (item) => item.attrs?.deviceData?.id === initialDetector.value?.id
+    (item) => item.attrs?.deviceData?.id === initialDetector.value?.id,
   );
 
   if (resultNode) triggerDeviceNode.value = resultNode;
@@ -588,7 +589,7 @@ function countDown() {
       triggerConnectArray.forEach((connectArray) => {
         connectArray.forEach((item: connectArrayType) => {
           const result = graphicLayerNode?.find(
-            (node: Konva.Node) => node.attrs.id === item.id
+            (node: Konva.Node) => node.attrs.id === item.id,
           );
           if (result?.attrs.deviceData?.iconId === 'fire_o3') {
             connectCctvData = result?.attrs.deviceData;
@@ -608,7 +609,7 @@ function countDown() {
       node.setAttrs({
         text: `預估 ${date.formatDate(
           hazardTime,
-          'HH:mm'
+          'HH:mm',
         )} 造成人體危害，請盡快撤離`, // 格式化過的時間
       });
     });
@@ -620,14 +621,14 @@ function countDown() {
 
 // 探測器為火災時換成火災圖片
 async function showFireImage() {
-  iconImageConfigs.forEach(async (config) => {
+  for (const config of iconImageConfigs) {
     if (
       config.deviceData?.deviceId ===
       triggerDeviceNode.value?.attrs.deviceData?.deviceId
     ) {
       config.data = await loadSvg('/svgIcons/fire_fs.svg#fire_fs');
     }
-  });
+  }
 }
 async function loadSvg(url: string) {
   const svgString = await fetch(url).then((res) => res.text());
@@ -638,11 +639,11 @@ async function loadSvg(url: string) {
   if (pathArray.length > 1) {
     const dArray: string[] = [];
     pathArray.forEach((path) => {
-      dArray.push(path.getAttribute('d') as string);
+      dArray.push(path.getAttribute('d'));
     });
     data = dArray.join(' ');
   } else {
-    data = pathArray[0]?.getAttribute('d') as string;
+    data = pathArray[0]?.getAttribute('d');
   }
   return data;
 }
@@ -686,7 +687,7 @@ const bgImageConfig = ref<{
 
 // 調整舞台寬高和縮放比例
 function resetCanvas() {
-  const stageNode = stage.value?.getStage() as Konva.Stage;
+  const stageNode = stage.value?.getStage();
   if (!stageNode) return;
   stageNode.x(0);
   stageNode.y(0);
@@ -828,7 +829,7 @@ watch(
   },
   {
     deep: true,
-  }
+  },
 );
 
 watch(
@@ -852,7 +853,7 @@ watch(
   },
   {
     deep: true,
-  }
+  },
 );
 watch(
   amsamotion02,
@@ -872,7 +873,7 @@ watch(
       nextTick(deviceStatusTrigger);
     }
   },
-  { deep: true }
+  { deep: true },
 );
 
 watch(
@@ -892,7 +893,7 @@ watch(
       nextTick(deviceStatusTrigger);
     }
   },
-  { deep: true }
+  { deep: true },
 );
 function allDeviceAddressDataFormat() {
   iconImageConfigs.forEach((item) => {
@@ -906,7 +907,7 @@ function allDeviceAddressDataFormat() {
             allAddressDataObj[address.driver][address.addressStr] = address;
           }
         }
-      }
+      },
     );
   });
   // 狀態寫進去
@@ -981,8 +982,8 @@ const polygonConfigs = reactive<Array<Konva.LineConfig>>([]);
 
 // Shape Cursor Style
 function hoverCursorPointer() {
-  const stageNode = stage.value?.getNode() as Konva.Stage;
-  const graphicLayerNode = graphicLayer.value?.getNode() as Konva.Layer;
+  const stageNode = stage.value?.getNode();
+  const graphicLayerNode = graphicLayer.value?.getNode();
   graphicLayerNode.getChildren().forEach((item) => {
     if (item.getClassName() === 'Path') {
       item.on('mouseenter', () => {
@@ -1012,9 +1013,7 @@ function animate() {
       blockConfigs.forEach((blockConfig) => {
         blockConfig.forEach((config) => {
           const blockId = connectIdArr?.find((id) => id === config.id);
-          const blockNode = layerNode?.findOne(`#${blockId}`) as
-            | Konva.Rect
-            | Konva.Line;
+          const blockNode = layerNode?.findOne(`#${blockId}`);
           if (blockNode) {
             config.visible = true;
             const tween = new Konva.Tween({
@@ -1032,7 +1031,7 @@ function animate() {
       });
       iconImageConfigs.forEach((config) => {
         const imageId = connectIdArr?.find((id) => id === config.id);
-        const iconNode = layerNode?.findOne(`#${imageId}`) as Konva.Path;
+        const iconNode = layerNode?.findOne(`#${imageId}`);
         if (iconNode) {
           const tween = new Konva.Tween({
             node: iconNode,
@@ -1061,15 +1060,13 @@ function closeAnimate() {
   blockConfigs.forEach((blockConfig) => {
     blockConfig.forEach((config) => {
       config.visible = false;
-      const rectNode = layerNode?.findOne(`#${config.id}`) as
-        | Konva.Rect
-        | Konva.Line;
+      const rectNode = layerNode?.findOne(`#${config.id}`);
       if (rectNode?.getAttr('tween')) rectNode?.getAttr('tween').reset();
     });
   });
 
   iconImageConfigs.forEach((config) => {
-    const iconNode = layerNode?.findOne(`#${config.id}`) as Konva.Path;
+    const iconNode = layerNode?.findOne(`#${config.id}`);
     if (iconNode?.getAttr('tween')) iconNode?.getAttr('tween').reset();
   });
 }
@@ -1082,7 +1079,7 @@ function deviceStatusTrigger() {
       config.deviceData.iconId !== 'fire_o3'
     ) {
       const layerNode = graphicLayer.value?.getNode();
-      const iconNode = layerNode?.findOne(`#${config.id}`) as Konva.Path;
+      const iconNode = layerNode?.findOne(`#${config.id}`);
       config.deviceData.addressData?.forEach((item: { status: string }) => {
         if (item.status === '開' && !iconNode?.getAttr('tween')) {
           const tween = new Konva.Tween({
@@ -1210,7 +1207,7 @@ const dialogPos = ref({
 });
 
 const dialogStyle = computed(
-  () => `transform: translate(${dialogPos.value.x}px, ${dialogPos.value.y}px);`
+  () => `transform: translate(${dialogPos.value.x}px, ${dialogPos.value.y}px);`,
 );
 
 function onPan(evt: any) {

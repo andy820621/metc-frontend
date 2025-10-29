@@ -183,7 +183,7 @@
           bordered
           ref="tableRef"
           :rows="blockData"
-          :columns="(tableConfig as QTableProps['columns'])"
+          :columns="tableConfig as QTableProps['columns']"
           row-key="id"
           v-model:pagination="pagination"
           :rows-per-page-options="[25, 50, 75, 100]"
@@ -338,7 +338,7 @@
                     col.value
                       ? date.formatDate(
                           new Date(col.value),
-                          col.customDateFormat || 'YYYY-MM-DD'
+                          col.customDateFormat || 'YYYY-MM-DD',
                         )
                       : ''
                   }}</span>
@@ -391,7 +391,9 @@
                     "
                     flat
                     :rows="props.row[expandAttrs.expandKey]"
-                    :columns="(expandAttrs.expandConfig as QTableProps['columns'])"
+                    :columns="
+                      expandAttrs.expandConfig as QTableProps['columns']
+                    "
                     row-key="id"
                     :rows-per-page-options="[0]"
                     hide-bottom
@@ -539,7 +541,7 @@
                           col.value
                             ? date.formatDate(
                                 new Date(col.value),
-                                col.customDateFormat || 'YYYY-MM-DD'
+                                col.customDateFormat || 'YYYY-MM-DD',
                               )
                             : ''
                         }}</span>
@@ -597,7 +599,7 @@
 </template>
 <script setup lang="ts">
 import type { QTableProps } from 'quasar';
-import { date } from 'quasar';
+import { date, useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 // utils
 import { linkUrlAction } from 'src/utils/urlActions';
@@ -605,7 +607,7 @@ import { useVModel } from '@vueuse/core';
 // icon
 import { fasFileExport, fasFileImport } from '@quasar/extras/fontawesome-v5';
 // type
-import {
+import type {
   tempDataType,
   blockAttrsType,
   expandAttrsType,
@@ -614,7 +616,7 @@ import {
 } from 'src/utils/tableMixin';
 import { matErrorOutline } from '@quasar/extras/material-icons';
 
-const $q = inject('$q') as typeof QVueGlobals;
+const $q = useQuasar();
 const slots = useSlots();
 
 const props = withDefaults(
@@ -634,7 +636,7 @@ const props = withDefaults(
     isDialogTable: false,
     tabHeight: '36px',
     isCheckbox: true,
-  }
+  },
 );
 
 const emit = defineEmits([
@@ -697,7 +699,7 @@ const tableRef = ref();
 const pagesNumber = computed(() =>
   blockData.value
     ? Math.ceil(blockAttrs.value.totalNum / pagination.value.rowsPerPage)
-    : 0
+    : 0,
 );
 
 const pagination = ref({
@@ -710,8 +712,8 @@ const pagination = ref({
 // 標題欄位
 const tableConfig = computed(() =>
   blockAttrs.value.tableConfig.filter(
-    (config: tableConfigItem) => config.isTable
-  )
+    (config: tableConfigItem) => config.isTable,
+  ),
 );
 // 表格內容
 const blockData = computed(() => blockAttrs.value.blockData);
@@ -815,10 +817,10 @@ const tableButtonsData = ref([
   },
 ]);
 const headerButtons = computed(() =>
-  headerButtonsData.value.filter((item) => item.isShow)
+  headerButtonsData.value.filter((item) => item.isShow),
 );
 const tableButtons = computed(() =>
-  tableButtonsData.value.filter((item) => item.isShow)
+  tableButtonsData.value.filter((item) => item.isShow),
 );
 watch(
   () => props.blockAttrs.headerButtons,
@@ -826,7 +828,7 @@ watch(
     headerButtonsData.value.forEach((item) => {
       item.isShow = blockAttrs.value.headerButtons.includes(item.status);
     });
-  }
+  },
 );
 watch(
   () => props.blockAttrs.tableButtons,
@@ -834,7 +836,7 @@ watch(
     tableButtonsData.value.forEach((item) => {
       item.isShow = blockAttrs.value.tableButtons.includes(item.status);
     });
-  }
+  },
 );
 
 const linkDialogVisible = ref(false);

@@ -1,4 +1,4 @@
-import { wfNode } from './flowTypes';
+import type { wfNode } from './flowTypes';
 
 export const basicProcessNodesData = {
   id: '111',

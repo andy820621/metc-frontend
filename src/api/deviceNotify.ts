@@ -1,9 +1,9 @@
 import { req } from "boot/axios";
-import { ApiRowsResponse, ApiResponse } from "src/api/api.type";
-import { DeviceViewModel } from "./device";
-import { Providers } from "./fireMarshalling";
-import { ProviderViewModel } from "./supplierData";
-import { CommunityUserViewModel } from "./managementCommittee";
+import type { ApiRowsResponse, ApiResponse } from "src/api/api.type";
+import type { DeviceViewModel } from "./device";
+import type { Providers } from "./fireMarshalling";
+import type { ProviderViewModel } from "./supplierData";
+import type { CommunityUserViewModel } from "./managementCommittee";
 
 export interface DeviceNotifyGetPayload {
   processed: boolean; // 已處理 / 未處理

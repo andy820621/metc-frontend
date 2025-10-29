@@ -20,12 +20,12 @@
                 { process: floorData?.id === fireFloor?.id },
                 {
                   alert: alertFloor.find(
-                    (floor) => floor?.id === floorData?.id
+                    (floor) => floor?.id === floorData?.id,
                   ),
                 },
                 {
                   spread: spreadFloor.find(
-                    (floor) => floor?.id === floorData?.id
+                    (floor) => floor?.id === floorData?.id,
                   ),
                 },
                 { expandHover: formattedFloorOption.floorsData.length > 1 },
@@ -50,9 +50,10 @@
 <script setup lang="ts">
 // pinia
 import { storeToRefs } from 'pinia';
-import { FloorViewModel } from 'src/api/floors';
+import type { FloorViewModel } from 'src/api/floors';
 import { useBuildingStore } from 'src/stores/building.js';
-import { TriggeredDeviceData, useSignalRStore } from 'src/stores/signalR';
+import type { TriggeredDeviceData } from 'src/stores/signalR';
+import { useSignalRStore } from 'src/stores/signalR';
 // utils
 import fileRead from 'src/utils/fileRead';
 import { formatFloorsData } from 'src/utils/formatUtils';
@@ -65,7 +66,7 @@ const buildingStore = useBuildingStore();
 const { Bid } = storeToRefs(buildingStore);
 
 const { getFile } = fileRead();
-const $q = inject('$q') as typeof QVueGlobals;
+const $q = useQuasar();
 
 const emit = defineEmits(['handleSelect']);
 
@@ -73,7 +74,7 @@ const props = withDefaults(
   defineProps<{
     canvasContainerHeight: number;
   }>(),
-  { canvasContainerHeight: 0 }
+  { canvasContainerHeight: 0 },
 );
 
 // 斷面圖樓層
@@ -83,11 +84,11 @@ watch(
     if (val && Bid.value) {
       if (val.building.id !== Bid.value) return;
 
-      fireFloor.value = (val as TriggeredDeviceData).floor;
+      fireFloor.value = val.floor;
       handleSelect(fireFloor.value);
     }
   },
-  { deep: true }
+  { deep: true },
 );
 
 // onMounted(() => {
@@ -179,12 +180,12 @@ async function getAllFloors() {
         const { sort } = initialDetector.value.floor;
         if (sort) {
           currentFloor.value = fireFloor.value = floorOptions.find(
-            (floor) => floor.sort === sort
+            (floor) => floor.sort === sort,
           ) as FloorViewModel;
         }
       } else {
         currentFloor.value = floorOptions.find(
-          (item) => item.sort === 1
+          (item) => item.sort === 1,
         ) as FloorViewModel;
       }
       const floorZIndex: number[] = floorOptions
@@ -212,7 +213,7 @@ async function getFloorImage(floorData: any) {
   ) {
     const imageUrl = new URL(
       floorData.floorPlanFilePath,
-      window.location.origin
+      window.location.origin,
     );
     emit('handleSelect', currentFloor.value, imageUrl);
   } else {
@@ -235,7 +236,7 @@ watch(
       if (currentFloor.value) handleSelect(currentFloor.value);
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 // 找到 currentFloor 在 formattedFloorOptions 裡的索引
 function findFloorIndex(targetFloorSort: number) {
@@ -243,7 +244,7 @@ function findFloorIndex(targetFloorSort: number) {
   const nowFloorIndex = formattedFloorOptions.value.findIndex(
     (formattedFloorOption: any) =>
       formattedFloorOption.floorZindex ===
-      nowFloorSort * 2 + (formattedFloorOption.lastObjZindex as number)
+      nowFloorSort * 2 + (formattedFloorOption.lastObjZindex as number),
   );
   return nowFloorIndex;
 }

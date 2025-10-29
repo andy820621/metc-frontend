@@ -100,7 +100,7 @@
 <script setup lang="ts">
 // pinia
 import { storeToRefs } from 'pinia';
-import { LoginPartialParams, LoginRequest } from 'src/api/basic';
+import type { LoginPartialParams, LoginRequest } from 'src/api/basic';
 import { useUserStore } from 'src/stores/user';
 // utils
 import FingerprintJS from '@fingerprintjs/fingerprintjs';
@@ -121,7 +121,7 @@ const { fcmToken } = storeToRefs(userStore);
 
 const router = useRouter();
 const route = useRoute();
-const $q = inject('$q') as typeof QVueGlobals;
+const $q = useQuasar();
 
 const isPwd = ref(true);
 
@@ -142,7 +142,7 @@ watch(
       loginData.token = val;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 watch(
   visitorId,
@@ -151,14 +151,14 @@ watch(
       loginData.visitorId = val;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 // TODO: 之後要拔掉
 // account.value = "test1";
 // loginData.password = "p@$$w0rd";
 
 function determineAccountString(
-  accounrString: string
+  accounrString: string,
 ): 'email' | 'phoneNumber' | 'account' {
   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const phoneNumberPattern = /^\d{10}$/;

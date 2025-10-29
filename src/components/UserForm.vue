@@ -34,7 +34,16 @@
         v-model="dialogAttrs.tempData[config.name]"
         :label="config.label + (config.required ? ' *' : '')"
         lazy-rules
-        :rules="[(val: any) => config.required ? !!val : (typeof val === 'string' || !val )  ? true :false || config.message?config.message:`請輸入 ${config.label}`]"
+        :rules="[
+          (val: any) =>
+            config.required
+              ? !!val
+              : typeof val === 'string' || !val
+                ? true
+                : false || config.message
+                  ? config.message
+                  : `請輸入 ${config.label}`,
+        ]"
       >
         <template v-slot:error>
           {{ config.message }}
@@ -46,7 +55,16 @@
         :label="config.label + (config.required ? ' *' : '')"
         type="number"
         lazy-rules
-        :rules="[(val: any) => config.required ? !!val : (typeof val === 'number' || !val )  ? true :false || config.message?config.message:`請輸入 ${config.label}`]"
+        :rules="[
+          (val: any) =>
+            config.required
+              ? !!val
+              : typeof val === 'number' || !val
+                ? true
+                : false || config.message
+                  ? config.message
+                  : `請輸入 ${config.label}`,
+        ]"
       />
       <!-- 電話 -->
       <q-input
@@ -70,10 +88,11 @@
           v-for="(item, index) in config.name === 'phoneNumber2'
             ? cellPhoneArr
             : config.name === 'emergencyNumber2'
-            ? emgyCellPhoneArr
-            : config.name === 'phoneNumber' || config.name === 'emergencyNumber'
-            ? [dialogAttrs.tempData[config.name]]
-            : []"
+              ? emgyCellPhoneArr
+              : config.name === 'phoneNumber' ||
+                  config.name === 'emergencyNumber'
+                ? [dialogAttrs.tempData[config.name]]
+                : []"
           :key="index"
           class="q-mb-md"
           v-model="
@@ -142,7 +161,10 @@
         v-model="dialogAttrs.tempData[config.name]"
         :label="config.label + (config.required ? ' *' : '')"
         lazy-rules
-        :rules="[(val: string) => !!val ? emailRegex.test(val) || '請輸入正確的信箱格式':true]"
+        :rules="[
+          (val: string) =>
+            !!val ? emailRegex.test(val) || '請輸入正確的信箱格式' : true,
+        ]"
       >
         <template
           v-slot:before
@@ -183,7 +205,16 @@
         v-model="dialogAttrs.tempData[config.name]"
         :type="isPwd ? 'password' : 'text'"
         :label="config.label + (config.required ? ' *' : '')"
-        :rules="[(val: any) => config.required ? !!val : (typeof val === 'string' || !val )  ? true :false || config.message?config.message:`請輸入 ${config.label}`]"
+        :rules="[
+          (val: any) =>
+            config.required
+              ? !!val
+              : typeof val === 'string' || !val
+                ? true
+                : false || config.message
+                  ? config.message
+                  : `請輸入 ${config.label}`,
+        ]"
       >
         <template v-slot:append>
           <q-icon
@@ -205,7 +236,16 @@
         :options="dialogAttrs.selectOption"
         :label="config.label + (config.required ? ' *' : '')"
         @focus="selectListChange(config.name)"
-        :rules="[(val: any) => config.required ? !!val : typeof val === 'object'|| !val ? true :false || config.message?config.message:`請輸入 ${config.label}`]"
+        :rules="[
+          (val: any) =>
+            config.required
+              ? !!val
+              : typeof val === 'object' || !val
+                ? true
+                : false || config.message
+                  ? config.message
+                  : `請輸入 ${config.label}`,
+        ]"
       >
         <template v-slot:before v-if="config.name === 'beControlled'">
           <q-btn
@@ -274,7 +314,10 @@
         :label="config.label + (config.required ? ' *' : '')"
         @focus="selectListChange(config.name)"
         class="q-mb-md-md"
-        :rules="[(val: any) => config.required ? val?.length > 0 : true || config.message]"
+        :rules="[
+          (val: any) =>
+            config.required ? val?.length > 0 : true || config.message,
+        ]"
       >
         <template v-slot:before v-if="config.name === 'roles'">
           <q-btn
@@ -338,7 +381,16 @@
         clearable
         type="date"
         @update:model-value="validateDate"
-        :rules="[(val: any) => config.required ? !!val : (typeof val === 'string' || !val )  ? true :false || config.message ? config.message : `請輸入 ${config.label}`]"
+        :rules="[
+          (val: any) =>
+            config.required
+              ? !!val
+              : typeof val === 'string' || !val
+                ? true
+                : false || config.message
+                  ? config.message
+                  : `請輸入 ${config.label}`,
+        ]"
       />
       <!-- radio -->
       <div v-else-if="config.formType === 'radioOption'">
@@ -351,7 +403,7 @@
           :model-value="dialogAttrs.tempData[config.name]"
           class="QField q-pa-none"
           lazy-rules
-          :rules="[(val: any) => config.required ? val !== undefined : true ]"
+          :rules="[(val: any) => (config.required ? val !== undefined : true)]"
         >
           <q-option-group
             v-model="dialogAttrs.tempData[config.name]"
@@ -444,7 +496,16 @@
               :options="userFormSelectOption"
               :label="config.label + (config.required ? ' *' : '')"
               @focus="selectListChange(config.name)"
-              :rules="[(val: any) => config.required ? !!val : typeof val === 'object'|| !val ? true :false || config.message?config.message:`請輸入 ${config.label}`]"
+              :rules="[
+                (val: any) =>
+                  config.required
+                    ? !!val
+                    : typeof val === 'object' || !val
+                      ? true
+                      : false || config.message
+                        ? config.message
+                        : `請輸入 ${config.label}`,
+              ]"
             >
               <template v-slot:before v-if="config.name === 'beControlled'">
                 <q-btn
@@ -509,7 +570,10 @@
               :label="config.label + (config.required ? ' *' : '')"
               @focus="selectListChange(config.name)"
               class="q-mb-md-md"
-              :rules="[(val: any) => config.required ? !!val : true || config.message]"
+              :rules="[
+                (val: any) =>
+                  config.required ? !!val : true || config.message,
+              ]"
             >
               <template v-slot:before v-if="config.name === 'roles'">
                 <q-btn
@@ -604,7 +668,7 @@ import {
 // icon
 import { matErrorOutline } from '@quasar/extras/material-icons';
 
-const $q = inject('$q') as typeof QVueGlobals;
+const $q = useQuasar();
 
 const emit = defineEmits(['selectListChange', 'getUserData', 'addOtherPhone']);
 
@@ -653,7 +717,7 @@ function validateDate() {
     const diff = date.getDateDiff(
       nowDate,
       dialogAttrs.value.tempData.birthday,
-      'years'
+      'years',
     );
     if (diff > 100) {
       dialogAttrs.value.tempData.birthday = '';
@@ -727,13 +791,13 @@ const isOnlyBuilding = ref(false);
 const isWithAddress = ref(false);
 function rolesTableConfigChange() {
   const floorConfigObj = rolesConfig.value.find(
-    (item) => item.name === 'floor'
+    (item) => item.name === 'floor',
   );
   const addressPlatesConfigObj = rolesConfig.value.find(
-    (item) => item.name === 'addressPlates'
+    (item) => item.name === 'addressPlates',
   );
   const buildingConfigObj = rolesConfig.value.find(
-    (item) => item.name === 'buildings'
+    (item) => item.name === 'buildings',
   );
   if (isOnlyBuilding.value || !isWithAddress.value) {
     if (floorConfigObj) floorConfigObj.isDialogForm = false;
@@ -761,7 +825,7 @@ watch(
         rolesTempData.value.addressPlates = [];
       }
     }
-  }
+  },
 );
 
 watch(
@@ -770,7 +834,7 @@ watch(
     if (newVal && oldVal && newVal.id !== oldVal.id) {
       if (rolesTempData.value) rolesTempData.value.addressPlates = [];
     }
-  }
+  },
 );
 
 defineExpose({
@@ -791,9 +855,9 @@ const accountType = ref('');
   align-items: center;
 }
 :deep(
-    .q-field--auto-height .q-field__control,
-    .q-field--auto-height .q-field__native
-  ) {
+  .q-field--auto-height .q-field__control,
+  .q-field--auto-height .q-field__native
+) {
   align-items: center;
 }
 

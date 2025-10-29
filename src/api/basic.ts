@@ -1,7 +1,7 @@
 import { req } from "boot/axios";
-import { ApiResponse } from "./api.type";
-import { RoleViewModel } from "./role";
-import { UserViewModel } from "./accountSetting";
+import type { ApiResponse } from "./api.type";
+import type { RoleViewModel } from "./role";
+import type { UserViewModel } from "./accountSetting";
 export interface LoginRequiredData {
   password: string;
   visitorId: string;

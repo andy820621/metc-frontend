@@ -28,7 +28,7 @@
 <script setup lang="ts">
 import { useBuildingStore } from "src/stores/building.js";
 import { storeToRefs } from "pinia";
-import { BuildingViewModel } from "src/api/building";
+import type { BuildingViewModel } from "src/api/building";
 
 const buildingStore = useBuildingStore();
 const { buildingData, buildingDataList } = storeToRefs(buildingStore);

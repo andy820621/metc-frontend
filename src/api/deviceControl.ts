@@ -1,4 +1,4 @@
-import { ApiResponse } from "./api.type";
+import type { ApiResponse } from "./api.type";
 import { req } from "boot/axios";
 interface MqttUserProperty {
   name?: string;

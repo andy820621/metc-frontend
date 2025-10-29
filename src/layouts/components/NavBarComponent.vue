@@ -171,7 +171,7 @@ const userStore = useUserStore();
 const { userData, userMugShotUrl } = storeToRefs(userStore);
 const { buildingData, buildingDataList } = storeToRefs(buildingStore);
 
-const $q = inject('$q') as typeof QVueGlobals;
+const $q = useQuasar();
 
 const deviceAlertStore = useDeviceAlertStore();
 const { deviceNotifiesLength, deviceAlertModel } =
@@ -199,12 +199,12 @@ const stop = watch(
   userDropdownOptionsRoutes,
   (val) => {
     dropdownLists.value = val.map((item) => ({
-      label: item.meta?.title as string,
+      label: item.meta?.title,
       path: item.path,
       name: item.name as string,
     }));
   },
-  { immediate: true }
+  { immediate: true },
 );
 onMounted(() => setTimeout(stop, 10000));
 
@@ -220,12 +220,12 @@ function logout() {
 const { dialogAttrs } = tableMixin();
 const dialogConfig = ref<tableConfigItem[]>([]);
 
-async function openDialog() {
+function openDialog() {
   dialogAttrs.value.visible = true;
   dialogAttrs.value.dialogTitle = '大樓基本資料';
   if (buildingData.value) dialogAttrs.value.tempData = buildingData.value;
   dialogConfig.value = buildingStore.buildingTableConfig.filter(
-    (item) => item.isTable
+    (item) => item.isTable,
   );
 }
 
@@ -247,7 +247,7 @@ interface ScreenDetailed extends Screen {
   readonly devicePixelRatio: number;
   readonly label: string;
 }
-// eslint-disable-next-line no-undef
+
 interface ExtendedFullscreenOptions extends FullscreenOptions {
   screen?: ScreenDetailed;
 }
@@ -255,12 +255,12 @@ interface ExtendedFullscreenOptions extends FullscreenOptions {
 async function monitorControl() {
   // 根據瀏覽器支援的功能取得屏幕信息接口
   const screensInterface =
-    'getScreens' in window // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ? await (window as any).getScreens() // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    'getScreens' in window
+      ? await (window as any).getScreens()
       : await (window as any).getScreenDetails();
   // 找到除當前屏幕外的其他屏幕
   const otherScreens = screensInterface.screens.filter(
-    (screen: ScreenDetailed) => screen !== screensInterface.currentScreen
+    (screen: ScreenDetailed) => screen !== screensInterface.currentScreen,
   );
   const currentScreenObj = {
     label: '目前螢幕',
@@ -285,7 +285,7 @@ async function monitorControl() {
     options: {
       type: 'radio',
       model: options[0].value,
-      isValid: (model: ScreenDetailed) => model !== undefined || model !== null,
+      isValid: (model: string) => model !== undefined || model !== null,
       items: options,
     },
     ok: {
@@ -293,15 +293,15 @@ async function monitorControl() {
       label: '確定',
     },
     cancel: '取消',
-  }).onOk(async (screen: ScreenDetailed) => {
+  }).onOk((screen: ScreenDetailed) => {
     console.log('screen', screen);
-    await document.body.requestFullscreen({
+    void document.body.requestFullscreen({
       screen,
     } as ExtendedFullscreenOptions);
   });
 }
 
-async function simulationDetectorOff() {
+function simulationDetectorOff() {
   console.log('DialogDeviceAlert');
 }
 </script>

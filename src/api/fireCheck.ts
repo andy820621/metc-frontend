@@ -1,10 +1,10 @@
 import { req } from "boot/axios";
 import type { pagination } from "./api.type";
-import { AddressPlateViewModel } from "./addressPlate";
+import type { AddressPlateViewModel } from "./addressPlate";
 import { birthdayFormatAge } from "src/utils/formatUtils";
-import { UserViewModel } from "./accountSetting";
-import { FireAckStatus } from "src/pages/emergency/pplStatus/index.type";
-import { AccountViewModel } from "./userAccount";
+import type { UserViewModel } from "./accountSetting";
+import type { FireAckStatus } from "src/pages/emergency/pplStatus/index.type";
+import type { AccountViewModel } from "./userAccount";
 
 export interface UserAccount {
   id?: string | number;

@@ -175,7 +175,7 @@ const signalRStore = useSignalRStore();
 const { processRunning, initialDetector, triggerTime } =
   storeToRefs(signalRStore);
 
-const $q = inject('$q') as typeof QVueGlobals;
+const $q = useQuasar();
 const deviceOperatingPower = ref(true);
 const fireGuide = ref();
 // 選擇設備
@@ -248,7 +248,7 @@ useResizeObserver(viewerPageRef, (entries) => {
 
 const canvasStage = ref();
 const canvasContainerHeight = computed(() =>
-  canvasStage.value ? canvasStage.value.canvasContainer.clientHeight : 0
+  canvasStage.value ? canvasStage.value.canvasContainer.clientHeight : 0,
 );
 
 // 點擊控制列
@@ -288,7 +288,7 @@ async function handleSelect(floorData: { id: number }, imageUrl?: string) {
     const jsonData = JSON.stringify(fakeJson);
     canvasStage.value.setStageSize(); // 先設定 Stage Size
     if (jsonData) canvasStage.value.loadShapeFromJson(jsonData); // 載入JsonData
-    setTimeout(canvasStage.value.canvasObserver.stop, 1000); // 再次調整 Stage Size
+    setTimeout(() => canvasStage.value.canvasObserver.stop(), 1000); // 再次調整 Stage Size
     deviceFilter.value = 0;
     canvasStage.value.resetCanvas();
   });

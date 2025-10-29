@@ -1,7 +1,7 @@
 import { req } from "boot/axios";
 import type { ApiResponse, pagination } from "./api.type";
-import { BuildingViewModel } from "./building";
-import { AreaViewModel } from "./area";
+import type { BuildingViewModel } from "./building";
+import type { AreaViewModel } from "./area";
 
 export interface FloorViewModel {
   id?: number;

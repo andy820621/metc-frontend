@@ -1,8 +1,8 @@
-import { NodeViewModel } from "./../stores/signalR";
+import type { NodeViewModel } from "./../stores/signalR";
 import { req } from "boot/axios";
-import { serverDataType } from "src/pages/emergency/flow/flowTypes";
-import { WorkflowTypeViewModel } from "./workflowType";
-import { ApiResponse } from "./api.type";
+import type { serverDataType } from "src/pages/emergency/flow/flowTypes";
+import type { WorkflowTypeViewModel } from "./workflowType";
+import type { ApiResponse } from "./api.type";
 // import { NodeViewModel } from "srr";
 
 interface EdgeViewModel {

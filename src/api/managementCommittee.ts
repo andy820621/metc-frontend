@@ -1,4 +1,4 @@
-import { SystemViewModel } from "./system";
+import type { SystemViewModel } from "./system";
 import { req } from "boot/axios";
 import type { ApiResponse, ApiRowsResponse, pagination } from "./api.type";
 import type { UserAccount, UserViewModel } from "./accountSetting";

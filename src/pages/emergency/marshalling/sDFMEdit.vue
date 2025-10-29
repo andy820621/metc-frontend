@@ -27,8 +27,8 @@
             $q.screen.xs || $q.screen.sm
               ? undefined
               : tab.value === activeTab.value
-              ? mdiCheckCircle
-              : ''
+                ? mdiCheckCircle
+                : ''
           "
           @click="tabChange(tab)"
         />
@@ -158,47 +158,44 @@
 </template>
 <script setup lang="ts">
 // api
-import Building from "src/api/building";
+import Building from 'src/api/building';
 import sDFM, {
   sDFMConfig,
   sDFMExpandConfig,
   floorTableConfig,
-} from "src/api/sDFM";
-import Area, { areaConfig } from "src/api/area";
-import Role, { roleType } from "src/api/role";
-import AccountSetting from "src/api/accountSetting";
-import Floors from "src/api/floors";
+} from 'src/api/sDFM';
+import Area, { areaConfig } from 'src/api/area';
+import Role, { roleType } from 'src/api/role';
+import AccountSetting from 'src/api/accountSetting';
+import Floors from 'src/api/floors';
 
 // utils
-import { useCloned } from "@vueuse/core";
-import { Cookies, is } from "quasar";
+import { useCloned } from '@vueuse/core';
+import { Cookies, is } from 'quasar';
 import {
   maskToNumberArrayAndUpdateToModel,
   numberToBitMask,
-} from "src/utils/bitMask";
-import tableMixin, { setBlockLoading } from "src/utils/tableMixin";
-import type { blockRefType, tempDataType } from "src/utils/tableMixin";
+} from 'src/utils/bitMask';
+import tableMixin, { setBlockLoading } from 'src/utils/tableMixin';
+import type { blockRefType, tempDataType } from 'src/utils/tableMixin';
 // icon
-import { mdiHomeFloorNegative1, mdiCheckCircle } from "@quasar/extras/mdi-v6";
+import { mdiHomeFloorNegative1, mdiCheckCircle } from '@quasar/extras/mdi-v6';
 
 // pinia store
-import { useBuildingStore } from "src/stores/building.js";
-import { useUserStore } from "src/stores/user";
+import { useBuildingStore } from 'src/stores/building.js';
+import { useUserStore } from 'src/stores/user';
 
 // 進階搜尋
-import { storeToRefs } from "pinia";
+import { storeToRefs } from 'pinia';
 import searchFiltersGenerator, {
   generateFiltersObject,
-} from "src/utils/advancedSearchFilters";
-import {
-  FilterColumn,
-  FilterColumnCollection,
-  FilterColumnLogical,
-} from "src/api/api.type";
+} from 'src/utils/advancedSearchFilters';
+import type { FilterColumnCollection } from 'src/api/api.type';
+import { FilterColumn, FilterColumnLogical } from 'src/api/api.type';
 
 const buildingStore = useBuildingStore();
 const { Bid } = storeToRefs(buildingStore);
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = useQuasar();
 
 const userStore = useUserStore();
 const { userData } = storeToRefs(userStore);
@@ -216,17 +213,17 @@ const isCommonCommunityUser = computed(() => {
 
 // tab
 const activeTab = ref({
-  label: "",
-  value: "",
+  label: '',
+  value: '',
 });
 const blockTabs = [
   {
-    label: "消防編組",
-    value: "sDFMEdit",
+    label: '消防編組',
+    value: 'sDFMEdit',
   },
   {
-    label: "樓層群組",
-    value: "areaEdit",
+    label: '樓層群組',
+    value: 'areaEdit',
   },
 ];
 
@@ -244,7 +241,7 @@ const {
   handleSelectArray,
   hideDialog,
   getDataMixin,
-} = tableMixin(blockRef as Ref<blockRefType>);
+} = tableMixin(blockRef);
 
 const dialogEvent = computed(() => {
   return {
@@ -264,9 +261,9 @@ const blockEvent = computed(() => {
 // 客製 button
 const customTableButtons = ref([
   {
-    label: "選擇樓層",
+    label: '選擇樓層',
     icon: mdiHomeFloorNegative1,
-    status: "selectFloor",
+    status: 'selectFloor',
     isShow: true,
   },
 ]);
@@ -276,7 +273,7 @@ function handleClickOption(
     icon: string;
     status: string;
   },
-  data?: tempDataType
+  data?: tempDataType,
 ) {
   if (data) {
     handleBlock(btn, data);
@@ -289,18 +286,18 @@ let API: typeof sDFM | typeof Area;
 // 在 block 上的操作
 async function handleBlock(
   btn: { label: string; icon: string; status: string },
-  data: tempDataType
+  data: tempDataType,
 ) {
-  handleBlockMixin(btn, data, API, getData);
+  handleBlockMixin(btn, data, API, void getData);
 
-  console.log("handleBlock", btn.status, data);
+  console.log('handleBlock', btn.status, data);
   if (
-    activeTab.value.value === "sDFMEdit" &&
+    activeTab.value.value === 'sDFMEdit' &&
     dialogAttrs.value.tempData.members
   ) {
     const classLeaderUser = dialogAttrs.value.tempData.members.find(
       (item: { id: string }) =>
-        item.id === dialogAttrs.value.tempData.classLeaderUserId
+        item.id === dialogAttrs.value.tempData.classLeaderUserId,
     );
     dialogAttrs.value.tempData.classLeaderUser = classLeaderUser || null;
   }
@@ -309,11 +306,11 @@ async function handleBlock(
   maskToNumberArrayAndUpdateToModel(
     dialogAttrs.value.tempData.dutyType,
     dutyTypeNum,
-    dutyTypeOptions
+    dutyTypeOptions,
   );
-  console.log("handleBlock", data);
+  console.log('handleBlock', data);
 
-  if (btn.status === "selectFloor") {
+  if (btn.status === 'selectFloor') {
     // 選擇樓層
     dialogAttrs.value.visible = true;
     const { cloned } = useCloned(data);
@@ -323,7 +320,7 @@ async function handleBlock(
 }
 // 在新增/編輯 dialog 上的操作
 async function handleDialog(status: string, data: tempDataType) {
-  if (activeTab.value.value === "sDFMEdit") {
+  if (activeTab.value.value === 'sDFMEdit') {
     data.classLeaderUserId = data.classLeaderUser?.id
       ? data.classLeaderUser.id
       : null;
@@ -332,13 +329,13 @@ async function handleDialog(status: string, data: tempDataType) {
     } else {
       data.building = buildingStore.buildingData;
     }
-  } else if (activeTab.value.value === "areaEdit") {
+  } else if (activeTab.value.value === 'areaEdit') {
     data.building = buildingStore.buildingData;
   }
 
-  await handleDialogMixin(status, API, getData, data);
+  await handleDialogMixin(status, API, void getData, data);
   // 選擇樓層
-  if (status === "selectFloor") {
+  if (status === 'selectFloor') {
     const { cloned } = useCloned(data);
     const floors = cloned.value.floor;
     floors.forEach((item: { area: tempDataType }) => {
@@ -349,15 +346,15 @@ async function handleDialog(status: string, data: tempDataType) {
     floors.forEach((item: { id: number }) => {
       if (result.data[item.id]) {
         $q.notify({
-          type: "positive",
-          message: "修改成功",
-          position: "top",
+          type: 'positive',
+          message: '修改成功',
+          position: 'top',
         });
       } else {
         $q.notify({
-          type: "negative",
-          message: "修改失敗",
-          position: "top",
+          type: 'negative',
+          message: '修改失敗',
+          position: 'top',
         });
       }
     });
@@ -372,29 +369,29 @@ const { filters: sDFMFilters } = searchFiltersGenerator(sDFMConfig);
 const { filters: areaFilters } = searchFiltersGenerator(areaConfig);
 
 const filters = computed(() => {
-  if (activeTab.value.value === "sDFMEdit") return sDFMFilters;
-  else if (activeTab.value.value === "areaEdit") {
+  if (activeTab.value.value === 'sDFMEdit') return sDFMFilters;
+  else if (activeTab.value.value === 'areaEdit') {
     return areaFilters;
   }
   return [];
 });
 // const { filters } = searchFiltersGenerator(sDFMConfig);
 async function getData(
-  pagination: blockRefType["pagination"] = {
-    filters: "",
+  pagination: blockRefType['pagination'] = {
+    filters: '',
     page: 1,
     rowsPerPage: 12,
-  }
+  },
 ) {
-  console.log("pagination", pagination);
+  console.log('pagination', pagination);
   const payload = useCloned(pagination).cloned.value;
   // 產出 filters 物件 (filtersObject)
   const searchText = pagination.filters.trim();
-  console.log("searchText", searchText);
+  console.log('searchText', searchText);
   let filtersObject: FilterColumnCollection[] = [];
-  if (activeTab.value.value === "sDFMEdit") {
+  if (activeTab.value.value === 'sDFMEdit') {
     payload.buildingId = Bid.value;
-    filtersObject = generateFiltersObject(filters.value, searchText, "Group");
+    filtersObject = generateFiltersObject(filters.value, searchText, 'Group');
     if (dutyTypeNum.value.length) {
       filtersObject.push({
         logical: FilterColumnLogical.And,
@@ -402,16 +399,16 @@ async function getData(
           {
             logical: FilterColumnLogical.And,
             columnKey: {
-              fieldName: "DutyType",
-              typeName: "Group",
+              fieldName: 'DutyType',
+              typeName: 'Group',
             },
             value: dutyTypeNum.value.reduce((acc, current) => acc + current, 0),
           },
         ],
       });
     }
-  } else if (activeTab.value.value === "areaEdit") {
-    filtersObject = generateFiltersObject(filters.value, searchText, "Area");
+  } else if (activeTab.value.value === 'areaEdit') {
+    filtersObject = generateFiltersObject(filters.value, searchText, 'Area');
   }
   const jsonFilters = JSON.stringify(filtersObject);
   payload.filters = jsonFilters;
@@ -426,88 +423,88 @@ onMounted(() => {
 });
 
 function tabChange(tab: { label: string; value: string } = blockTabs[0]) {
-  console.log("tabChange", tab);
+  console.log('tabChange', tab);
 
   if (activeTab.value.value !== tab.value) activeTab.value.value = tab.value;
   activeTab.value.label = tab.label;
   blockAttrs.value.blockTitle = tab.value;
   dialogAttrs.value.dialogTitle = tab.label;
 
-  if (activeTab.value.value === "sDFMEdit") {
+  if (activeTab.value.value === 'sDFMEdit') {
     API = sDFM;
     nextTick(() => {
       blockAttrs.value.tableConfig = sDFMConfig;
       blockAttrs.value.headerButtons = isCommonCommunityUser.value
         ? []
-        : ["add", "deleteMany"];
+        : ['add', 'deleteMany'];
       blockAttrs.value.tableButtons = isCommonCommunityUser.value
         ? []
-        : ["edit", "delete"];
+        : ['edit', 'delete'];
 
       // 展開
       expandTableAttrs.value.isExpand = true;
-      expandTableAttrs.value.expandKey = "members";
+      expandTableAttrs.value.expandKey = 'members';
       expandTableAttrs.value.expandConfig = sDFMExpandConfig;
     });
-  } else if (activeTab.value.value === "areaEdit") {
+  } else if (activeTab.value.value === 'areaEdit') {
     API = Area;
     nextTick(() => {
       blockAttrs.value.tableConfig = areaConfig;
       blockAttrs.value.headerButtons = isCommonCommunityUser.value
         ? []
-        : ["add", "deleteMany"];
+        : ['add', 'deleteMany'];
       blockAttrs.value.tableButtons = isCommonCommunityUser.value
         ? []
-        : ["edit", "delete"];
+        : ['edit', 'delete'];
 
       // 展開
       expandTableAttrs.value.isExpand = false;
-      expandTableAttrs.value.expandKey = "";
+      expandTableAttrs.value.expandKey = '';
       expandTableAttrs.value.expandConfig = [];
     });
   }
 }
 
 async function selectListChange(props: string, tempData: tempDataType) {
-  console.log("selectListChange", props);
-  if (props === "role") {
+  console.log('selectListChange', props);
+  if (props === 'role') {
     const result = (await Role.apiGetRoles([
       { type: roleType.class, isEmergency: null },
     ])) as typeof AxiosResponse;
     dialogAttrs.value.selectOption = result.data;
-  } else if (props === "area") {
-    const bid = localStorage.getItem("Bid");
+  } else if (props === 'area') {
+    const bid = localStorage.getItem('Bid');
     if (bid) {
       const result = (await Area.apiGetArea(+bid)) as typeof AxiosResponse;
       dialogAttrs.value.selectOption = result.data;
     }
-  } else if (props === "members") {
+  } else if (props === 'members') {
     if (tempData.role?.name) {
       const result = (await AccountSetting.apiGetUsersByRoleName(
-        tempData.role.name
+        tempData.role.name,
       )) as typeof AxiosResponse;
       dialogAttrs.value.selectOption = result.data;
     } else {
       $q.notify({
-        type: "negative",
-        message: "請先選擇班別",
-        position: "top",
+        type: 'negative',
+        message: '請先選擇班別',
+        position: 'top',
       });
       dialogAttrs.value.selectOption = [];
     }
-  } else if (props === "classLeaderUser") {
+  } else if (props === 'classLeaderUser') {
     if (tempData.members) {
       dialogAttrs.value.selectOption = tempData.members;
     } else {
       dialogAttrs.value.selectOption = [];
     }
-  } else if (props === "building") {
+  } else if (props === 'building') {
     const result = (await Building.apiGetAllBuilding()) as typeof AxiosResponse;
     dialogAttrs.value.selectOption = result.data;
-  } else if (props === "floor") {
+  } else if (props === 'floor') {
     if (Bid.value) {
       const result = (await Floors.apiGetBuildingFloor(
-        Bid.value
+        Bid.value,
       )) as typeof AxiosResponse;
       dialogAttrs.value.selectOption = result.data;
     }
@@ -524,7 +521,7 @@ watch(
   },
   {
     deep: true,
-  }
+  },
 );
 
 // 班別模式
@@ -532,19 +529,19 @@ const selectAll = ref<string[]>([]);
 const dutyTypeNum = ref<number[]>([]);
 const dutyTypeOptions = reactive([
   {
-    label: "平日",
+    label: '平日',
     value: 1,
   },
   {
-    label: "夜間",
+    label: '夜間',
     value: 2,
   },
   {
-    label: "假日",
+    label: '假日',
     value: 4,
   },
   {
-    label: "",
+    label: '',
     value: 8,
   },
 ]);
@@ -556,20 +553,20 @@ watch(
       dutyTypeNum.value.includes(2) &&
       dutyTypeNum.value.includes(4)
     ) {
-      selectAll.value = ["selectAll"];
+      selectAll.value = ['selectAll'];
     } else {
       selectAll.value = [];
     }
-  }
+  },
 );
 watch(
   () => dialogAttrs.value.visible,
   (newVal) => {
     if (!newVal) {
-      selectAll.value[0] = "selectAll";
+      selectAll.value[0] = 'selectAll';
       dutyTypeNum.value = dutyTypeOptions.map((item) => item.value);
     }
-  }
+  },
 );
 
 // 把 dutyType 陣列轉成數字
@@ -577,7 +574,7 @@ function dutyTypeChange(tempData: tempDataType) {
   tempData.dutyType = numberToBitMask(dutyTypeNum.value);
 }
 function selectAllCheckbox(tempData: tempDataType) {
-  if (selectAll.value[0] === "selectAll") {
+  if (selectAll.value[0] === 'selectAll') {
     dutyTypeNum.value = dutyTypeOptions.map((item) => item.value);
   } else {
     dutyTypeNum.value = [];
@@ -586,7 +583,7 @@ function selectAllCheckbox(tempData: tempDataType) {
 }
 
 function updateLatestData(tempData: tempDataType) {
-  if (activeTab.value.value === "sDFMEdit") {
+  if (activeTab.value.value === 'sDFMEdit') {
     // 消防編組 - building & Area 二必擇一 (Area 本身就會帶 building)
     if (dialogAttrs.value.tempData.role?.id !== tempData.role?.id) {
       tempData.members = [];

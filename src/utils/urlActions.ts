@@ -1,5 +1,5 @@
 import { router } from "src/router/index";
-import { tempDataType } from "./tableMixin";
+import type { tempDataType } from "./tableMixin";
 
 export interface Params {
   type?: string;

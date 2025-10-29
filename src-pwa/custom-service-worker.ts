@@ -16,7 +16,7 @@ import { registerRoute, NavigationRoute } from 'workbox-routing';
 import { StaleWhileRevalidate } from 'workbox-strategies';
 
 self.__WB_DISABLE_DEV_LOGS = true; // ? 停用 console.log
-self.skipWaiting();
+void self.skipWaiting();
 
 clientsClaim();
 
@@ -30,8 +30,8 @@ if (process.env.MODE !== 'ssr' || process.env.PROD) {
   registerRoute(
     new NavigationRoute(
       createHandlerBoundToURL(process.env.PWA_FALLBACK_HTML),
-      { denylist: [/sw\.js$/, /workbox-(.)*\.js$/] }
-    )
+      { denylist: [/sw\.js$/, /workbox-(.)*\.js$/] },
+    ),
   );
 }
 
@@ -40,5 +40,5 @@ registerRoute(
   ({ url }) => url.pathname.startsWith('/svgIcons/'),
   new StaleWhileRevalidate({
     cacheName: 'svg-icon-cache',
-  })
+  }),
 );

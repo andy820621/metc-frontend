@@ -3,7 +3,7 @@ import { useBuildingStore } from "src/stores/building.js";
 import { storeToRefs } from "pinia";
 const buildingStore = useBuildingStore();
 import type { pagination } from "./api.type";
-import { BuildingViewModel } from "./building";
+import type { BuildingViewModel } from "./building";
 
 const { Bid } = storeToRefs(buildingStore);
 export interface AreaViewModel {

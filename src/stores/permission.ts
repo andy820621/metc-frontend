@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { computed, reactive } from 'vue';
 import routes from '../router/routes';
-import { RouteRecordRaw } from 'vue-router';
+import type { RouteRecordRaw } from 'vue-router';
 
 export const usePermissionStore = defineStore('permission', () => {
   const sideBarMenuRoutes = reactive<RouteRecordRaw[]>([]);

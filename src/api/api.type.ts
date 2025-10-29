@@ -1,4 +1,4 @@
-import { SearchOption, selectOption } from "./../utils/tableMixin";
+import type { SearchOption, selectOption } from "./../utils/tableMixin";
 export interface TimeSpan {
   start: string;
   end: string;

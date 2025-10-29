@@ -1,10 +1,10 @@
 import { req } from "boot/axios";
 import type { pagination } from "./api.type";
 
-import { JobViewModel } from "./building";
-import { SystemViewModel } from "./system";
-import { FloorViewModel } from "./floors";
-import { UserViewModel } from "./accountSetting";
+import type { JobViewModel } from "./building";
+import type { SystemViewModel } from "./system";
+import type { FloorViewModel } from "./floors";
+import type { UserViewModel } from "./accountSetting";
 import { birthdayFormatAge } from "src/utils/formatUtils";
 
 enum Uses {

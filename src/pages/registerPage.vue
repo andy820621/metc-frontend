@@ -288,25 +288,28 @@
 </template>
 <script setup lang="ts">
 // utils
-import tableMixin from "src/utils/tableMixin";
-import cellPhoneMixin from "src/utils/cellPhoneMixin";
-import { useCloned } from "@vueuse/core";
-import type { tableConfigItem, tempDataType } from "src/utils/tableMixin";
+import tableMixin from 'src/utils/tableMixin';
+import cellPhoneMixin from 'src/utils/cellPhoneMixin';
+import { useCloned } from '@vueuse/core';
+import type { tableConfigItem, tempDataType } from 'src/utils/tableMixin';
 // api
-import Basic, { registerConfig } from "src/api/basic";
-import Building, { BuildingViewModel } from "src/api/building";
-import Floors, { FloorViewModel } from "src/api/floors";
+import Basic, { registerConfig } from 'src/api/basic';
+import type { BuildingViewModel } from 'src/api/building';
+import Building from 'src/api/building';
+import type { FloorViewModel } from 'src/api/floors';
+import Floors from 'src/api/floors';
 // type
-import Role, { RoleViewModel } from "src/api/role";
+import type { RoleViewModel } from 'src/api/role';
+import Role from 'src/api/role';
 
 // pinia
 
-import { useRouter } from "vue-router";
-import { UserViewModel } from "src/api/accountSetting";
+import { useRouter } from 'vue-router';
+import type { UserViewModel } from 'src/api/accountSetting';
 
 const router = useRouter();
 
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = useQuasar();
 const { dialogAttrs } = tableMixin();
 const tableConfig = ref<tableConfigItem[]>([]);
 
@@ -315,44 +318,44 @@ const { cellPhoneArr, emgyCellPhoneArr, addOtherPhone, formatPhoneNumber } =
   cellPhoneMixin(dialogAttrs.value);
 
 const activeTab = ref({
-  label: "",
-  value: "",
+  label: '',
+  value: '',
 });
 const blockTabs = [
   {
-    label: "STEP 1 : 為誰申請",
-    value: "firstStep",
+    label: 'STEP 1 : 為誰申請',
+    value: 'firstStep',
   },
   {
-    label: "STEP 2 : 多筆註冊身分 / 地址",
-    value: "secondStep",
+    label: 'STEP 2 : 多筆註冊身分 / 地址',
+    value: 'secondStep',
   },
   {
-    label: "STEP 3 : 填寫資料",
-    value: "thirdStep",
+    label: 'STEP 3 : 填寫資料',
+    value: 'thirdStep',
   },
 ];
 
 // 多筆註冊的地址/人數
 const groupConfig = [
   {
-    label: "角色/身分",
-    name: "roles",
-    field: "roles",
-    align: "left",
-    formType: "selectMany",
-    message: "請選擇 角色/身分",
+    label: '角色/身分',
+    name: 'roles',
+    field: 'roles',
+    align: 'left',
+    formType: 'selectMany',
+    message: '請選擇 角色/身分',
     isTable: true,
     isDialogForm: true,
     required: true,
   },
   {
-    label: "總人數",
-    name: "totalTabNum",
-    field: "totalTabNum",
-    align: "left",
-    formType: "inputNumber",
-    message: "請輸入 總人數",
+    label: '總人數',
+    name: 'totalTabNum',
+    field: 'totalTabNum',
+    align: 'left',
+    formType: 'inputNumber',
+    message: '請輸入 總人數',
     isTable: false,
     isDialogForm: true,
     required: true,
@@ -363,13 +366,13 @@ const groupConfig = [
 const userFormSelectOption = ref<tempDataType[]>([]);
 
 async function selectListChange(props: string) {
-  console.log("selectListChange", props);
+  console.log('selectListChange', props);
 
-  if (props === "buildings") {
+  if (props === 'buildings') {
     const result =
       (await Building.apiGetAnonymousAllBuilding()) as typeof AxiosResponse;
     userFormSelectOption.value = result.data;
-  } else if (props === "floor") {
+  } else if (props === 'floor') {
     if (
       Array.isArray(userFormRef.value) &&
       userFormRef.value[0]?.rolesTempData.buildings
@@ -378,35 +381,35 @@ async function selectListChange(props: string) {
         ? userFormRef.value[0]?.rolesTempData.buildings[0].id
         : userFormRef.value[0]?.rolesTempData.buildings.id;
       const result = (await Floors.apiGetAnonymousBuildingFloor(
-        Bid
+        Bid,
       )) as typeof AxiosResponse;
       userFormSelectOption.value = result.data;
     } else {
       $q.notify({
-        type: "warning",
-        message: "請先選擇大樓，再選擇樓層",
-        position: "top",
+        type: 'warning',
+        message: '請先選擇大樓，再選擇樓層',
+        position: 'top',
       });
       userFormSelectOption.value = [];
     }
-  } else if (props === "addressPlates") {
+  } else if (props === 'addressPlates') {
     if (
       Array.isArray(userFormRef.value) &&
       userFormRef.value[0]?.rolesTempData.floor
     ) {
       const result = (await Floors.apiGetAnonymousBuildingFloorAddressplate(
-        userFormRef.value[0]?.rolesTempData.floor.id
+        userFormRef.value[0]?.rolesTempData.floor.id,
       )) as typeof AxiosResponse;
       userFormSelectOption.value = result.data;
     } else {
       $q.notify({
-        type: "warning",
-        message: "請先選擇樓層，再選擇地址",
-        position: "top",
+        type: 'warning',
+        message: '請先選擇樓層，再選擇地址',
+        position: 'top',
       });
       userFormSelectOption.value = [];
     }
-  } else if (props === "roles") {
+  } else if (props === 'roles') {
     // 系統角色
     const result =
       (await Role.apiGetAnonymousRolesList()) as typeof AxiosResponse;
@@ -421,7 +424,7 @@ const applyRadio = ref(null);
 const radioOptions = ref<{ label: string; value: string }[]>([]);
 
 function selectClear() {
-  console.log("selectClear");
+  console.log('selectClear');
   dialogAttrs.value.selectArray = [];
   dialogAttrs.value.tempData = {
     id: 1,
@@ -432,23 +435,23 @@ function selectClear() {
 
 // thirdStep : 填寫資料
 const innerActiveTab = ref({
-  label: "",
+  label: '',
   value: 0,
 });
 // step1-3 的tabChange
 function tabChange(tab: { label: string; value: string } = blockTabs[0]) {
-  console.log("tabChange", tab);
+  console.log('tabChange', tab);
   if (activeTab.value.value !== tab.value) activeTab.value.value = tab.value;
   activeTab.value.label = tab.label;
-  if (activeTab.value.value === "firstStep") {
+  if (activeTab.value.value === 'firstStep') {
     radioOptions.value = [
-      { label: "個人 用戶申請", value: "individual" },
-      { label: "家庭 / 公司 / 多筆 用戶申請", value: "group" },
+      { label: '個人 用戶申請', value: 'individual' },
+      { label: '家庭 / 公司 / 多筆 用戶申請', value: 'group' },
     ];
-  } else if (activeTab.value.value === "secondStep") {
+  } else if (activeTab.value.value === 'secondStep') {
     tableConfig.value = groupConfig;
-  } else if (activeTab.value.value === "thirdStep") {
-    if (applyRadio.value === "group") {
+  } else if (activeTab.value.value === 'thirdStep') {
+    if (applyRadio.value === 'group') {
       tableConfig.value = registerConfig;
       commonRoles.value = dialogAttrs.value.tempData.roles;
       if (dialogAttrs.value.selectArray.length === 0) {
@@ -459,18 +462,18 @@ function tabChange(tab: { label: string; value: string } = blockTabs[0]) {
               id: index + 1,
               isDisability: false,
             };
-          }
+          },
         );
         innerTabChange(
           {
             id: 1,
             isDisability: false,
           },
-          0
+          0,
         );
       }
-    } else if (applyRadio.value === "individual") {
-      console.log("individual");
+    } else if (applyRadio.value === 'individual') {
+      console.log('individual');
       const { cloned } = useCloned(registerConfig);
       tableConfig.value = cloned.value;
     }
@@ -521,8 +524,8 @@ function deleteAccountTab(index: number) {
 
 const formsRef = ref(null);
 // 多筆註冊的tabChange
-function innerTabChange(item: tempDataType, index: number, status = "") {
-  if (Array.isArray(formsRef.value)) (formsRef.value[0] as any).scrollTop = 0;
+function innerTabChange(item: tempDataType, index: number, status = '') {
+  if (Array.isArray(formsRef.value)) formsRef.value[0].scrollTop = 0;
 
   if (
     dialogAttrs.value.selectArray &&
@@ -531,17 +534,17 @@ function innerTabChange(item: tempDataType, index: number, status = "") {
     innerActiveTab.value.value = item.id;
     if (!dialogAttrs.value.tempData.id) dialogAttrs.value.tempData.id = 1;
     const dialogDataIndex = dialogAttrs.value.selectArray?.findIndex(
-      (item: tempDataType) => item.id === dialogAttrs.value.tempData.id
+      (item: tempDataType) => item.id === dialogAttrs.value.tempData.id,
     );
     const { cloned } = useCloned(dialogAttrs.value.tempData);
     dialogAttrs.value.selectArray[dialogDataIndex] = cloned.value;
     dialogAttrs.value.tempData = dialogAttrs.value.selectArray[index];
 
-    if (status === "pre") {
+    if (status === 'pre') {
       if (errorHandle()) return;
       innerActiveTab.value.value = dialogAttrs.value.selectArray[index - 1].id;
       dialogAttrs.value.tempData = dialogAttrs.value.selectArray[index - 1];
-    } else if (status === "next") {
+    } else if (status === 'next') {
       if (errorHandle()) return;
       innerActiveTab.value.value = dialogAttrs.value.selectArray[index + 1].id;
       dialogAttrs.value.tempData = dialogAttrs.value.selectArray[index + 1];
@@ -567,9 +570,9 @@ function errorHandle() {
     if (item.required && dialogAttrs.value.tempData[item.name] === undefined) {
       error = true;
       $q.notify({
-        type: "negative",
+        type: 'negative',
         message: `${item.label} 尚未填寫`,
-        position: "top",
+        position: 'top',
       });
     }
   });
@@ -578,9 +581,9 @@ function errorHandle() {
   ) {
     error = true;
     $q.notify({
-      type: "negative",
-      message: "兩次密碼輸入不一致",
-      position: "top",
+      type: 'negative',
+      message: '兩次密碼輸入不一致',
+      position: 'top',
     });
   }
   if (Array.isArray(userFormRef.value)) {
@@ -593,9 +596,9 @@ function errorHandle() {
         ) {
           error = true;
           $q.notify({
-            type: "negative",
+            type: 'negative',
             message: `${item.label} 尚未填寫 (位於角色/身分欄位裡)`,
-            position: "top",
+            position: 'top',
           });
         }
       });
@@ -607,7 +610,7 @@ function errorHandle() {
 async function onSubmit() {
   if (errorHandle()) return;
   if (dialogAttrs.value.selectArray.length) {
-    dialogAttrs.value.selectArray.forEach(async (item) => {
+    dialogAttrs.value.selectArray.forEach((item) => {
       if (item.phoneNumber2 || item.emergencyNumber2) {
         formatPhoneNumber(item);
       }
@@ -628,21 +631,21 @@ async function onSubmit() {
     });
 
     const result = (await Basic.apiPostRegister(
-      dialogAttrs.value.selectArray as UserViewModel[]
+      dialogAttrs.value.selectArray as UserViewModel[],
     )) as typeof AxiosResponse;
     result.data.forEach((item: tempDataType) => {
       if (item) {
         $q.notify({
-          type: "positive",
-          message: "註冊成功",
-          position: "top",
+          type: 'positive',
+          message: '註冊成功',
+          position: 'top',
         });
-        router.push("/login");
+        router.push('/login');
       } else {
         $q.notify({
-          type: "negative",
-          message: Object.values(result.errors).join("、"),
-          position: "top",
+          type: 'negative',
+          message: Object.values(result.errors).join('、'),
+          position: 'top',
         });
       }
     });
@@ -659,16 +662,16 @@ async function onSubmit() {
     result.data.forEach((item: tempDataType) => {
       if (item) {
         $q.notify({
-          type: "positive",
-          message: "註冊成功",
-          position: "top",
+          type: 'positive',
+          message: '註冊成功',
+          position: 'top',
         });
-        router.push("/login");
+        router.push('/login');
       } else {
         $q.notify({
-          type: "negative",
-          message: Object.values(result.errors).join("、"),
-          position: "top",
+          type: 'negative',
+          message: Object.values(result.errors).join('、'),
+          position: 'top',
         });
       }
     });

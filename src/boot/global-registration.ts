@@ -8,7 +8,7 @@ import VueKonva from 'vue-konva';
 import { register } from 'swiper/element/bundle';
 // 想註冊的屬性
 
-export default boot(async ({ app }) => {
+export default boot(({ app }) => {
   // 註冊元件 (全域)
   app.component('SvgIcon', SvgIcon);
   app.component('SvgBtn', SvgBtn);

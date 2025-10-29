@@ -1,6 +1,6 @@
 import { req } from "boot/axios";
 import type { pagination } from "./api.type";
-import { UserViewModel } from "./accountSetting";
+import type { UserViewModel } from "./accountSetting";
 import { birthdayFormatAge } from "src/utils/formatUtils";
 
 export interface AccountViewModel {

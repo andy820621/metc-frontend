@@ -5,7 +5,7 @@ import type {
   pagination,
 } from "./api.type";
 import { useUserStore } from "src/stores/user";
-import { DeviceStatus } from "./device";
+import type { DeviceStatus } from "./device";
 const userStore = useUserStore();
 
 // 保養頻率

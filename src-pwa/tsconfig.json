@@ -3,5 +3,5 @@
   "compilerOptions": {
     "lib": ["esnext", "webworker", "webworker.importscripts"]
   },
-  "include": ["./**/*.ts"]
+  "include": ["./**/*.ts", "*.ts", "*.d.ts"]
 }

@@ -1,16 +1,20 @@
 import { req } from "boot/axios";
 import { useBuildingStore } from "src/stores/building.js";
 import type { ApiResponse, pagination } from "./api.type";
-import { BuildingViewModel } from "./building";
-import { ProviderViewModel, supplierDataConfig } from "./supplierData";
+import type { BuildingViewModel } from "./building";
+import type { ProviderViewModel} from "./supplierData";
+import { supplierDataConfig } from "./supplierData";
 import type { AddressPlateViewModel } from "./addressPlate";
 import type { FloorViewModel } from "./floors";
-import { DeviceTypeViewModel, deviceTypeConfig } from "./deviceType";
-import { ReceiveDeviceAddressViewModel } from "./deviceHistory";
-import { MaintainViewModel } from "./maintain";
-import { CommunityUserViewModel, committeeConfig } from "./managementCommittee";
+import type { DeviceTypeViewModel} from "./deviceType";
+import { deviceTypeConfig } from "./deviceType";
+import type { ReceiveDeviceAddressViewModel } from "./deviceHistory";
+import type { MaintainViewModel } from "./maintain";
+import type { CommunityUserViewModel} from "./managementCommittee";
+import { committeeConfig } from "./managementCommittee";
+import type {
+  DeviceConditions} from "src/utils/deviceStatus";
 import {
-  DeviceConditions,
   deviceStatus,
   deviceConditionOptions,
 } from "src/utils/deviceStatus";
@@ -525,7 +529,7 @@ const device = {
   },
   // 取得設備
   apiGetData(payload: pagination) {
-    payload.buildingId = +(localStorage.getItem("Bid") as string);
+    payload.buildingId = +(localStorage.getItem("Bid"));
     return req("get", "/Device", payload);
   },
   // 刪除設備

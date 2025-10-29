@@ -30,29 +30,33 @@
   </q-list>
 </template>
 
-<script setup name="CascaderItem">
-const emit = defineEmits(["handleSelect"]);
+<script setup name="CascaderItem" lang="ts">
+export interface CascaderOption {
+  id: string | number;
+  label: string;
+  value?: any;
+  children?: CascaderOption[];
+  [key: string]: any;
+}
 
-const props = defineProps({
-  options: {
-    type: Array,
-    required: false,
-    default: () => [],
-  },
-  deep: {
-    type: Number,
-    required: false,
-    default: 0,
-  },
-  modelLabel: {
-    type: Array,
-    required: false,
-    default: () => [],
-  },
+interface Props {
+  options?: CascaderOption[];
+  deep?: number;
+  modelLabel?: CascaderOption[];
+}
+
+const emit = defineEmits<{
+  handleSelect: [item: CascaderOption, deep: number];
+}>();
+
+const props = withDefaults(defineProps<Props>(), {
+  options: () => [],
+  deep: 0,
+  modelLabel: () => [],
 });
 
-function select(item, deep) {
-  emit("handleSelect", item, deep);
+function select(item: CascaderOption, deep: number) {
+  emit('handleSelect', item, deep);
 }
 </script>
 <style lang="scss" scoped></style>

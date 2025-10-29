@@ -4,7 +4,7 @@
     flat
     bordered
     :rows="tableRowsData"
-    :columns="(emgyMissionTableConfig as QTableProps['columns'])"
+    :columns="emgyMissionTableConfig as QTableProps['columns']"
     :visible-columns="visibleColumns"
     row-key="id"
     hide-pagination
@@ -73,9 +73,9 @@
 </template>
 
 <script setup lang="ts">
-import type { QTableProps } from "quasar";
-import { emgyMissionTableConfig } from "src/api/emergencyMission";
-const $q = inject("$q") as typeof QVueGlobals;
+import type { QTableProps } from 'quasar';
+import { emgyMissionTableConfig } from 'src/api/emergencyMission';
+const $q = useQuasar();
 
 const props = withDefaults(
   defineProps<{
@@ -84,8 +84,8 @@ const props = withDefaults(
     unVisibleColumns?: string[];
   }>(),
   {
-    unVisibleColumns: () => ["receiveTime"],
-  }
+    unVisibleColumns: () => ['receiveTime'],
+  },
 );
 
 // 這裡是指顯示部分config ，之後要改通用方式

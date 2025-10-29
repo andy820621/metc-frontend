@@ -7,7 +7,7 @@ type alertBtnOptions = any;
 export const useDeviceAlertStore = defineStore('deviceAlert', () => {
   const deviceAlertModel = ref(false); // 控制設備異常彈窗開關
   const ifAutoShowDeviceAlertDialog = ref(
-    +(localStorage.getItem('ifAutoShowDeviceAlertDialog') || '1')
+    +(localStorage.getItem('ifAutoShowDeviceAlertDialog') || '1'),
   ); // 是否允許設備異常永遠自動彈出該視窗?
   const deviceNotify = ref<DeviceNotifyViewModel[]>([
     // {
@@ -240,13 +240,13 @@ export const useDeviceAlertStore = defineStore('deviceAlert', () => {
     // },
   ]);
   const deviceNotifiesLength = computed(
-    () => processingAlertDevice.value.length
+    () => processingAlertDevice.value.length,
   ); // 顯示在按鈕上
   const formattedDeviceNotify = computed(() => {
     return deviceNotify.value.map((item) => {
       item.dateTime = date.formatDate(
         new Date(item.dateTime),
-        'YYYY-MM-DD HH:mm:ss'
+        'YYYY-MM-DD HH:mm:ss',
       );
 
       // format notifyResult
@@ -255,7 +255,7 @@ export const useDeviceAlertStore = defineStore('deviceAlert', () => {
       } else item.formattedNotifyResults = {};
 
       // 判斷設備是否有按鈕
-      let options: alertBtnOptions | undefined;
+      let options;
       const { keeperUnit, maintainVendor } = item.device;
       if (keeperUnit && maintainVendor) {
         options = {
@@ -281,10 +281,10 @@ export const useDeviceAlertStore = defineStore('deviceAlert', () => {
   });
 
   const processingAlertDevice = computed(() =>
-    formattedDeviceNotify.value.filter((item) => !item.processed)
+    formattedDeviceNotify.value.filter((item) => !item.processed),
   );
   const processedAlertDevice = computed(() =>
-    formattedDeviceNotify.value.filter((item) => item.processed)
+    formattedDeviceNotify.value.filter((item) => item.processed),
   );
 
   // TODO：可刪掉？
@@ -329,13 +329,13 @@ export const useDeviceAlertStore = defineStore('deviceAlert', () => {
   function groupByDateTime(array: any[]) {
     // 按 dateTime 排序，早的在前
     const sortedArray = array.sort(
-      (a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime()
+      (a, b) => new Date(a.dateTime).getTime() - new Date(b.dateTime).getTime(),
     );
 
     return sortedArray.reduce((acc, item) => {
       const key = date.formatDate(
         new Date(item.dateTime),
-        'YYYY-MM-DD HH:mm:ss'
+        'YYYY-MM-DD HH:mm:ss',
       );
       if (!acc[key]) {
         acc[key] = [];

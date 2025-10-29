@@ -4,8 +4,8 @@ import type {
   ApiRowsResponse,
   pagination,
 } from "./api.type";
-import { DeviceViewModel } from "./device";
-import { BuildingViewModel } from "./building";
+import type { DeviceViewModel } from "./device";
+import type { BuildingViewModel } from "./building";
 
 export interface WorkflowTypeViewModel {
   id?: number;

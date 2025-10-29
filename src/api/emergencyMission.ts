@@ -1,13 +1,13 @@
-import { pagination } from "./api.type";
+import type { pagination } from "./api.type";
 import { req } from "boot/axios";
 import { storeToRefs } from "pinia";
 import { date } from "quasar";
 import { useBuildingStore } from "src/stores/building.js";
 import { setStatus } from "src/utils/missionListFormater";
-import { UserViewModel } from "./accountSetting";
-import { BuildingViewModel } from "./building";
-import { DeviceViewModel } from "./device";
-import { RoleViewModel } from "./role";
+import type { UserViewModel } from "./accountSetting";
+import type { BuildingViewModel } from "./building";
+import type { DeviceViewModel } from "./device";
+import type { RoleViewModel } from "./role";
 
 const buildingStore = useBuildingStore();
 const { Bid } = storeToRefs(buildingStore);
@@ -61,7 +61,7 @@ export const emgyMissionTableConfig = [
     name: "receiveTime",
     field: (row: GroupTaskViewModel) =>
       date.formatDate(
-        new Date(row.receiveTime as string),
+        new Date(row.receiveTime),
         "YYYY-MM-DD HH:mm:ss"
       ),
     align: "left",

@@ -49,8 +49,8 @@
 </template>
 
 <script setup lang="ts">
-import TestProcess from "src/utils/testProcess";
-const $q = inject("$q") as typeof QVueGlobals;
+import TestProcess from 'src/utils/testProcess';
+const $q = useQuasar();
 
 const dialogRef = ref();
 
@@ -72,7 +72,7 @@ watch(
     } else if (val === false) {
       modelMultiple.value = [];
     }
-  }
+  },
 );
 </script>
 

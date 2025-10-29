@@ -47,7 +47,7 @@ export default function fileRead() {
   function base64toFile(
     base64: string,
     fileName = 'file',
-    fileType?: string
+    fileType?: string,
   ): File {
     const byteCharacters = atob(base64);
     const byteNumbers = new Array(byteCharacters.length);
@@ -176,7 +176,7 @@ export default function fileRead() {
     filePath: string | null = null,
     fileId: number | null = null,
     type: string | null = null,
-    fileName = 'file'
+    fileName = 'file',
   ) {
     let result: typeof AxiosResponse;
 
@@ -214,17 +214,15 @@ export default function fileRead() {
         throw new Error('docx 轉換失敗: ' + error);
       }
 
-      const docxWrapper = tempContainer.querySelector(
-        '.docx-wrapper'
-      ) as HTMLElement;
+      const docxWrapper: HTMLElement | null =
+        tempContainer.querySelector('.docx-wrapper');
       if (docxWrapper) {
         // docxWrapper.style.backgroundColor = "#fff";
         docxWrapper.style.padding = '1rem .6rem';
       }
 
-      const sectionDocx = tempContainer.querySelector(
-        'section.docx'
-      ) as HTMLElement;
+      const sectionDocx: HTMLElement | null =
+        tempContainer.querySelector('section.docx');
       if (sectionDocx) {
         if (sectionDocx) {
           sectionDocx.style.setProperty('width', '100%', 'important');
@@ -299,7 +297,7 @@ function readExcelFile(file: File): Promise<WorksheetObj[]> {
         resolve(worksheets);
       } else reject(new Error('讀取檔案失敗'));
     };
-    reader.onerror = (error) => reject(error);
+    reader.onerror = () => reject(new Error('讀取檔案失敗'));
     reader.readAsArrayBuffer(file);
   });
 }

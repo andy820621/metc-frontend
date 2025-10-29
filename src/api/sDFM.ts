@@ -1,9 +1,9 @@
 import { req } from "boot/axios";
 import type { pagination } from "./api.type";
-import { UserViewModel } from "./accountSetting";
-import { BuildingViewModel } from "./building";
-import { RoleViewModel } from "./role";
-import { AreaViewModel } from "./area";
+import type { UserViewModel } from "./accountSetting";
+import type { BuildingViewModel } from "./building";
+import type { RoleViewModel } from "./role";
+import type { AreaViewModel } from "./area";
 enum Group {
   Fire = "滅火班",
   Inform = "通報班",

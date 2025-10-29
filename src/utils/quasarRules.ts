@@ -1,4 +1,4 @@
-import { tempDataType } from "./tableMixin";
+import type { tempDataType } from "./tableMixin";
 
 export function phoneRules(val: string) {
   if (!val) return true; // 如果值為空，不進行驗證

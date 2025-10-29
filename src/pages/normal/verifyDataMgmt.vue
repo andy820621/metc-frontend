@@ -37,8 +37,8 @@
             $q.screen.xs || $q.screen.sm
               ? undefined
               : tab.value === activeTab.value
-              ? mdiCheckCircle
-              : ''
+                ? mdiCheckCircle
+                : ''
           "
           @click="tabChange(tab)"
         />
@@ -141,46 +141,43 @@
 </template>
 <script setup lang="ts">
 // api
+import type { UserAddressPlateViewModel } from 'src/api/AddressplateVerify';
 import AddressplateVerify, {
-  UserAddressPlateViewModel,
   addressPlatesVerifyConfig,
-} from "src/api/AddressplateVerify";
-import AccountSetting from "src/api/accountSetting";
+} from 'src/api/AddressplateVerify';
+import AccountSetting from 'src/api/accountSetting';
 
 // pinia store
-import { storeToRefs } from "pinia";
-import { useBuildingStore } from "src/stores/building";
+import { storeToRefs } from 'pinia';
+import { useBuildingStore } from 'src/stores/building';
 
 // utils
-import tableMixin, { setBlockLoading } from "src/utils/tableMixin";
-import type { blockRefType, tempDataType } from "src/utils/tableMixin";
+import tableMixin, { setBlockLoading } from 'src/utils/tableMixin';
+import type { blockRefType, tempDataType } from 'src/utils/tableMixin';
 import searchFiltersGenerator, {
   generateFiltersObject,
-} from "src/utils/advancedSearchFilters";
-import { useCloned } from "@vueuse/core";
+} from 'src/utils/advancedSearchFilters';
+import { useCloned } from '@vueuse/core';
 
 // icon
-import { matVerified, matSmsFailed } from "@quasar/extras/material-icons";
-import { mdiCheckCircle } from "@quasar/extras/mdi-v6";
-import {
-  FilterColumn,
-  FilterColumnCollection,
-  FilterColumnLogical,
-} from "src/api/api.type";
+import { matVerified, matSmsFailed } from '@quasar/extras/material-icons';
+import { mdiCheckCircle } from '@quasar/extras/mdi-v6';
+import type { FilterColumnCollection } from 'src/api/api.type';
+import { FilterColumn, FilterColumnLogical } from 'src/api/api.type';
 
 const buildingStore = useBuildingStore();
 const { Bid } = storeToRefs(buildingStore);
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = useQuasar();
 
 // tab
 const activeTab = ref({
-  label: "",
-  value: "",
+  label: '',
+  value: '',
 });
 const blockTabs = [
   {
-    label: "地址驗證",
-    value: "addressPlates",
+    label: '地址驗證',
+    value: 'addressPlates',
   },
 ];
 
@@ -193,7 +190,7 @@ const {
   handleSelectArray,
   getDataMixin,
   resetSelect,
-} = tableMixin(blockRef as Ref<blockRefType>);
+} = tableMixin(blockRef);
 
 const blockEvent = computed(() => {
   return {
@@ -206,21 +203,21 @@ const blockEvent = computed(() => {
 // 客製 button
 const customHeaderButtons = ref([
   {
-    label: "多筆驗證成功",
+    label: '多筆驗證成功',
     icon: matVerified,
-    status: "verifyMany",
+    status: 'verifyMany',
   },
 ]);
 const customTableButtons = ref([
   {
-    label: "驗證成功",
+    label: '驗證成功',
     icon: matVerified,
-    status: "verify",
+    status: 'verify',
   },
   {
-    label: "驗證失敗",
+    label: '驗證失敗',
     icon: matSmsFailed,
-    status: "verifyFailed",
+    status: 'verifyFailed',
   },
 ]);
 function handleClickOption(
@@ -229,7 +226,7 @@ function handleClickOption(
     icon: string;
     status: string;
   },
-  data?: tempDataType
+  data?: tempDataType,
 ) {
   if (data) {
     handleBlock(btn, data);
@@ -242,31 +239,31 @@ let API: typeof AddressplateVerify;
 // 在 block 上的操作
 async function handleBlock(
   btn: { label: string; icon: string; status: string },
-  data: tempDataType
+  data: tempDataType,
 ) {
-  console.log("handleBlock", btn, data);
+  console.log('handleBlock', btn, data);
   const pagination = Array.isArray(blockRef?.value)
     ? blockRef?.value[0]?.pagination
     : blockRef?.value?.pagination;
-  if (btn.status === "verifyMany") {
+  if (btn.status === 'verifyMany') {
     if (
       dialogAttrs.value.selectArray &&
       dialogAttrs.value.selectArray.length > 0
     ) {
       const idArr = dialogAttrs.value.selectArray.map((item) => item.id);
       const result = (await API.apiPatchSuccess(idArr)) as typeof AxiosResponse;
-      idArr.forEach(async (id) => {
+      idArr.forEach((id) => {
         if (result.data[id]) {
           $q.notify({
-            type: "positive",
-            message: "驗證成功",
-            position: "top",
+            type: 'positive',
+            message: '驗證成功',
+            position: 'top',
           });
         } else {
           $q.notify({
-            type: "negative",
-            message: "驗證失敗",
-            position: "top",
+            type: 'negative',
+            message: '驗證失敗',
+            position: 'top',
           });
         }
       });
@@ -274,134 +271,136 @@ async function handleBlock(
         return item.user.id;
       });
       const accountStatus: { [key: string]: boolean } = {};
-      userIdArr.forEach(async (userId) => {
+      userIdArr.forEach((userId) => {
         accountStatus[userId] = false;
       });
       const lockResult = (await AccountSetting.apiLockoutUser(
-        accountStatus
+        accountStatus,
       )) as typeof AxiosResponse;
       userIdArr.forEach((userId) => {
         if (lockResult.data[userId]) {
           $q.notify({
-            type: "positive",
-            message: "啟用成功",
-            position: "top",
+            type: 'positive',
+            message: '啟用成功',
+            position: 'top',
           });
         } else {
           $q.notify({
-            type: "negative",
-            message: "啟用失敗",
-            position: "top",
+            type: 'negative',
+            message: '啟用失敗',
+            position: 'top',
           });
         }
       });
     } else {
       $q.notify({
-        type: "negative",
-        message: "請勾選要更新的資料列",
-        position: "top",
+        type: 'negative',
+        message: '請勾選要更新的資料列',
+        position: 'top',
       });
     }
-  } else if (btn.status === "verify") {
+  } else if (btn.status === 'verify') {
     if (!data.addressPlateConfirmed) {
       const result = (await API.apiPatchSuccess([
         data.id,
       ])) as typeof AxiosResponse;
       if (result.data[data.id]) {
         $q.notify({
-          type: "positive",
-          message: "驗證成功",
-          position: "top",
+          type: 'positive',
+          message: '驗證成功',
+          position: 'top',
         });
 
         const accountStatus: { [key: string]: boolean } = {};
         accountStatus[data.user.id] = false;
         const lockResult = (await AccountSetting.apiLockoutUser(
-          accountStatus
+          accountStatus,
         )) as typeof AxiosResponse;
         if (lockResult.data[data.user.id]) {
           $q.notify({
-            type: "positive",
-            message: "啟用成功",
-            position: "top",
+            type: 'positive',
+            message: '啟用成功',
+            position: 'top',
           });
         } else {
           $q.notify({
-            type: "negative",
-            message: "啟用失敗",
-            position: "top",
+            type: 'negative',
+            message: '啟用失敗',
+            position: 'top',
           });
         }
       } else {
         $q.notify({
-          type: "negative",
-          message: "驗證失敗",
-          position: "top",
+          type: 'negative',
+          message: '驗證失敗',
+          position: 'top',
         });
       }
     } else {
       $q.notify({
-        type: "positive",
-        message: "已驗證過成功",
-        position: "top",
+        type: 'positive',
+        message: '已驗證過成功',
+        position: 'top',
       });
     }
-  } else if (btn.status === "verifyFailed") {
+  } else if (btn.status === 'verifyFailed') {
     if (data.addressPlateConfirmed) {
       $q.dialog({
-        title: "驗證失敗原因",
-        message: "請輸入驗證失敗原因",
+        title: '驗證失敗原因',
+        message: '請輸入驗證失敗原因',
         prompt: {
-          model: "身分/內容有誤",
-          type: "text", // optional
+          model: '身分/內容有誤',
+          type: 'text', // optional
         },
         cancel: true,
         persistent: true,
-      }).onOk(async (message: string) => {
-        const result = (await API.apiPatchFailure(
-          data.id,
-          message
-        )) as typeof AxiosResponse;
-        if (result.data) {
-          $q.notify({
-            type: "positive",
-            message: "已成功驗證為失敗",
-            position: "top",
-          });
-
-          const accountStatus: { [key: string]: boolean } = {};
-          accountStatus[data.user.id] = false;
-          const lockResult = (await AccountSetting.apiLockoutUser(
-            accountStatus
+      }).onOk(
+        void (async (message: string) => {
+          const result = (await API.apiPatchFailure(
+            data.id,
+            message,
           )) as typeof AxiosResponse;
-          if (lockResult.data[data.user.id]) {
+          if (result.data) {
             $q.notify({
-              type: "positive",
-              message: "取消啟用",
-              position: "top",
+              type: 'positive',
+              message: '已成功驗證為失敗',
+              position: 'top',
             });
+
+            const accountStatus: { [key: string]: boolean } = {};
+            accountStatus[data.user.id] = false;
+            const lockResult = (await AccountSetting.apiLockoutUser(
+              accountStatus,
+            )) as typeof AxiosResponse;
+            if (lockResult.data[data.user.id]) {
+              $q.notify({
+                type: 'positive',
+                message: '取消啟用',
+                position: 'top',
+              });
+            } else {
+              $q.notify({
+                type: 'negative',
+                message: '取消啟用失敗',
+                position: 'top',
+              });
+            }
+            resetSelect();
+            getData(pagination);
           } else {
             $q.notify({
-              type: "negative",
-              message: "取消啟用失敗",
-              position: "top",
+              type: 'negative',
+              message: '更改失敗',
+              position: 'top',
             });
           }
-          resetSelect();
-          getData(pagination);
-        } else {
-          $q.notify({
-            type: "negative",
-            message: "更改失敗",
-            position: "top",
-          });
-        }
-      });
+        }),
+      );
     } else {
       $q.notify({
-        type: "negative",
-        message: "已驗證過失敗",
-        position: "top",
+        type: 'negative',
+        message: '已驗證過失敗',
+        position: 'top',
       });
     }
 
@@ -420,21 +419,21 @@ type VerifyResult = { confirmed: boolean; withoutReason: boolean };
 const verifyResult = ref<{ label: string; value: VerifyResult }>();
 const verifyResultOptions = [
   {
-    label: "尚未驗證",
+    label: '尚未驗證',
     value: {
       confirmed: false,
       withoutReason: true,
     },
   },
   {
-    label: "驗證成功",
+    label: '驗證成功',
     value: {
       confirmed: true,
       withoutReason: true,
     },
   },
   {
-    label: "驗證失敗",
+    label: '驗證失敗',
     value: {
       confirmed: false,
       withoutReason: false,
@@ -444,28 +443,28 @@ const verifyResultOptions = [
 
 // 取得分頁資料
 async function getData(
-  pagination: blockRefType["pagination"] = {
-    filters: "",
+  pagination: blockRefType['pagination'] = {
+    filters: '',
     page: 1,
     rowsPerPage: 12,
-  }
+  },
 ) {
-  console.log("pagination", pagination);
+  console.log('pagination', pagination);
   const payload = useCloned(pagination).cloned.value;
   // 產出 filters 物件 (filtersObject)
   const searchText = pagination.filters.trim();
   const filtersObject: FilterColumnCollection[] = generateFiltersObject(
     filters,
     searchText,
-    "Validate"
+    'Validate',
   );
   if (verifyResult.value) {
     // 產出驗證結果物件並加進 filtersObject
     const verifyResultColumn = generateFilterColumnForVerifyResult(
-      verifyResult.value.value
+      verifyResult.value.value,
     );
     if (verifyResultColumn) filtersObject.push(...verifyResultColumn);
-    console.log("now filtersObject", filtersObject);
+    console.log('now filtersObject', filtersObject);
   }
 
   const jsonFilters = JSON.stringify(filtersObject);
@@ -488,14 +487,14 @@ onMounted(() => {
 });
 
 function tabChange(tab: { label: string; value: string } = blockTabs[0]) {
-  console.log("tabChange", tab);
+  console.log('tabChange', tab);
 
   if (activeTab.value.value !== tab.value) activeTab.value.value = tab.value;
   activeTab.value.label = tab.label;
   blockAttrs.value.blockTitle = tab.value;
   dialogAttrs.value.dialogTitle = tab.label;
 
-  if (activeTab.value.value === "addressPlates") {
+  if (activeTab.value.value === 'addressPlates') {
     API = AddressplateVerify;
     nextTick(() => {
       blockAttrs.value.tableConfig = addressPlatesVerifyConfig;
@@ -506,9 +505,9 @@ function tabChange(tab: { label: string; value: string } = blockTabs[0]) {
 }
 
 function generateFilterColumnForVerifyResult(
-  verifyResultValue: VerifyResult
+  verifyResultValue: VerifyResult,
 ): FilterColumnCollection[] {
-  console.log("now generateFilterColumnForVerifyResult", verifyResultValue);
+  console.log('now generateFilterColumnForVerifyResult', verifyResultValue);
   return [
     {
       logical: FilterColumnLogical.And,
@@ -516,8 +515,8 @@ function generateFilterColumnForVerifyResult(
         {
           logical: FilterColumnLogical.And,
           columnKey: {
-            fieldName: "AddressPlateConfirmed",
-            typeName: "Validate",
+            fieldName: 'AddressPlateConfirmed',
+            typeName: 'Validate',
           },
           value: verifyResultValue.confirmed,
         },
@@ -529,8 +528,8 @@ function generateFilterColumnForVerifyResult(
         {
           logical: FilterColumnLogical.And,
           columnKey: {
-            fieldName: "AddressPlateReason6",
-            typeName: "Validate",
+            fieldName: 'AddressPlateReason6',
+            typeName: 'Validate',
           },
           value: verifyResultValue.withoutReason,
         },
@@ -541,19 +540,19 @@ function generateFilterColumnForVerifyResult(
 
 const verifyTextStyle = computed(() => (data: UserAddressPlateViewModel) => {
   const StyleObj = {
-    colorStyle: "",
-    result: "",
+    colorStyle: '',
+    result: '',
   };
 
   if (data.addressPlateConfirmed) {
-    StyleObj.colorStyle = "text-positive";
-    StyleObj.result = "驗證成功";
+    StyleObj.colorStyle = 'text-positive';
+    StyleObj.result = '驗證成功';
   } else if (data.addressPlateConfirmed === false && data.addressPlateReason) {
-    StyleObj.colorStyle = "text-negative";
-    StyleObj.result = "驗證失敗";
+    StyleObj.colorStyle = 'text-negative';
+    StyleObj.result = '驗證失敗';
   } else if (data.addressPlateConfirmed === false) {
-    StyleObj.colorStyle = "text-grey";
-    StyleObj.result = "尚未驗證";
+    StyleObj.colorStyle = 'text-grey';
+    StyleObj.result = '尚未驗證';
   }
   return StyleObj;
 });

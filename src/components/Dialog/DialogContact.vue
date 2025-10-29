@@ -72,7 +72,7 @@
                 </div>
                 <div class="right">
                   {{
-                    account.emergencyContact ? account.emergencyContact : "無"
+                    account.emergencyContact ? account.emergencyContact : '無'
                   }}
                 </div>
               </q-item-section>
@@ -101,18 +101,19 @@
 </template>
 
 <script setup lang="ts">
+const $q = useQuasar();
 const props = defineProps({
   titleName: {
     type: String,
-    default: "聯絡方式",
+    default: '聯絡方式',
   },
   titleSize: {
     type: String,
-    default: "1.5rem",
+    default: '1.5rem',
   },
   avatarSize: {
     type: String,
-    default: "120px",
+    default: '120px',
   },
   account: {
     type: Object,

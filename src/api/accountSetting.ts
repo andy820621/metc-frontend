@@ -1,12 +1,12 @@
-import { ApiResponse, ApiRowsResponse, pagination } from './api.type';
+import type { ApiResponse, ApiRowsResponse, pagination } from './api.type';
 import { req } from 'boot/axios';
 import { Notify } from 'quasar';
 import { useBuildingStore } from 'src/stores/building.js';
-import { RoleViewModel } from './role';
-import { BuildingViewModel } from './building';
-import { AddressPlateViewModel } from './addressPlate';
+import type { RoleViewModel } from './role';
+import type { BuildingViewModel } from './building';
+import type { AddressPlateViewModel } from './addressPlate';
 import { birthdayFormatAge } from 'src/utils/formatUtils';
-import { FloorViewModel } from './floors';
+import type { FloorViewModel } from './floors';
 
 const buildingStore = useBuildingStore();
 

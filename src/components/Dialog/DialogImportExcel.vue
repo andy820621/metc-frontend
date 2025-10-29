@@ -61,7 +61,7 @@
           <q-table
             title="預覽表格"
             :rows="rowData"
-            :columns="(tableConfig as QTableProps['columns'])"
+            :columns="tableConfig as QTableProps['columns']"
             row-key="name"
             hide-pagination
             :rows-per-page-options="[0]"
@@ -74,13 +74,13 @@
 </template>
 
 <script setup lang="ts">
-import { mdiFileUpload } from "@quasar/extras/mdi-v6";
-import { QTableProps, QRejectedEntry } from "quasar";
-import { tableConfigItem, tempDataType } from "src/utils/tableMixin";
-import { read, utils } from "xlsx";
-const emit = defineEmits(["formatAndSaveFunc"]);
+import { mdiFileUpload } from '@quasar/extras/mdi-v6';
+import type { QTableProps, QRejectedEntry } from 'quasar';
+import type { tableConfigItem, tempDataType } from 'src/utils/tableMixin';
+import { read, utils } from 'xlsx';
+const emit = defineEmits(['formatAndSaveFunc']);
 
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = useQuasar();
 
 const dialogRef = ref();
 
@@ -89,7 +89,7 @@ const rowData = ref();
 const tableConfig = ref<tableConfigItem[]>();
 const tableRef = ref<HTMLDivElement>();
 const cardWidth = computed(() =>
-  tableRef.value ? tableRef.value.getBoundingClientRect().width + 48 : 450
+  tableRef.value ? tableRef.value.getBoundingClientRect().width + 48 : 450,
 );
 
 const props = defineProps<{
@@ -106,7 +106,7 @@ export interface dataItem {
   [key: string]: any;
 }
 async function updateFile() {
-  console.log("updateFile", fileModel.value);
+  console.log('updateFile', fileModel.value);
   if (!fileModel.value) {
     rowData.value = undefined;
     tableConfig.value = undefined;
@@ -117,21 +117,21 @@ async function updateFile() {
     const wb = read(await fileModel.value.arrayBuffer()); // 讀取檔案
     const data = utils.sheet_to_json<dataRowType>(wb.Sheets[wb.SheetNames[0]]); // 獲取工作表1的數據
 
-    console.log("wb", wb);
-    console.log("data", data);
+    console.log('wb', wb);
+    console.log('data', data);
 
     tableConfig.value = props.tableConfig;
-    console.log("tableConfig.value", tableConfig.value);
+    console.log('tableConfig.value', tableConfig.value);
 
     rowData.value = props.formatImportData(data);
-    console.log("rowData.value", rowData.value);
+    console.log('rowData.value', rowData.value);
   } catch (err) {
     console.log(err);
   }
 }
 
 function formatAndSaveFunc(data: tempDataType) {
-  emit("formatAndSaveFunc", data);
+  emit('formatAndSaveFunc', data);
 }
 interface counterLabelEvent {
   totalSize: string;
@@ -143,14 +143,14 @@ function counterLabelFunc({
   maxFiles,
   totalSize,
 }: counterLabelEvent): string {
-  return filesNumber ? `${filesNumber} 個檔案 (大小: ${totalSize})` : "";
+  return filesNumber ? `${filesNumber} 個檔案 (大小: ${totalSize})` : '';
 }
 
 const errorMaps = {
-  accept: "請上傳 xlsx 或是 csv 格式的檔案",
-  "max-file-size": "檔案大小必須小於 500 kb",
-  filter: "...沒用到所以沒有預設內容之後可以自己在這改",
-  "max-total-size": "...沒用到所以沒有預設內容之後可以自己在這改",
+  accept: '請上傳 xlsx 或是 csv 格式的檔案',
+  'max-file-size': '檔案大小必須小於 500 kb',
+  filter: '...沒用到所以沒有預設內容之後可以自己在這改',
+  'max-total-size': '...沒用到所以沒有預設內容之後可以自己在這改',
 };
 
 function handelReject(rejectedFiles: QRejectedEntry[]) {
@@ -160,18 +160,18 @@ function handelReject(rejectedFiles: QRejectedEntry[]) {
     if (!errorMessage) return;
     $q.notify({
       message: errorMessage,
-      color: "negative",
-      icon: "warning",
+      color: 'negative',
+      icon: 'warning',
     });
   });
 }
 
 // 下載範例檔案
 function downloadSampleFile() {
-  const a = document.createElement("a");
+  const a = document.createElement('a');
   a.href = props.sampleFile;
-  a.download = props.sampleFileText || "範例檔案.xlsx";
-  a.style.display = "none";
+  a.download = props.sampleFileText || '範例檔案.xlsx';
+  a.style.display = 'none';
   document.body.appendChild(a);
   a.click();
   a.remove();

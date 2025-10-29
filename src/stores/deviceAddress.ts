@@ -280,7 +280,7 @@ export const useDeviceAddressStore = defineStore('deviceAddress', () => {
     for (const key in fatek03.value?.points) {
       setFatek03ControlValueByState(
         fatek03State[key as keyof typeof fatek03State],
-        fatek03.value?.points[key as string] === '關' ? 0 : 1,
+        fatek03.value?.points[key] === '關' ? 0 : 1,
         controlArray
       );
     }

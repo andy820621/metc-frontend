@@ -435,10 +435,18 @@
                         v-for="icon in equipIconFilter"
                         :key="icon.deviceId"
                         @dragstart="dragstart(icon)"
-                        :style="graphicLayer
-                              ?.getNode()
-                              .getChildren()
-                              .find((item:any) => item.attrs.deviceData?.deviceId === icon.deviceId) && tabValue === 'deviceAddress'?'cursor: not-allowed':'cursor: grab'"
+                        :style="
+                          graphicLayer
+                            ?.getNode()
+                            .getChildren()
+                            .find(
+                              (item: any) =>
+                                item.attrs.deviceData?.deviceId ===
+                                icon.deviceId,
+                            ) && tabValue === 'deviceAddress'
+                            ? 'cursor: not-allowed'
+                            : 'cursor: grab'
+                        "
                       >
                         <SvgIcon
                           auto-close
@@ -450,11 +458,16 @@
                           style="padding: 10px"
                           class="svgIcon"
                           :class="{
-                          'no-pointer-events bg-grey-3': graphicLayer
-                              ?.getNode()
-                              .getChildren()
-                              .find((item:any) => item.attrs.deviceData?.deviceId === icon.deviceId) && tabValue === 'deviceAddress'
-                        }"
+                            'no-pointer-events bg-grey-3':
+                              graphicLayer
+                                ?.getNode()
+                                .getChildren()
+                                .find(
+                                  (item: any) =>
+                                    item.attrs.deviceData?.deviceId ===
+                                    icon.deviceId,
+                                ) && tabValue === 'deviceAddress',
+                          }"
                         >
                           <q-tooltip
                             class="text-body2"
@@ -503,7 +516,8 @@
 </template>
 
 <script setup lang="ts">
-import { uid, QSelectProps, date } from 'quasar';
+import type { QSelectProps } from 'quasar';
+import { uid, date } from 'quasar';
 
 // vue-Json
 import JsonEditor from 'vue-json-pretty';
@@ -539,7 +553,7 @@ import equipIcons from 'src/constant/equipment';
 
 // konva
 import Konva from 'konva';
-import { IRect } from 'konva/lib/types';
+import type { IRect } from 'konva/lib/types';
 // pinia store
 import { storeToRefs } from 'pinia';
 import { useBuildingStore } from 'src/stores/building.js';
@@ -548,7 +562,7 @@ const buildingStore = useBuildingStore();
 const { Bid } = storeToRefs(buildingStore);
 
 // 全域變數
-const $q = inject('$q') as typeof QVueGlobals;
+const $q = useQuasar();
 
 // 點擊圖示 區塊 文字的客製參數
 const isGraphicOpen = ref(false);
@@ -570,11 +584,11 @@ function getConnectArray() {
       result = graphicLayerNode.filter(
         (item: Konva.Node) =>
           item.attrs.id !== activeObjectNode[0].attrs.id &&
-          !item.attrs.hazardTime
+          !item.attrs.hazardTime,
       );
     } else {
       result = graphicLayerNode.filter(
-        (item: Konva.Node) => item.attrs.id !== activeObjectNode[0].attrs.id
+        (item: Konva.Node) => item.attrs.id !== activeObjectNode[0].attrs.id,
       );
     }
     if (result.length > 0) {
@@ -599,16 +613,16 @@ function connectAction(connectData: connectArrayType, status: string) {
     if (status === 'addItem') {
       // 新增
       const addNode = graphicLayerNode.find(
-        (node: Konva.Node) => node.attrs.id === connectData.id
+        (node: Konva.Node) => node.attrs.id === connectData.id,
       );
       addNode.attrs.connectArray.push(activeItem);
     } else if (status === 'deleteItem') {
       // 刪除
       const deleteNode = graphicLayerNode.find(
-        (node: Konva.Node) => node.attrs.id === connectData.id
+        (node: Konva.Node) => node.attrs.id === connectData.id,
       );
       const activeNodeItemIndex = deleteNode.attrs.connectArray.findIndex(
-        (item: connectArrayType) => item.id === activeItem.id
+        (item: connectArrayType) => item.id === activeItem.id,
       );
       deleteNode.attrs.connectArray.splice(activeNodeItemIndex, 1);
     }
@@ -634,11 +648,11 @@ const blockTypeOptions = reactive([
 // blockType 顯示與否
 function blockTypeVisible() {
   const graphicLayerNode = graphicLayer.value?.getNode().getChildren();
-  const transformerNode = transformer.value?.getNode() as Konva.Transformer;
+  const transformerNode = transformer.value?.getNode();
   graphicLayerNode.forEach((node: Konva.Node) => {
     if (node.className === 'Rect' || node.className === 'Line') {
       const result = blockType.value.find(
-        (blockType) => blockType === node.attrs.blockType
+        (blockType) => blockType === node.attrs.blockType,
       );
       if (result) node.show();
       else node.hide();
@@ -674,7 +688,7 @@ watch(
   ],
   () => {
     graphicLayer.value.getNode().batchDraw();
-  }
+  },
 );
 
 // 點位圖示篩選
@@ -700,12 +714,12 @@ function filterFn(val: string, update: (func: () => void) => void) {
     if (tabValue.value === 'deviceAddress') {
       const options = EquipData.value.map((item) => item.name);
       deviceNameOptions.value = options.filter(
-        (v) => v.toLocaleLowerCase().indexOf(needle) > -1
+        (v) => v.toLocaleLowerCase().indexOf(needle) > -1,
       );
     } else {
       const options = equipIcons.map((item) => item.name);
       deviceNameOptions.value = options.filter(
-        (v) => v.toLocaleLowerCase().indexOf(needle) > -1
+        (v) => v.toLocaleLowerCase().indexOf(needle) > -1,
       );
     }
   });
@@ -736,7 +750,7 @@ function setModel(val: string) {
   deviceName.value = val;
   if (val !== '') {
     equipIconFilter.value = equipIconFilter.value.filter((item) =>
-      item.name.includes(val)
+      item.name.includes(val),
     );
   } else {
     getEquipIconData();
@@ -897,7 +911,7 @@ watch(
     // 當 stage 可拖動時 => 限制圖形、物件不能移動
     if (val) cofigDraggableChange(false);
     else cofigDraggableChange(true);
-  }
+  },
 );
 // 圖形 - 鍵盤事件
 onKeyDown('Alt', () => {
@@ -939,7 +953,7 @@ function copyConfigs() {
       if (className === 'Path') {
         resultNum = iconImageConfigs.filter(
           (item) =>
-            item.deviceData?.deviceId === node.attrs.deviceData?.deviceId
+            item.deviceData?.deviceId === node.attrs.deviceData?.deviceId,
         ).length;
       } else if (className === 'Rect') {
         resultNum = rectangleConfigs.length;
@@ -954,7 +968,7 @@ function copyConfigs() {
           x: node.x() + 50,
           y: node.y(),
           id: uid(),
-        })
+        }),
       );
     });
   });
@@ -1043,7 +1057,8 @@ function loadBackgroundImage(imageUrl: string) {
   image.onload = () => {
     let scale;
     const { width, height } = image;
-    if (width / height > 1) scale = stageConfig.width / width; // 橫的圖片
+    if (width / height > 1)
+      scale = stageConfig.width / width; // 橫的圖片
     else scale = stageConfig.height / height; // 直的圖片
     bgImageConfig.value = {
       image,
@@ -1054,7 +1069,7 @@ function loadBackgroundImage(imageUrl: string) {
       name: 'background',
     };
     nextTick(() => {
-      nowState = stage.value?.getStage().toJSON() as string;
+      nowState = stage.value?.getStage().toJSON();
     });
   };
 }
@@ -1104,7 +1119,7 @@ function getIconImageConfig(
   x: number,
   y: number,
   data: string,
-  iconImageData: equipIconType
+  iconImageData: equipIconType,
 ) {
   return {
     x,
@@ -1187,7 +1202,7 @@ async function drop() {
     mousePos.value.x,
     mousePos.value.y,
     data,
-    iconImageData.value
+    iconImageData.value,
   );
   iconImageConfigs.push(basicIconImageConfig);
 
@@ -1208,11 +1223,11 @@ async function loadSvg(url: string) {
   if (pathArray.length > 1) {
     const dArray: string[] = [];
     pathArray.forEach((path) => {
-      dArray.push(path.getAttribute('d') as string);
+      dArray.push(path.getAttribute('d'));
     });
     data = dArray.join(' ');
   } else {
-    data = pathArray[0]?.getAttribute('d') as string;
+    data = pathArray[0]?.getAttribute('d');
   }
   return data;
 }
@@ -1244,7 +1259,7 @@ function handleClickToolBtn(
   target: {
     label: string;
     icon: string;
-  }
+  },
 ) {
   selectTool.value = activeToolBtn.value = target.label;
   if (
@@ -1299,7 +1314,7 @@ function handleClickControlBtn(
   target: {
     label: string;
     icon: string;
-  }
+  },
 ) {
   // 復原位置
   if (target.label === controlListIconLabels.restorePosition) {
@@ -1369,14 +1384,14 @@ async function getFloorGraphicJson(floorId: number) {
 async function saveGraphicFile() {
   console.log('saveGraphicFile');
   // 儲存圖控資料之前要先把被點選變色後的 icon 還原
-  const transformerNode = transformer.value?.getNode() as Konva.Transformer;
+  const transformerNode = transformer.value?.getNode();
   transformerNode.nodes([]);
   selectAndChangeIconColor('#bdbbbb'); // 灰
   getJsonData();
   if (jsonData.value) {
     jsonData.value.attrs.editTime = date.formatDate(
       new Date().toISOString(),
-      'YYYY-MM-DD HH:mm'
+      'YYYY-MM-DD HH:mm',
     );
   }
   const jsonStr = JSON.stringify(jsonData.value);
@@ -1385,7 +1400,7 @@ async function saveGraphicFile() {
   });
   console.log('fileContent', fileContent);
   const formData = new FormData();
-  const fileName = `${Bid}_${currentFloor.value?.id}.txt`;
+  const fileName = `${Bid.value}_${currentFloor.value?.id}.txt`;
   formData.append('file', fileContent, fileName);
 
   console.log('saveGraphicFile jsonData: ', jsonData.value);
@@ -1400,7 +1415,7 @@ function clearCanvas() {
   polygonConfigs.length = 0;
   iconImageConfigs.length = 0;
   // 隱藏 transformer
-  const transformerNode = transformer.value?.getNode() as Konva.Transformer;
+  const transformerNode = transformer.value?.getNode();
   transformerNode.nodes([]);
   transformerNode.hide();
 }
@@ -1434,7 +1449,7 @@ function doUndo() {
   }
   saveJsonStateToArray(redo);
   clearCanvas();
-  const lastJson = undo.pop() as string;
+  const lastJson = undo.pop();
   nextTick(() => {
     loadShapeFromJson(lastJson);
     nowState = lastJson;
@@ -1459,7 +1474,7 @@ function doRedo() {
   }
   saveJsonStateToArray(undo);
   clearCanvas();
-  const nextJson = redo.pop() as string;
+  const nextJson = redo.pop();
   nextTick(() => {
     loadShapeFromJson(nextJson);
     nowState = nextJson;
@@ -1479,7 +1494,7 @@ function loadShapeFromJson(json: string) {
   nextTick(selectAndChangeIconColor);
 }
 function saveJsonStateToArray(jsonStateArray: string[]) {
-  jsonStateArray.push(nowState as string);
+  jsonStateArray.push(nowState);
 }
 function addDataToUndo() {
   const lastState = undo[undo.length - 1];
@@ -1487,7 +1502,7 @@ function addDataToUndo() {
   nextTick(() => {
     if (undo.length && undo.length === 10) undo.shift(); // 最多只儲存十筆動作
     saveJsonStateToArray(undo);
-    nowState = stage.value?.getStage().toJSON() as string;
+    nowState = stage.value?.getStage().toJSON();
     redo.length = 0; // 清空redo
   });
 }
@@ -1520,7 +1535,7 @@ function deleteGraphic() {
   activeObjectNode.length = selectedShapeId.length = 0;
   selectTool.value = activeToolBtn.value = '';
   isGraphicOpen.value = false;
-  const transformerNode = transformer.value?.getNode() as Konva.Transformer;
+  const transformerNode = transformer.value?.getNode();
   transformerNode.nodes([]);
 }
 function deleteConfigData(idArray: string[]) {
@@ -1558,7 +1573,7 @@ function removeGlobalClickListener() {
 function handleGlobalClick(event: MouseEvent) {
   // 檢查點擊是否發生在 Konva stage 之外
   const clickedOutsideStage = !(event.target as HTMLElement).closest(
-    '.konvajs-content'
+    '.konvajs-content',
   );
   if (clickedOutsideStage && selectTool.value === FuncListIconLabels.Polygon) {
     finishDrawingPolygon();
@@ -1611,7 +1626,7 @@ function handleStageMouseDown(e: Konva.KonvaEventObject<MouseEvent>) {
       drawCircle(mousePos.value.x, mousePos.value.y);
       drawLine(points);
       // 開始繪製 polygon 後清除選擇的物件
-      const transformerNode = transformer.value?.getNode() as Konva.Transformer;
+      const transformerNode = transformer.value?.getNode();
       if (transformerNode) {
         updateSelected([]);
         transformerNode.nodes([]);
@@ -1648,7 +1663,7 @@ function handleStageMouseDown(e: Konva.KonvaEventObject<MouseEvent>) {
     clickRectangle || clickText || clickPolygon || clickImageIcon;
   if (isClickOnShape) {
     const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
-    const transformerNode = transformer.value?.getNode() as Konva.Transformer;
+    const transformerNode = transformer.value?.getNode();
     const isSelected = transformerNode.nodes().indexOf(e.target) >= 0;
     let nodes;
     if (!metaPressed && !isSelected && !isPainting) {
@@ -1704,7 +1719,7 @@ function handleStageMouseDown(e: Konva.KonvaEventObject<MouseEvent>) {
             graphicLayer.value.getStage().add(circle);
             polygonAnchorPoints.push(circle); // 保存錨點
 
-            const stageNode = stage.value?.getNode() as Konva.Stage;
+            const stageNode = stage.value?.getNode();
 
             circle.on('mouseover', () => {
               circle.stroke('#306478');
@@ -1827,7 +1842,7 @@ function handleStageMouseDown(e: Konva.KonvaEventObject<MouseEvent>) {
     } else if (selectTool.value === FuncListIconLabels.Text) {
       const basicTextConfig = getBasicTextConfig(
         mousePos.value.x,
-        mousePos.value.y
+        mousePos.value.y,
       );
       textConfigs.push(basicTextConfig);
       selectedShapeId.length = 0;
@@ -1848,17 +1863,17 @@ function handleStageMouseMove(e: Konva.KonvaPointerEvent) {
 
     selectionRectangleConfig.x = Math.min(
       selectionRectangleConfigPos.x1,
-      selectionRectangleConfigPos.x2
+      selectionRectangleConfigPos.x2,
     );
     selectionRectangleConfig.y = Math.min(
       selectionRectangleConfigPos.y1,
-      selectionRectangleConfigPos.y2
+      selectionRectangleConfigPos.y2,
     );
     selectionRectangleConfig.width = Math.abs(
-      selectionRectangleConfigPos.x2 - selectionRectangleConfigPos.x1
+      selectionRectangleConfigPos.x2 - selectionRectangleConfigPos.x1,
     );
     selectionRectangleConfig.height = Math.abs(
-      selectionRectangleConfigPos.y2 - selectionRectangleConfigPos.y1
+      selectionRectangleConfigPos.y2 - selectionRectangleConfigPos.y1,
     );
   }
 
@@ -1951,12 +1966,12 @@ function handleStageMouseUp() {
   const clientRect = selectionRectangle?.getClientRect();
   const shapeNodes = graphicLayer.value?.getNode().children;
   const selected = shapeNodes.filter((shape: Konva.Node) =>
-    Konva.Util.haveIntersection(clientRect as IRect, shape.getClientRect())
+    Konva.Util.haveIntersection(clientRect as IRect, shape.getClientRect()),
   ) as Konva.Node[];
   // 更新 activeObjectNode 和 selectedShapeId
   updateSelected(selected);
   updateGraphic();
-  const transformerNode = transformer.value?.getNode() as Konva.Transformer;
+  const transformerNode = transformer.value?.getNode();
   transformerNode.nodes(selected);
 
   // 如果只抓到單一圖控 icon 的話，更改transformer config成只能旋轉
@@ -1990,7 +2005,7 @@ function isInsideCircle(circleIndex = 0) {
   const testCircleIndex = polygonCircles[circleIndex].attrs;
   const distance = Math.sqrt(
     (mousePos.value.x - testCircleIndex.x + testCircleIndex.radius) ** 2 +
-      (mousePos.value.y - testCircleIndex.y + testCircleIndex.radius) ** 2
+      (mousePos.value.y - testCircleIndex.y + testCircleIndex.radius) ** 2,
   );
   return distance < testCircleIndex.radius * 2.4;
 }
@@ -2018,12 +2033,12 @@ function closeLinePath() {
   polygonCircles.length = 0;
   // 把 Transformer 節點附屬到該 polygon
   selectedShapeId.length = 0;
-  selectedShapeId.push(polygonConfigs[polygonConfigs.length - 1].id as string);
+  selectedShapeId.push(polygonConfigs[polygonConfigs.length - 1].id);
   updateGraphic();
 }
 function updateTransformer() {
   // 這裡我們需要手動把 Transformer 節點附屬或者脫離
-  const transformerNode = transformer.value?.getNode() as Konva.Transformer;
+  const transformerNode = transformer.value?.getNode();
   const stageNode = stage.value?.getStage();
   // 更新 activeObjectNode
   activeObjectNode.length = 0;
@@ -2042,7 +2057,7 @@ function updateTransformer() {
 
   // 若為 iconImage 則取消 anchors
   const allImage = activeObjectNode.every(
-    (node) => node.getClassName() === 'Path'
+    (node) => node.getClassName() === 'Path',
   );
   if (allImage) {
     transformerNode.setAttrs({
@@ -2077,7 +2092,7 @@ function updateSelected(nodes: Konva.Node[]) {
 
 // iconImage，選擇後變為藍色，反之變回原色
 function selectAndChangeIconColor(defaultColor = '#2970c2') {
-  const transformerNode = transformer.value?.getNode() as Konva.Transformer;
+  const transformerNode = transformer.value?.getNode();
   let clickColor = '';
   const originColor = defaultColor;
   const activeIconColor = '#73b5eb';
@@ -2144,8 +2159,8 @@ function getBasicTextConfig(x: number, y: number) {
 function handleDoubleClick(e: Konva.KonvaEventObject<MouseEvent | TouchEvent>) {
   isTyping = true;
   const textNode = e.target as Konva.Text;
-  const transformerNode = transformer.value?.getNode() as Konva.Transformer;
-  const stageNode = stage.value?.getNode() as Konva.Stage;
+  const transformerNode = transformer.value?.getNode();
+  const stageNode = stage.value?.getNode();
   // 隱藏 Text Node 和 Transformer
   textNode.hide();
   transformerNode.hide();
@@ -2301,7 +2316,7 @@ const polygonAnchorPoints = reactive<Konva.Circle[]>([]);
 const currentPolyId = ref<string>();
 
 function drawCircle(x: number, y: number) {
-  const nowScale = stage.value?.getStage().scaleX() as number;
+  const nowScale = stage.value?.getStage().scaleX();
   const circle = new Konva.Circle({
     name: 'Circle' + (polygonCircles.length + 1),
     x,
@@ -2318,7 +2333,7 @@ function drawCircle(x: number, y: number) {
   polygonCircles.push(circle);
   points.push(...[circle.x(), circle.y()]);
 
-  const stageNode = stage.value?.getNode() as Konva.Stage;
+  const stageNode = stage.value?.getNode();
   circle.on('mouseover', () => {
     stageNode.container().style.cursor = 'pointer';
   });
@@ -2347,7 +2362,7 @@ function clearAnchorPointsAndResetPolyId() {
 }
 
 function hoverCursorPointer() {
-  const stageNode = stage.value?.getNode() as Konva.Stage;
+  const stageNode = stage.value?.getNode();
   const graphicLayerNode = graphicLayer.value?.getNode() as Konva.Stage;
   graphicLayerNode.getChildren().forEach((item) => {
     item.on('mouseenter', () => {
@@ -2366,8 +2381,8 @@ function resetCanvas() {
 // 點位欄位顯示
 const modelMultiple = computed(() =>
   graphicObj.value.deviceData.addressData?.map(
-    (item: { addressStr: string }) => item.addressStr
-  )
+    (item: { addressStr: string }) => item.addressStr,
+  ),
 );
 </script>
 

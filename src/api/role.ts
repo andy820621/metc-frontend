@@ -1,5 +1,5 @@
 import { req } from "boot/axios";
-import { ApiResponse } from "./api.type";
+import type { ApiResponse } from "./api.type";
 export interface RoleViewModel {
   id: string;
   name: string;

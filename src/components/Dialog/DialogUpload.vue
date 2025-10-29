@@ -6,8 +6,8 @@
         $q.screen.xs
           ? 'width:100%'
           : $q.screen.sm
-          ? 'min-width: 750px;'
-          : 'min-width: 1100px;height:700px'
+            ? 'min-width: 750px;'
+            : 'min-width: 1100px;height:700px'
       "
     >
       <q-toolbar>
@@ -48,9 +48,9 @@
 </template>
 
 <script setup lang="ts">
-import { useCloned } from "@vueuse/core";
-import { ApiResponse } from "src/api/api.type";
-import type { dialogAttrsType } from "src/utils/tableMixin";
+import { useCloned } from '@vueuse/core';
+import type { ApiResponse } from 'src/api/api.type';
+import type { dialogAttrsType } from 'src/utils/tableMixin';
 
 const props = withDefaults(
   defineProps<{
@@ -66,8 +66,8 @@ const props = withDefaults(
   }>(),
   {
     isDisable: true,
-    rootNameKey: "name",
-  }
+    rootNameKey: 'name',
+  },
 );
 const dialogAttrs = computed(() => {
   const { cloned } = useCloned(props.dialogAttrs);
@@ -78,38 +78,38 @@ const highlightObj = ref<{ [path: string]: string }>({});
 watch(
   () => dialogAttrs.value.tempData,
   (val) => {
-    console.log("now dialogAttrs.value.tempData changed!! ", val);
+    console.log('now dialogAttrs.value.tempData changed!! ', val);
 
     const { id, frontCoverFilePath } = val;
-    root.value.path = props.rootPathName + id + ":\\";
+    root.value.path = props.rootPathName + id + ':\\';
     root.value.name = val[props.rootNameKey];
     if (frontCoverFilePath) {
       highlightObj.value = {
-        [frontCoverFilePath]: "red",
+        [frontCoverFilePath]: 'red',
       };
     }
   },
-  { deep: true }
+  { deep: true },
 );
 
-const root = ref({ path: "", name: "Home" });
+const root = ref({ path: '', name: 'Home' });
 
 // 設定封面
-const $q = inject("$q") as typeof QVueGlobals;
+const $q = useQuasar();
 async function setCover(fullPath: string, fileModelArray: string[]) {
-  console.log("setCover", fullPath, fileModelArray);
+  console.log('setCover', fullPath, fileModelArray);
   if (fileModelArray.length > 1) {
     $q.notify({
-      type: "warning",
-      message: "請只選擇一個檔案",
-      position: "top",
+      type: 'warning',
+      message: '請只選擇一個檔案',
+      position: 'top',
     });
     return;
   } else if (fileModelArray.length === 0) {
     $q.notify({
-      type: "warning",
-      message: "請選擇一個檔案",
-      position: "top",
+      type: 'warning',
+      message: '請選擇一個檔案',
+      position: 'top',
     });
     return;
   }
@@ -128,8 +128,8 @@ async function setCover(fullPath: string, fileModelArray: string[]) {
 
   const encodedPath = encodeURI(fullPath + fileModelArray[0]);
   const nowDataId = dialogAttrs.value.tempData.id;
-  console.log("encodedPath", encodedPath);
-  console.log("dialogAttrs", dialogAttrs.value.tempData);
+  console.log('encodedPath', encodedPath);
+  console.log('dialogAttrs', dialogAttrs.value.tempData);
   const payload = {
     id: nowDataId,
     path: encodedPath,
@@ -140,15 +140,15 @@ async function setCover(fullPath: string, fileModelArray: string[]) {
   if (result.data) {
     if (props.updateBlockData) props.updateBlockData();
     $q.notify({
-      type: "positive",
-      message: "設定封面成功",
-      position: "top",
+      type: 'positive',
+      message: '設定封面成功',
+      position: 'top',
     });
   } else {
     $q.notify({
-      type: "negative",
-      message: "設定封面失敗",
-      position: "top",
+      type: 'negative',
+      message: '設定封面失敗',
+      position: 'top',
     });
   }
 }
